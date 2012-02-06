@@ -1,0 +1,163 @@
+*pantondoc*                 for vim 7.3           Last change: 06/02/2012 
+
+
+	                                            ▎            
+	        _   __,   _  _  _▎_  __   _  _    __▎   __   __  
+	      ▎/ \_/  ▎  / ▎/ ▎  ▎  /  \_/ ▎/ ▎  /  ▎  /  \_/    
+	      ▎__/ \_/▎_/  ▎  ▎_/▎_/\__/   ▎  ▎_/\_/▎_/\__/ \___/
+	     /▎              
+	     \▎                                                 
+	                                                         ❡ 
+
+
+
+vim-pantondoc is a experimental version of vim-pandoc. It features a more 
+modular design, is more configurable and has advanced pandoc integration. It
+aims to provide an optimal writing experience using vim.
+
+=== CONTENTS ===
+
+- MODULES
+    - FORMATTING |pantondoc-formatting-module|
+    - FOLDING |pantondoc-folding-module|
+    - EXECUTORS |pantondoc-executors-module|
+    - MOTIONS |pantondoc-motions-module|
+- CONFIGURATION
+	- SETTINGS |pantondoc-settings|
+
+=== MODULES ===
+                                                            *pantondoc-modules*
+
+vim-pantondoc is split in several modules.
+
+- FORMATTING                                      *pantondoc-formatting-module*
+
+Handles some writing settings, like hard/soft wraps. It is recommended to
+leave this module enabled.
+
+- FOLDING                                            *pantondoc-folding-module*
+
+Provides some folding support for markdown and textile files.
+
+- EXECUTORS                                        *pantondoc-executors-module*
+
+Executors are commands that can be run to process the current file using
+pandoc, a similar tool, or a pipeline. The `executors` module makes executors
+available as both local commands and mappings.
+
+The user can register custom executors using the *PantondocRegisterExecutor*
+command. Its syntax is >
+
+	:PantondocRegisterExecutor NAME MAP TYPE COMMAND
+<
+where NAME is the name of the Command, MAP is the mapping for it, TYPE
+is the extension of the created file, and COMMAND is a description of
+the command to create the document. For example: >
+
+    :PandocRegisterExecutor PdcHtml <Leader>ph html pandoc -Ss -t html %
+<
+should register a PdcPdf command that runs pandoc on the current file to
+create a standalone html file, and a mapping to do the same. If the command is
+followed by a bang (!), the created file will be opened by the proper
+application on the system.
+
+If |g:pantondoc_executors_save_new| is set to 1, the plugin will try to save
+the registered commands in the file plugin/pantondoc/executors/usr. 
+
+Executors are registered before opening a file.
+
+Executors depend on the *pantondoc_executors#Execute* function, which can be
+called like this: >
+
+    :call pantondoc_executors#Execute(COMMAND, TYPE, OPEN)
+<
+where COMMAND is a string describing some pandoc arguments, TYPE is the
+extesion of the created file, and OPEN isn flag determining wether to
+open the created file or not. COMMAND can include some variables:
+
+1. {#PANDOC_BIBS} for a sequence of --bibliography arguments for every
+   value in |b:pantondoc_bibfiles|, if any.
+2. {#BIBS} for a list of the values in |b:pantondoc_bibfiles|, if any.
+3. {#STRICT} expands to "--strict" on markdown files if the
+   |g:pantondoc_use_pandoc_markdown| is set to 0.
+4. {#PANDOC_LATEX_ENGINE}, for the value of
+   |g:pantondoc_executors_latex_engine|
+
+Those will be evaluated before executing the command, so the user can
+define executors that can access those variables.
+
+COMMAND can also include some vim filename expansions. For example, "%" will
+expand to the current file name, "%:p" to the full path of the current file,
+etc. See |filename-modifiers| for more info. Note that not all expansions are
+available: only those starting in "%" are.
+
+For example, you can register an executor that creates an ODT file: >
+
+    :PantondocRegisterExecutor PdcOdt <Leader>o odt pandoc #PANDOC_BIBS -o %:r.odt %
+<
+The value of COMMAND in |PantondocRegisterExecutor| and
+|pantondoc_executors#Execute| can also describe a pipeline, like: >
+
+    pandoc -t json % | filter | pandoc -f json -t odt -o %:r.odt
+<
+
+- MOTIONS                                            *pantondoc-motions-module*
+
+Registers some custom motions to navigate files.
+
+- BIBLIOGRAPHIES                              *pantondoc-bibliographies-module*
+
+Provides with support for bibliographic info completion and retrieval.
+
+- COMPLETION                                      *pantondoc-completion-module*
+
+Provides omni completion.
+
+- EXTERNALS                                        *pantondoc-externals-module*
+
+When the `externals` module is enabled, the files in
+plugin/plantondoc/externals are sourced. They provide integration with other
+vim plugins, like Voom or SuperTab.
+
+=== CONFIGURATION ===
+
+SETTINGS                                                   *pantondoc-settings*
+
+- *g:pantondoc_handled_filetypes*
+  default = ["markdown", "rst", "textile", "extra"]
+
+  A list of the kinds of files pantondoc will attach to. "extra" includes
+  .text and .txt files.
+
+- *g:pantondoc_enabled_modules* 
+
+  default = ["formatting", "folding", "bibliographies", "completion",
+  "externals", "metadata", "menu", "executors", "motions"]
+
+  A list of the modules to enable on the files determined by
+  |g:pantondoc_handled_filetypes|. See |vim-pantondoc-modules|.
+
+- *g:pantondoc_formatting_settings*
+  default = "h"
+
+	h: use hard wraps
+	a: autoformat
+	s: use soft wraps
+
+- *g:pantondoc_executors_register_from_cache*
+  default = 1
+
+  pantondoc will create executors from the files in the folder
+  `/plugin/pantondoc/executors`. 
+
+- *g:pantondoc_executors_save_new*
+  default = 1
+
+  Save user registered executors in plugin/pantondoc/executors/user
+
+- *g:pantondoc_executors_latex_engine*
+  default = "xelatex"
+
+  The LaTeX engine to use with pandoc.
+
+vim: set ft=help :

@@ -1,0 +1,3 @@
+PandocHTml <localleader>html html pandoc #STRICT? -t html -Ss -o %:r.html %
+PandocPdf <localleader>pdf pdf markdown2pdf #STRICT? --xetex #PANDOC_BIBS -o %:r.pdf %
+PandocOdt <localleader>odt odt pandoc #STRICT? -t odt #PANDOC_BIBS -o %:r.odt %
