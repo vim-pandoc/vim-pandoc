@@ -36,7 +36,7 @@ def register_executor(executor, user=True):
     pantondoc_executors.add(executor)
 
 def register_from_cache():
-    version = ".".join(pantondoc.pandoc.PandocInfo().version.split(".")[:2])
+    version = ".".join(pantondoc.pandoc.PandocInfo().mayor_version)
     for path in (version, "user"):
         try:
             with open(plugin_path() + "/plugin/pantondoc/executors/" + path) as ifile:

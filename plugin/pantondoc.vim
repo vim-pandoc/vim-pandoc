@@ -8,10 +8,14 @@
 " Load? {{{1
 if exists("g:loaded_pantondoc") && g:loaded_pantondoc
 	|| &cp
-	|| has("python") == 0
 	finish
 endif
 let g:loaded_pantondoc = 1
+" }}}1
+
+" Globals: {{{1
+
+let pantondoc_extensions_table = {"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd"], "native" : ["hs"], "rst" : ["rst"], "json" : ["json"], "textile": ["textile"], "html": ["html", "htm"], "latex": ["latex", "tex", "ltx"], "extra": ["text", "txt"] }
 " }}}1
 
 " Defaults: {{{1
@@ -61,30 +65,17 @@ if !exists("g:pantondoc_executors_latex_engine")
 endif
 " }}}1
 
-" Import pantondoc lib {{{1
-python<<EOF
-import vim, sys
-sys.path.append(vim.eval("expand('<sfile>:p:h')"))
-import pantondoc
-EOF
-" }}}1
-
-" Commands: {{{1
-
-command! -nargs=? PantondocRegisterExecutor call pantondoc_executors#RegisterExecutor("<args>")
-" }}}1
-
 " Autocommands: {{{1
 " We must do this here instead of ftdetect because we need to be able to use
 " the value of g:pantondoc_handled_filetypes and
 " g:pantondoc_use_pandoc_markdown
  
 augroup pantondoc
-python<<EOF
-from pantondoc.utils import ex
-exts = ",".join(["*." + ext for ext in pantondoc.pandoc.get_input_extensions()])
-ex('au BufRead,BufNewFile', exts ,'runtime ftplugin/pantondoc.vim')
-EOF
+	let s:exts = []
+	for ext in g:pantondoc_handled_filetypes
+		call extend(s:exts, map(pantondoc_extensions_table[ext], '"*." . v:val'))
+	endfor
+	execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
 augroup END
 
 augroup pandoc
@@ -93,4 +84,15 @@ augroup pandoc
 		au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
 	endif
 augroup END
+" }}}1
+
+" Import pantondoc lib {{{1
+" if we have python, we will want to load the pantondoc lib asap
+if has("python")
+python<<EOF
+import vim, sys
+sys.path.append(vim.eval("expand('<sfile>:p:h')"))
+import pantondoc
+EOF
+endif
 " }}}1

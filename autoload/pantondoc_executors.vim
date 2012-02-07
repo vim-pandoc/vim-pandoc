@@ -1,8 +1,11 @@
 function! pantondoc_executors#InitExecutors()
-	if g:pantondoc_executors_register_from_cache == 1
-		python pantondoc.executors.register_from_cache()
+	if has("python")
+		if g:pantondoc_executors_register_from_cache == 1
+			python pantondoc.executors.register_from_cache()
+		endif
+		python pantondoc.executors.create_executors()
+		command! -buffer -nargs=? PantondocRegisterExecutor call pantondoc_executors#RegisterExecutor("<args>")
 	endif
-	python pantondoc.executors.create_executors()
 endfunction
 
 function! pantondoc_executors#RegisterExecutor(ref)
