@@ -15,7 +15,15 @@ let g:loaded_pantondoc = 1
 
 " Globals: {{{1
 
-let pantondoc_extensions_table = {"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd"], "native" : ["hs"], "rst" : ["rst"], "json" : ["json"], "textile": ["textile"], "html": ["html", "htm"], "latex": ["latex", "tex", "ltx"], "extra": ["text", "txt"] }
+let pantondoc_extensions_table = {
+			\"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd"],
+			\"native" : ["hs"],
+			\"rst" : ["rst"],
+			\"json" : ["json"],
+			\"textile": ["textile"],
+			\"html": ["html", "htm"],
+			\"latex": ["latex", "tex", "ltx"],
+			\"extra": ["text", "txt"] }
 " }}}1
 
 " Defaults: {{{1
