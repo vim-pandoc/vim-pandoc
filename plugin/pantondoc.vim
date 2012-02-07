@@ -16,14 +16,14 @@ let g:loaded_pantondoc = 1
 " Globals: {{{1
 
 let pantondoc_extensions_table = {
+			\"extra": ["text", "txt"],
+			\"html": ["html", "htm"],
+			\"json" : ["json"],
+			\"latex": ["latex", "tex", "ltx"],
 			\"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd"],
 			\"native" : ["hs"],
 			\"rst" : ["rst"],
-			\"json" : ["json"],
-			\"textile": ["textile"],
-			\"html": ["html", "htm"],
-			\"latex": ["latex", "tex", "ltx"],
-			\"extra": ["text", "txt"] }
+			\"textile": ["textile"] }
 " }}}1
 
 " Defaults: {{{1
@@ -32,12 +32,26 @@ let pantondoc_extensions_table = {
 "
 " Enabled modules {{{3
 if !exists("g:pantondoc_enabled_modules")
-	let g:pantondoc_enabled_modules = ["formatting", "folding", "executors", "motions", "bibligraphies", "completion", "metadata", "menu", "externals", "tables"]
+	let g:pantondoc_enabled_modules = [
+				\"bibligraphies",
+				\"completion",
+				\"executors",
+				\"externals",
+				\"folding",
+				\"formatting",
+				\"menu",
+				\"metadata",
+				\"motions",
+				\"tables" ]
 endif
 
 "Markups to handle {{{3
 if !exists("g:pantondoc_handled_filetypes")
-	let g:pantondoc_handled_filetypes = ["markdown", "rst", "textile", "extra"]
+	let g:pantondoc_handled_filetypes = [
+				\"markdown",
+				\"rst",
+				\"textile",
+				\"extra"]
 endif
 
 " Use pandoc extensions to markdown for all markdown files {{{3
