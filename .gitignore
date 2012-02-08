@@ -1,2 +1,3 @@
 /doc/tags
 *.pyc
+/plugin/pantondoc/.ropeproject/*
