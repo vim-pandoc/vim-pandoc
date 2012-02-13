@@ -51,8 +51,9 @@ command. Its syntax is >
 	:PantondocRegisterExecutor NAME MAP TYPE COMMAND
 <
 where NAME is the name of the Command, MAP is the mapping for it, TYPE
-is the extension of the created file, and COMMAND is a description of
-the command to create the document. For example: >
+is the extension of the created file (which can't be deduced from the value of
+COMMAND in a general way), and COMMAND is a description of the command to 
+create the document. For example: >
 
     :PandocRegisterExecutor PdcHtml <Leader>ph html pandoc -Ss -t html %
 <
@@ -75,12 +76,12 @@ where COMMAND is a string describing some pandoc arguments, TYPE is the
 extesion of the created file, and OPEN isn flag determining wether to
 open the created file or not. COMMAND can include some variables:
 
-1. {#PANDOC_BIBS} for a sequence of --bibliography arguments for every
+1. {#PANDOC-BIBS} for a sequence of --bibliography arguments for every
    value in |b:pantondoc_bibfiles|, if any.
 2. {#BIBS} for a list of the values in |b:pantondoc_bibfiles|, if any.
 3. {#STRICT} expands to "--strict" on markdown files if the
    |g:pantondoc_use_pandoc_markdown| is set to 0.
-4. {#PANDOC_LATEX_ENGINE}, for the value of
+4. {#PANDOC-LATEX-ENGINE}, for the value of
    |g:pantondoc_executors_latex_engine|
 
 Those will be evaluated before executing the command, so the user can

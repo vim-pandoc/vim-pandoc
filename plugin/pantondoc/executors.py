@@ -58,7 +58,7 @@ def create_executors():
 
 variable_substitutions = {
 	# the values in b:pandoc_bibfiles, as arguments for a pandoc-compatible program
-    "#PANDOC_BIBS" : lambda m: " ".join(["--bibliography "+ i for i in vim.eval('b:pantondoc_bibfiles')]) \
+    "#PANDOC-BIBS" : lambda m: " ".join(["--bibliography "+ i for i in vim.eval('b:pantondoc_bibfiles')]) \
             if vim.eval('exists("b:pantondoc_bibfiles")') == '1' else "",
 	# the values in b:pandoc_bibfiles, as a list
     "#BIBS" : lambda m: " ".join(vim.eval("b:pantondoc_bibfiles")) \
@@ -66,7 +66,7 @@ variable_substitutions = {
     # wether to use --strict for markdown files
     "#STRICT\?" : lambda m: "--strict" \
             if vim.eval("&ft") == "markdown" and vim.eval("g:pantondoc_use_pandoc_markdown") == '0' else "",
-    "#PANDOC_LATEX_ENGINE" : lambda m: vim.eval("g:pantondoc_executors_latex_engine")
+    "#PANDOC-LATEX-ENGINE" : lambda m: vim.eval("g:pantondoc_executors_latex_engine")
 }
 
 def execute(command, output_type="html", open_when_done=False):
