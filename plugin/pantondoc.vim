@@ -33,7 +33,7 @@ let pantondoc_extensions_table = {
 " Enabled modules {{{3
 if !exists("g:pantondoc_enabled_modules")
 	let g:pantondoc_enabled_modules = [
-				\"bibligraphies",
+				\"bibliographies",
 				\"completion",
 				\"executors",
 				\"externals",
@@ -97,6 +97,17 @@ endif
 "
 if !exists("g:pantondoc_biblio_sources")
 	let g:pantondoc_biblio_sources = "bcg"
+endif
+
+" Use bibtool for queries?
+if !exists("g:pantondoc_biblio_use_bibtool")
+	let g:pantondoc_biblio_use_bibtool = 0
+endif
+
+" A list of files to add to b:pantondoc_bibs if "g" is in
+" g:pantondoc_biblio_sources
+if !exists("g:pantondoc_bibs")
+	let g:pantondoc_bibs = []
 endif
 " }}}1
 

@@ -38,8 +38,8 @@ def find_bibfiles():
             bibfiles = [f for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions]
 
     # we append the items in g:pandoc_bibfiles, if set
-    if "g" in sources and vim.eval("exists('g:pantondoc_bibfiles')") != "0":
-        bibfiles.extend(vim.eval("g:pantondoc_bibfiles"))
+    if "g" in sources and vim.eval("exists('g:pantondoc_bibs')") != "0":
+        bibfiles.extend(vim.eval("g:pantondoc_bibs"))
 
     # we check if the items in bibfiles are readable and not directories
     bibfiles = list(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles))
@@ -162,7 +162,7 @@ def get_json_suggestions(text, query):
     return entries
 
 def get_suggestions():
-    bibs = vim.eval("b:pantondoc_bibfiles")
+    bibs = vim.eval("b:pantondoc_bibs")
     query = vim.eval("a:partkey")
 
     matches = []
@@ -180,7 +180,7 @@ def get_suggestions():
         elif bib_type == "json":
             ids = get_json_suggestions(text, query)
         else:
-            if int(vim.eval("exists('g:pandoc_use_bibtool') && g:pandoc_use_bibtool && executable('bibtool')")):
+            if int(vim.eval("exists('g:pantondoc_biblio_use_bibtool') && g:pantondoc_biblio_use_bibtool && executable('bibtool')")):
                 ids = get_bibtex_suggestions(bib, query, True, bib)
             else:
                 ids = get_bibtex_suggestions(text, query)
