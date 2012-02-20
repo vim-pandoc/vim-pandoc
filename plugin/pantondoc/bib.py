@@ -2,6 +2,7 @@ import vim
 import re
 import os
 import os.path
+import operator
 from glob import glob
 import subprocess as sp
 
@@ -159,3 +160,34 @@ def get_json_suggestions(text, query):
                 entries.append(entry_dict)
 
     return entries
+
+def get_suggestions():
+    bibs = vim.eval("b:pantondoc_bibfiles")
+    query = vim.eval("a:partkey")
+
+    matches = []
+
+    for bib in bibs:
+        bib_type = os.path.basename(bib).split(".")[-1].lower()
+        with open(bib) as f:
+            text = f.read()
+
+        ids = []
+        if bib_type == "mods":
+            ids = get_mods_suggestions(text, query)
+        elif bib_type == "ris":
+            ids = get_ris_suggestions(text, query)
+        elif bib_type == "json":
+            ids = get_json_suggestions(text, query)
+        else:
+            if int(vim.eval("exists('g:pandoc_use_bibtool') && g:pandoc_use_bibtool && executable('bibtool')")):
+                ids = get_bibtex_suggestions(bib, query, True, bib)
+            else:
+                ids = get_bibtex_suggestions(text, query)
+
+        matches.extend(ids)
+
+    matches = sorted(matches, key=operator.itemgetter("word"))
+    # for now, we remove non ascii characters. TODO: handle that properly
+    vim.command("return " + re.sub(r'\\x\w{2}', '', str(matches)))
+

@@ -7,3 +7,9 @@ function! pantondoc_biblio#Find_Bibliographies()
 		python pantondoc.bib.find_bibfiles()
 	endif
 endfunction
+
+function! pantondoc_biblio#GetSuggestions(partkey)
+	if has("python")
+		python pantondoc.bib.get_suggestions()
+	endif
+endfunction
