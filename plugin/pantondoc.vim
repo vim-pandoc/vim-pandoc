@@ -85,6 +85,19 @@ endif
 if !exists("g:pantondoc_executors_latex_engine")
 	let g:pantondoc_executors_latex_engine = "xelatex"
 endif
+
+" Bibliographies: {{{2
+
+" Places to look for bibliographies {{{3
+" b: bibs named after the current file in the working dir
+" c: any bib in the working dir
+" l: pandoc local dir
+" t: texmf
+" g: append values in g:pantondoc_bibfiles
+"
+if !exists("g:pantondoc_biblio_sources")
+	let g:pantondoc_biblio_sources = "bcg"
+endif
 " }}}1
 
 " Autocommands: {{{1
