@@ -161,4 +161,21 @@ SETTINGS                                                   *pantondoc-settings*
 
   The LaTeX engine to use with pandoc.
 
+- *g:pantondoc_biblio_sources*
+  default = "bcg"
+
+  Where to look for bibliographies:
+
+    b: use files with the same name as the current file, in the working dir
+	c: use any bibliograhy in the working dir
+	l: look in pandoc's local dir
+	t: look in TeX's texmf
+	g: append items in g:pantondoc_bibs
+
+- *g:pantondoc_biblio_use_bibtool*
+  default = 0
+
+  Use bibtool for queries, if available (might help performance).
+
+
 vim: set ft=help :

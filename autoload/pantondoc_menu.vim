@@ -6,6 +6,6 @@ function! pantondoc_menu#CreateMenu()
 	" .200 General configuration
 	amenu .800 Pantondoc.-Sep2- :
 	amenu .900 Pantondoc.Help :help pantondoc<CR>
-	amenu .910 Pantondoc.About :echo "vim-pantondoc, experimental pandoc plugin"
+	amenu .910 Pantondoc.? :echo "vim-pantondoc, experimental pandoc plugin, 0.1pre"<CR>
 endfunction
 
