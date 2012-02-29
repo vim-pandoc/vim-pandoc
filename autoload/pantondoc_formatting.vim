@@ -21,6 +21,14 @@ function! pantondoc_formatting#InitFormatting()
 endfunction
 
 function! pantondoc_formatting#UseHardWraps()
+	" reset settings that might have changed by UseSoftWraps
+	setlocal formatoptions&
+	setlocal linebreak&
+	setlocal breakat&
+	setlocal display&
+	silent! unmap j
+	silent! unmap k
+
 	" hard wrapping at 79 chars (like in gq default)
 	if &textwidth == 0
 		setlocal textwidth=79
@@ -43,6 +51,11 @@ function! pantondoc_formatting#UseHardWraps()
 endfunction
 
 function! pantondoc_formatting#UseSoftWraps()
+	" reset settings that might have been changed by UseHardWraps
+	setlocal textwidth&
+	setlocal formatoptions&
+	setlocal formatlistpat&
+
 	" soft wrapping
 	setlocal formatoptions=1
 	setlocal linebreak
