@@ -33,7 +33,7 @@ let pantondoc_extensions_table = {
 " Enabled modules {{{3
 if !exists("g:pantondoc_enabled_modules")
 	let g:pantondoc_enabled_modules = [
-				\"bibligraphies",
+				\"bibliographies",
 				\"completion",
 				\"executors",
 				\"externals",
@@ -84,6 +84,30 @@ endif
 " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3
 if !exists("g:pantondoc_executors_latex_engine")
 	let g:pantondoc_executors_latex_engine = "xelatex"
+endif
+
+" Bibliographies: {{{2
+
+" Places to look for bibliographies {{{3
+" b: bibs named after the current file in the working dir
+" c: any bib in the working dir
+" l: pandoc local dir
+" t: texmf
+" g: append values in g:pantondoc_bibfiles
+"
+if !exists("g:pantondoc_biblio_sources")
+	let g:pantondoc_biblio_sources = "bcg"
+endif
+
+" Use bibtool for queries?
+if !exists("g:pantondoc_biblio_use_bibtool")
+	let g:pantondoc_biblio_use_bibtool = 0
+endif
+
+" A list of files to add to b:pantondoc_bibs if "g" is in
+" g:pantondoc_biblio_sources
+if !exists("g:pantondoc_bibs")
+	let g:pantondoc_bibs = []
 endif
 " }}}1
 
