@@ -21,6 +21,18 @@ ${1:term}
   ~  ${2:definition}
 endsnippet
 
+snippet ===
+`!p
+snip.rv = '=' * len(vim.current.buffer[vim.current.window.cursor[0] - 2])
+`
+endsnippet
+
+snippet ---
+`!p
+snip.rv = '-' * len(vim.current.buffer[vim.current.window.cursor[0] - 2])
+`
+endsnippet
+
 snippet [
 [${1:link}](http://${2:url} "${3:title}")$0
 endsnippet
