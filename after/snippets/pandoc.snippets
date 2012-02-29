@@ -1,0 +1,77 @@
+#
+# Snipmate Snippets for Pandoc Markdown
+#
+# Many snippets have starred versions, i.e., versions
+# that end with an asterisk (`*`). These snippets use
+# vim's `"*` register---i.e., the contents of the 
+# system clipboard---to insert text.
+
+# Insert Title Block
+snippet %%
+	% ${1:`Filename('', 'title')`}
+	% ${2:`g:snips_author`}
+	% ${3:`strftime("%d %b %Y")`}
+
+	${4}
+snippet %%*
+	% ${1:`Filename('', @*)`}
+	% ${2:`g:snips_author`}
+	% ${3:`strftime("%d %b %Y")`}
+
+	${4}
+
+# Insert Definition List
+snippet ::
+	${1:term}
+	  ~  ${2:definition}
+
+# Underline with `=`s or `-`s
+snippet ===
+	`repeat('=', strlen(getline(line(".") - 1)))`
+	
+	${1}
+snippet ---
+	`repeat('-', strlen(getline(line(".") - 1)))`
+	
+	${1}
+
+# Links and their kin
+# -------------------
+#
+# (These don't play very well with delimitMate)
+#
+
+snippet [
+	[${1:link}](http://${2:url} "${3:title}")${4}
+snippet [*
+	[${1:link}](${2:`@*`} "${3:title}")${4}
+
+snippet [:
+	[${1:id}]: http://${2:url} "${3:title}"
+snippet [:*
+	[${1:id}]: ${2:`@*`} "${3:title}"
+
+snippet [@
+	[${1:link}](mailto:${2:email})${3}
+snippet [@*
+	[${1:link}](mailto:${2:`@*`})${3}
+
+snippet [:@
+	[${1:id}]: mailto:${2:email} "${3:title}"
+snippet [:@*
+	[${1:id}]: mailto:${2:`@*`} "${3:title}"
+
+snippet ![
+	![${1:alt}](${2:url} "${3:title}")${4}
+snippet ![*
+	![${1:alt}](${2:`@*`} "${3:title}")${4}
+
+snippet ![:
+	![${1:id}]: ${2:url} "${3:title}"
+snippet ![:*
+	![${1:id}]: ${2:`@*`} "${3:title}"
+
+snippet [^:
+	[^${1:id}]: ${2:note}
+snippet [^:*
+	[^${1:id}]: ${2:`@*`}
