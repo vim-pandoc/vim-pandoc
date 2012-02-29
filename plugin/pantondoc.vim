@@ -69,6 +69,16 @@ if !exists("g:pantondoc_formatting_settings")
 	let g:pantondoc_formatting_settings = "h"
 endif
 
+" Syntax: {{{2
+
+" Highlighting flags {{{3
+" s: highlight spans
+" i: highlight implicit references
+
+if !exists("g:pantondoc_highlighting_flags")
+	let g:pantondoc_highlighting_flags = "i"
+endif
+
 " Executors: {{{2
 
 " Must pandoc/markdown2pdf executors be created from the cache? {{{3

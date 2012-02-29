@@ -63,7 +63,7 @@ variable_substitutions = {
 	# the values in b:pandoc_bibfiles, as a list
     "#BIBS" : lambda m: " ".join(vim.eval("b:pantondoc_bibfiles")) \
             if vim.eval('exists("b:pantondoc_bibfiles")') == '1' else "",
-    # wether to use --strict for markdown files
+    # whether to use --strict for markdown files
     "#STRICT" : lambda m: "--strict" \
             if vim.eval("&ft") == "markdown" and vim.eval("g:pantondoc_use_pandoc_markdown") == '0' else "",
     "#PANDOC-LATEX-ENGINE" : lambda m: vim.eval("g:pantondoc_executors_latex_engine")

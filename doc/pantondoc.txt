@@ -32,12 +32,12 @@ vim-pantondoc is split in several modules.
 
 - FORMATTING                                      *pantondoc-formatting-module*
 
-Handles some writing settings, like hard/soft wraps. It is recommended to
-leave this module enabled.
+Handles some writing settings, like the use hard or soft line wraps. It is
+recommended to leave this module enabled.
 
 - FOLDING                                            *pantondoc-folding-module*
 
-Provides some folding support for markdown and textile files.
+Provides basic folding support for markdown and textile files.
 
 - EXECUTORS                                        *pantondoc-executors-module*
 
@@ -76,12 +76,12 @@ where COMMAND is a string describing some pandoc arguments, TYPE is the
 extesion of the created file, and OPEN isn flag determining wether to
 open the created file or not. COMMAND can include some variables:
 
-1. {#PANDOC-BIBS} for a sequence of --bibliography arguments for every
+1. '#PANDOC-BIBS' for a sequence of --bibliography arguments for every
    value in |b:pantondoc_bibfiles|, if any.
-2. {#BIBS} for a list of the values in |b:pantondoc_bibfiles|, if any.
-3. {#STRICT} expands to "--strict" on markdown files if the
+2. '#BIBS' for a list of the values in |b:pantondoc_bibfiles|, if any.
+3. '#STRICT' expands to "--strict" on markdown files if the
    |g:pantondoc_use_pandoc_markdown| is set to 0.
-4. {#PANDOC-LATEX-ENGINE}, for the value of
+4. '#PANDOC-LATEX-ENGINE', for the value of
    |g:pantondoc_executors_latex_engine|
 
 Those will be evaluated before executing the command, so the user can
@@ -94,7 +94,7 @@ available: only those starting in "%" are.
 
 For example, you can register an executor that creates an ODT file: >
 
-    :PantondocRegisterExecutor PdcOdt <Leader>o odt pandoc #PANDOC_BIBS -o %:r.odt %
+    :PantondocRegisterExecutor PdcOdt <Leader>o odt pandoc #PANDOC-BIBS -o %:r.odt %
 <
 The value of COMMAND in |PantondocRegisterExecutor| and
 |pantondoc_executors#Execute| can also describe a pipeline, like: >
@@ -104,7 +104,7 @@ The value of COMMAND in |PantondocRegisterExecutor| and
 
 - MOTIONS                                            *pantondoc-motions-module*
 
-Registers some custom motions to navigate files.
+Registers some custom motions to navigate documents.
 
 - BIBLIOGRAPHIES                              *pantondoc-bibliographies-module*
 
@@ -112,11 +112,12 @@ Provides with support for bibliographic info completion and retrieval.
 
 - COMPLETION                                      *pantondoc-completion-module*
 
-Provides omni completion.
+Provides omni completion. If the 'bibliographies' module is active, it will
+complete bibliographic references.
 
 - EXTERNALS                                        *pantondoc-externals-module*
 
-When the `externals` module is enabled, the files in
+When the 'externals' module is enabled, the files in
 plugin/plantondoc/externals are sourced. They provide integration with other
 vim plugins, like Voom or SuperTab.
 
@@ -145,6 +146,12 @@ SETTINGS                                                   *pantondoc-settings*
 	a: autoformat
 	s: use soft wraps
 
+- *g:pantondoc_highlighting_flags*
+  default = "i"
+
+    s: highlight span styles (italics, bold)
+	i: highlight implicit references
+
 - *g:pantondoc_executors_register_from_cache*
   default = 1
 
@@ -159,7 +166,8 @@ SETTINGS                                                   *pantondoc-settings*
 - *g:pantondoc_executors_latex_engine*
   default = "xelatex"
 
-  The LaTeX engine to use with pandoc.
+  The LaTeX engine to use with pandoc. 'xelatex' is the default for greater
+  unicode compatibility.
 
 - *g:pantondoc_biblio_sources*
   default = "bcg"

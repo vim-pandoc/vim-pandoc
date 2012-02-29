@@ -3,8 +3,7 @@
 " Maintainer: David Sanson <dsanson@gmail.com>
 " Maintainer: Felipe Morales <hel.sheep@gmail.com>
 " OriginalAuthor: Jeremy Schultz <taozhyn@gmail.com>
-" Version: 4.0
-" Remark: Mayor rewrite.
+" Version: 4.1
 
 if version < 600
 	syntax clear
@@ -20,8 +19,8 @@ syn sync linebreaks=1
 " Set embedded HTML highlighting
 syn include @HTML syntax/html.vim
 " this breaks when g:pandoc_no_spans is 1
-if !exists("g:pandoc_no_spans") || !g:pandoc_no_spans
-syn match pandocHTML /<\a[^>]\+>/ contains=@HTML
+if stridx(g:pantondoc_highlighting_flags, "s")
+	syn match pandocHTML /<\a[^>]\+>/ contains=@HTML
 endif
 " Support HTML multi line comments
 syn region pandocHTMLComment start=/<!--/ end=/-->/
@@ -37,8 +36,8 @@ syn match pandocLatex /\\\w\S/ contains=@LATEX
 syn match pandocLatex /\$.\{-}\$/ contains=@LATEX
 
 
-if !exists("g:pandoc_no_spans") || !g:pandoc_no_spans
-syn match pandocPara /\(^\(=\|[-:#%>]\|\[.\{-}\]:\)\@!\(\S.*\)\n\)\(\(^[=-].*\n\)\|\(^[:].*\n\)\)\@!/ contains=pandocEmphasis,pandocStrong,pandocNoFormatted,pandocSuperscript,pandocSubscript,pandocStrikeout,pandocLinkArea,pandocFootnoteID,@Spell,pandocPCite,pandocLatex
+if stridx(g:pantondoc_highlighting_flags, "s")
+	syn match pandocPara /\(^\(=\|[-:#%>]\|\[.\{-}\]:\)\@!\(\S.*\)\n\)\(\(^[=-].*\n\)\|\(^[:].*\n\)\)\@!/ contains=pandocEmphasis,pandocStrong,pandocNoFormatted,pandocSuperscript,pandocSubscript,pandocStrikeout,pandocLinkArea,pandocFootnoteID,@Spell,pandocPCite,pandocLatex
 endif
 
 syn match pandocTitleBlock /\%^\(%.*\n\)\{1,3}$/ skipnl
@@ -77,7 +76,7 @@ syn match pandocLinkTextRef /\(\]\(\[\|(\)\)\@<=.\{-}\(\]\|)\)\@=/ containedin=p
 syn match pandocLinkTitle /".\{-}"/ contained containedin=pandocLinkArea contains=@Spell
 " This can be expensive on very large files, so we should be able to disable
 " it:
-if !exists("g:pandoc_no_empty_implicits") || !g:pandoc_no_empty_implicits
+if stridx(g:pantondoc_highlighting_flags, "i")
 " will highlight implicit references only if, on reading the file, it can find
 " a matching reference label. This way, square parenthesis in a file won't be
 " highlighted unless they will be turned into links by pandoc.
@@ -134,31 +133,30 @@ syn match pandocPCite /@\w*\s\[.\{-}\]/
 " Tables: TODO
 "
 """""""""""""""""""""""""""""""""""""""""""""""
-if !exists("g:pandoc_no_spans") || !g:pandoc_no_spans
-" Text Styles:
-" TODO: make the matches allow for items spanning several lines
+if stridx(g:pantondoc_highlighting_flags, "s")
+	" Text Styles:
+	" TODO: make the matches allow for items spanning several lines
 
-" Strong:
-"
-" Using underscores
-syn match pandocStrong /\(__\)\([^_ ]\|[^_]\( [^_]\)\+\)\+\1/ contained contains=@Spell skipnl
-" Using Asterisks
-syn match pandocStrong /\(\*\*\)\([^\* ]\|[^\*]\( [^\*]\)\+\)\+\1/ contained contains=@Spell skipnl
-"""""""""""""""""""""""""""""""""""""""
-" Emphasis:
-"
-"Using underscores
-syn match pandocEmphasis /\(_\)\([^_ ]\|[^_]\( [^_]\)\+\)\+\1/ contained contains=@Spell skipnl
-"Using Asterisks
-syn match pandocEmphasis /\(\*\)\([^\* ]\|[^\*]\( [^\*]\)\+\)\+\1/ contained contains=@Spell skipnl
-"""""""""""""""""""""""""""""""""""""""
-" Inline Code:
+	" Strong:
+	"
+	" Using underscores
+	syn match pandocStrong /\(__\)\([^_ ]\|[^_]\( [^_]\)\+\)\+\1/ contained contains=@Spell skipnl
+	" Using Asterisks
+	syn match pandocStrong /\(\*\*\)\([^\* ]\|[^\*]\( [^\*]\)\+\)\+\1/ contained contains=@Spell skipnl
+	"""""""""""""""""""""""""""""""""""""""
+	" Emphasis:
+	"
+	"Using underscores
+	syn match pandocEmphasis /\(_\)\([^_ ]\|[^_]\( [^_]\)\+\)\+\1/ contained contains=@Spell skipnl
+	"Using Asterisks
+	syn match pandocEmphasis /\(\*\)\([^\* ]\|[^\*]\( [^\*]\)\+\)\+\1/ contained contains=@Spell skipnl
+	"""""""""""""""""""""""""""""""""""""""
+	" Inline Code:
 
-" Using single back ticks
-syn region pandocNoFormatted start=/`/ end=/`\|^\s*$/ contained
-" Using double back ticks
-syn region pandocNoFormatted start=/``[^`]*/ end=/``\|^\s*$/ contained
-
+	" Using single back ticks
+	syn region pandocNoFormatted start=/`/ end=/`\|^\s*$/ contained
+	" Using double back ticks
+	syn region pandocNoFormatted start=/``[^`]*/ end=/``\|^\s*$/ contained
 endif
 
 " Subscripts:
