@@ -50,8 +50,7 @@ if !exists("g:pantondoc_handled_filetypes")
 	let g:pantondoc_handled_filetypes = [
 				\"markdown",
 				\"rst",
-				\"textile",
-				\"extra"]
+				\"textile"]
 endif
 
 " Use pandoc extensions to markdown for all markdown files {{{3

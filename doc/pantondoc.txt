@@ -21,7 +21,11 @@ aims to provide an optimal writing experience using vim.
     - FORMATTING |pantondoc-formatting-module|
     - FOLDING |pantondoc-folding-module|
     - EXECUTORS |pantondoc-executors-module|
+	- MENU |pantondoc-menu-module|
     - MOTIONS |pantondoc-motions-module|
+	- BIBLIOGRAPHIES |pantondoc-bibliographies-module|
+	- COMPLETION |pantondoc-completion-module|
+	- EXTERNALS |pantondoc-externals-module|
 - CONFIGURATION
 	- SETTINGS |pantondoc-settings|
 
@@ -102,6 +106,10 @@ The value of COMMAND in |PantondocRegisterExecutor| and
     pandoc -t json % | filter | pandoc -f json -t odt -o %:r.odt
 <
 
+- MENU                                                  *pantondoc-menu-module*
+
+Creates a menu for pandoc handled files.
+
 - MOTIONS                                            *pantondoc-motions-module*
 
 Registers some custom motions to navigate documents.
@@ -118,17 +126,18 @@ complete bibliographic references.
 - EXTERNALS                                        *pantondoc-externals-module*
 
 When the 'externals' module is enabled, the files in
-plugin/plantondoc/externals are sourced. They provide integration with other
-vim plugins, like Voom or SuperTab.
+plugin/plantondoc/externals are sourced. They are meant to provide integration
+with other vim plugins, like Voom or SuperTab, but can be used for other
+purposes.
 
 === CONFIGURATION ===
 
 SETTINGS                                                   *pantondoc-settings*
 
 - *g:pantondoc_handled_filetypes*
-  default = ["markdown", "rst", "textile", "extra"]
+  default = ["markdown", "rst", "textile"]
 
-  A list of the kinds of files pantondoc will attach to. "extra" includes
+  A list of the kinds of files pantondoc will attach to. 'extra' includes
   .text and .txt files.
 
 - *g:pantondoc_enabled_modules* 
