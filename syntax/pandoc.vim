@@ -31,14 +31,14 @@ syn region pandocHTMLComment start=/<!--/ end=/-->/
 unlet b:current_syntax
 syn include @LATEX syntax/tex.vim
 " Single Tex command
-syn match pandocLatex /\\\w\S/ contains=@LATEX
+"syn match pandocLatex /\\\w\S/ contains=@LATEX
 " Math Tex
 syn match pandocLatex /\$.\{-}\$/ contains=@LATEX
 
 
-if stridx(g:pantondoc_highlighting_flags, "s")
-	syn match pandocPara /\(^\(=\|[-:#%>]\|\[.\{-}\]:\)\@!\(\S.*\)\n\)\(\(^[=-].*\n\)\|\(^[:].*\n\)\)\@!/ contains=pandocEmphasis,pandocStrong,pandocNoFormatted,pandocSuperscript,pandocSubscript,pandocStrikeout,pandocLinkArea,pandocFootnoteID,@Spell,pandocPCite,pandocLatex
-endif
+"if stridx(g:pantondoc_highlighting_flags, "s")
+"	syn match pandocPara /\(^\(=\|[-:#%>]\|\[.\{-}\]:\)\@!\(\S.*\)\n\)\(\(^[=-].*\n\)\|\(^[:].*\n\)\)\@!/ contains=pandocEmphasis,pandocStrong,pandocNoFormatted,pandocSuperscript,pandocSubscript,pandocStrikeout,pandocLinkArea,pandocFootnoteID,@Spell,pandocPCite,pandocLatex
+"endif
 
 syn match pandocTitleBlock /\%^\(%.*\n\)\{1,3}$/ skipnl
 

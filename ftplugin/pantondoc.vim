@@ -10,7 +10,7 @@
 " Formatting: {{{2
 if index(g:pantondoc_enabled_modules, "formatting") >= 0
 	call pantondoc_formatting#InitFormatting()
-endif "{{{2
+endif "}}}2
 
 " Folding: {{{2
 if index(g:pantondoc_enabled_modules, "folding") >= 0
