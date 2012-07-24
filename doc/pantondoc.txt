@@ -77,7 +77,7 @@ called like this: >
     :call pantondoc_executors#Execute(COMMAND, TYPE, OPEN)
 <
 where COMMAND is a string describing some pandoc arguments, TYPE is the
-extesion of the created file, and OPEN isn flag determining wether to
+extension of the created file, and OPEN is a flag determining whether to
 open the created file or not. COMMAND can include some variables:
 
 1. '#PANDOC-BIBS' for a sequence of --bibliography arguments for every
