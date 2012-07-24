@@ -11,6 +11,10 @@ elseif exists("b:current_syntax")
 	finish
 endif
 
+if index(g:pantondoc_enabled_modules, "syntax") == -1
+	finish
+endif
+
 syntax case match
 syntax spell toplevel
 " TODO: optimize

@@ -19,6 +19,7 @@ aims to provide an optimal writing experience using vim.
 
 - MODULES
     - FORMATTING |pantondoc-formatting-module|
+	- SYNTAX |pantondoc-syntax-module|
     - FOLDING |pantondoc-folding-module|
     - EXECUTORS |pantondoc-executors-module|
 	- MENU |pantondoc-menu-module|
@@ -38,6 +39,11 @@ vim-pantondoc is split in several modules.
 
 Handles some writing settings, like the use hard or soft line wraps. It is
 recommended to leave this module enabled.
+
+- SYNTAX                                              *pantondoc-syntax-module*
+
+If enabled, vim-pantondoc will use highlighting for pandoc-markdown files. Most
+people will want to enable this, but disabling it might help with performance.
 
 - FOLDING                                            *pantondoc-folding-module*
 

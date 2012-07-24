@@ -42,6 +42,7 @@ if !exists("g:pantondoc_enabled_modules")
 				\"menu",
 				\"metadata",
 				\"motions",
+				\"syntax",
 				\"tables" ]
 endif
 
