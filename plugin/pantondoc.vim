@@ -6,8 +6,7 @@
 " Version: alpha1 }}}1
 
 " Load? {{{1
-if exists("g:loaded_pantondoc") && g:loaded_pantondoc
-	|| &cp
+if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
 	finish
 endif
 let g:loaded_pantondoc = 1

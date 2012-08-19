@@ -27,6 +27,11 @@ function! pantondoc_folding#MarkdownLevel()
 		return ">1"
 	elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
 		return ">2"
+	" support for arbitrary folds through special comments
+	elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
+		return "a1"
+	elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
+		return "s1"
 	else
 		return "="
 	endif
@@ -45,6 +50,10 @@ function! pantondoc_folding#TextileLevel()
 		return ">5"
 	elseif getline(v:lnum) =~ '^h6\..*$'
 		return ">6"
+	elseif getline(v:lnum) =~ '^.. .*fold-begin'
+		return "a1"
+	elseif getline(v:lnum) =~ '^.. .*fold end'
+		return "s1"
 	else
 		return "="
 	endif
