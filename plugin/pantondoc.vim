@@ -19,7 +19,7 @@ let pantondoc_extensions_table = {
 			\"html": ["html", "htm"],
 			\"json" : ["json"],
 			\"latex": ["latex", "tex", "ltx"],
-			\"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd"],
+			\"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd", "pdc"],
 			\"native" : ["hs"],
 			\"rst" : ["rst"],
 			\"textile": ["textile"] }
