@@ -56,7 +56,7 @@ syn match pandocSetexHeader /^.\+\n[-]\+$/
 """""""""""""""""""""""""""""""""""""""""""""
 " Blockquotes:
 "
-syn match pandocBlockQuote /^>.*\n\(.*\n\@<!\n\)*/ skipnl
+syn match pandocBlockQuote /^>.*\n\(.*\n\@<!\n\)*/ contains=@Spell skipnl
 
 """"""""""""""""""""""""""""""""""""""""""""""
 " Code Blocks:
