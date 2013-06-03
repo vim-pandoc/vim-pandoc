@@ -17,9 +17,10 @@ Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
 
 * Modular architecure. (I)
 * Support for vim-pandoc style executors. (I)
-* pandoc-markdown syntax can be used only for certain file extensions, instead
-  of being the default for all pandoc-supported file formats, as a side effect
-  you can use pantondoc with textile and restructuredText files. (I)
+* pandoc-markdown syntax can be set to be used only for certain file
+  extensions, instead of being the default for all pandoc-supported file
+  formats. As a side effect you can use pantondoc with textile and
+  restructuredText files. (I)
 * Expanded support for working with bibliographies. (I, partially) Aditional
   information on the bibliography items can be gathered from tooltips, where
   supported.

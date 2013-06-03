@@ -94,36 +94,36 @@ def execute(command, output_type="html", open_when_done=False):
             procs[i-1].stdout.close()
     output = procs[len(procs) - 1].communicate()[0]
 
-    # we create a temporary buffer where the command and its output will be shown
+    if bool(int(vim.eval("g:pantondoc_use_message_buffers"))):
+        # we create a temporary buffer where the command and its output will be shown
+        # we always splitbelow
+        splitbelow = bool(int(vim.eval("&splitbelow")))
+        if not splitbelow:
+            ex("set splitbelow")
 
-    # we always splitbelow
-    splitbelow = bool(int(vim.eval("&splitbelow")))
-    if not splitbelow:
-        ex("set splitbelow")
+        ex("5new")
+        vim.current.buffer[0] = "# Press <Esc> to close this"
+        vim.current.buffer.append("▶ " + " | ".join(steps))
+        try:
+            for line in output.split("\n"):
+                vim.current.buffer.append(line)
+        except:
+            pass
+        ex("setlocal nomodified")
+        ex("setlocal nomodifiable")
+        # pressing <esc> on the buffer will delete it
+        ex("map <buffer> <esc> :bd<cr>")
+        # we will highlight some elements in the buffer
+        ex("syn match PandocOutputMarks /^>>/")
+        ex("syn match PandocCommand /^▶.*$/hs=s+1")
+        ex("syn match PandocInstructions /^#.*$/")
+        ex("hi! link PandocOutputMarks Operator")
+        ex("hi! link PandocCommand Statement")
+        ex("hi! link PandocInstructions Comment")
 
-    ex("5new")
-    vim.current.buffer[0] = "# Press <Esc> to close this"
-    vim.current.buffer.append("▶ " + " | ".join(steps))
-    try:
-        for line in output.split("\n"):
-            vim.current.buffer.append(line)
-    except:
-        pass
-    ex("setlocal nomodified")
-    ex("setlocal nomodifiable")
-    # pressing <esc> on the buffer will delete it
-    ex("map <buffer> <esc> :bd<cr>")
-    # we will highlight some elements in the buffer
-    ex("syn match PandocOutputMarks /^>>/")
-    ex("syn match PandocCommand /^▶.*$/hs=s+1")
-    ex("syn match PandocInstructions /^#.*$/")
-    ex("hi! link PandocOutputMarks Operator")
-    ex("hi! link PandocCommand Statement")
-    ex("hi! link PandocInstructions Comment")
-
-    # we revert splitbelow to its original value
-    if not splitbelow:
-        ex("set nosplitbelow")
+        # we revert splitbelow to its original value
+        if not splitbelow:
+            ex("set nosplitbelow")
 
     # finally, we open the created file
     if os.path.exists(out) and open_when_done:
