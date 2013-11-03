@@ -1,5 +1,1 @@
-PandocHtml <localleader>html html pandoc #STRICT -Ss -t html -o %:r.html %
-PandocPdf <localleader>pdf pdf pandoc #STRICT #PANDOC-BIBS --latex-engine=#PANDOC-LATEX-ENGINE -o %:r.pdf %
-PandocOdt <localleader>odt odt pandoc #STRICT #PANDOC-BIBS -t odt -o %:r.odt %
-PandocDocx <localleader>docx docx #STRICT #PANDOC-BIBS -t docx -o %:r.docx %
-PandocBeamer <localleader>beam pdf pandoc #STRICT #PANDOC-BIBS -t beamer --latex-engine=#PANDOC-LATEX-ENGINE -o %:r.pdf %
+1.9
