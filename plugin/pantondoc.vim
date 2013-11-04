@@ -6,7 +6,7 @@
 " Version: alpha-mark2 }}}1
 
 " Load? {{{1
-if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
+if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp || v:version < 704
 	finish
 endif
 let g:loaded_pantondoc = 1

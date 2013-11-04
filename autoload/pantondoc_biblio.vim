@@ -5,13 +5,13 @@ endfunction
 function! pantondoc_biblio#Find_Bibliographies()
 	if has("python")
 	    python import pantondoc_bib
-	    python pantondoc_bib.find_bibfiles()
+	    return pyeval("pantondoc_bib.find_bibfiles()")
 	endif
 endfunction
 
 function! pantondoc_biblio#GetSuggestions(partkey)
 	if has("python")
 	    python import pantondoc_bib
-	    python pantondoc_bib.get_suggestions()
+	    return pyeval("pantondoc_bib.get_suggestions()")
 	endif
 endfunction

@@ -89,6 +89,11 @@ SETTINGS                                                   *pantondoc-settings*
 	a: autoformat
 	s: use soft wraps
 
+- *g:pantondoc_use_message_buffers*
+  default = 1
+
+  Whether to display pandoc output in a message buffer after execution.
+
 - *g:pantondoc_command_latex_engine*
   default = "xelatex"
 

@@ -9,7 +9,7 @@ import subprocess as sp
 bib_extensions = ["json", "ris", "mods", "biblatex", "bib"]
 
 def find_bibfiles():
-    sources = vim.eval("g:pantondoc_biblio_sources")
+    sources = vim.vars["pantondoc_biblio_sources"]
     bibfiles = []
     if "b" in sources and vim.current.buffer.name != None:
         file_name = ".".join(os.path.relpath(vim.current.buffer.name).split(".")[:-1])
@@ -38,13 +38,14 @@ def find_bibfiles():
             bibfiles.extend([os.path.abspath(f) for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions])
 
     # we append the items in g:pandoc_bibfiles, if set
-    if "g" in sources and vim.eval("exists('g:pantondoc_bibs')") != "0":
-        bibfiles.extend(vim.eval("g:pantondoc_bibs"))
+    if "g" in sources:
+        bibfiles.extend(vim.vars["pantondoc_bibs"])
 
     # we check if the items in bibfiles are readable and not directories
-    bibfiles = list(set(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles)))
+    if bibfiles != []:
+        bibfiles = list(set(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles)))
 
-    vim.command("return " + str(bibfiles))
+    return bibfiles
 
 # SUGGESTIONS
 
@@ -180,7 +181,7 @@ def get_suggestions():
         elif bib_type == "json":
             ids = get_json_suggestions(text, query)
         else:
-            if int(vim.eval("exists('g:pantondoc_biblio_use_bibtool') && g:pantondoc_biblio_use_bibtool && executable('bibtool')")):
+            if bool(vim.vars["pantondoc_biblio_use_bibtool"]) and bool(vim.eval("executable('bibtool')")):
                 ids = get_bibtex_suggestions(bib, query, True, bib)
             else:
                 ids = get_bibtex_suggestions(text, query)
@@ -188,6 +189,5 @@ def get_suggestions():
         matches.extend(ids)
 
     matches = sorted(matches, key=operator.itemgetter("word"))
-    # for now, we remove non ascii characters. TODO: handle that properly
-    vim.command("return " + re.sub(r'\\x\w{2}', '', str(matches)))
+    return matches
 

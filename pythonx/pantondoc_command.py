@@ -53,8 +53,8 @@ class PandocCommand(object):
                 else ""
 
         strict_arg = "--strict" if \
-                vim.eval("&ft") == "markdown" and \
-                vim.eval("g:pantondoc_use_pandoc_markdown") == '0' \
+                vim.current.buffer.options["ft"] == "markdown" and \
+                not bool(vim.vars["pantondoc_use_pandoc_markdown"]) \
                 else ""
 
         try:
@@ -68,7 +68,7 @@ class PandocCommand(object):
         output_file_path = vim.eval('expand("%:r")') + '.' + output_extensions[output_format]
         output_arg = '-o "' + output_file_path + '"'
 
-        engine_arg = "--latex-engine=" + vim.eval("g:pantondoc_command_latex_engine") if output_format in ["pdf", "beamer"] else ""
+        engine_arg = "--latex-engine=" + vim.vars["pantondoc_command_latex_engine"] if output_format in ["pdf", "beamer"] else ""
 
         extra_args = " ".join([opt[0] +  opt[1] for opt in c_opts])
 
@@ -86,7 +86,7 @@ class PandocCommand(object):
         # execute
         output = Popen(shlex.split(run_command), stdout=PIPE, stderr=PIPE).communicate()[0]
 
-        if bool(int(vim.eval("g:pantondoc_use_message_buffers"))):
+        if bool(vim.vars["pantondoc_use_message_buffers"]):
             vim.command("setlocal splitbelow")
 
             vim.command("5new")

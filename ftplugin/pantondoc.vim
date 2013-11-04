@@ -3,7 +3,7 @@
 " File: ftplugin/pantondoc.vim
 " Description: pantondoc-handled buffer settings
 " Author: Felipe Morales
-" Version: alpha1 }}}1
+" Version: alpha.mark2 }}}1
 
 " Modules: {{{1
 "

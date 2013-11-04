@@ -13,10 +13,11 @@ vim-pantondoc
 
 Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
 
+**IMPORTANT**: Requires vim 7.4 (makes use of the new python facilities).
+
 ## Features (*I*mplemented or *P*laned)
 
 * Modular architecure. (I)
-* Support for vim-pandoc style executors. (I)
 * pandoc-markdown syntax can be set to be used only for certain file
   extensions, instead of being the default for all pandoc-supported file
   formats. As a side effect you can use pantondoc with textile and
