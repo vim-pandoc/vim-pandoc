@@ -19,7 +19,6 @@ aims to provide an optimal writing experience using vim.
 
 - MODULES
     - FORMATTING |pantondoc-formatting-module|
-	- SYNTAX |pantondoc-syntax-module|
     - FOLDING |pantondoc-folding-module|
     - EXECUTORS |pantondoc-executors-module|
 	- MENU |pantondoc-menu-module|
@@ -39,11 +38,6 @@ vim-pantondoc is split in several modules.
 
 Handles some writing settings, like the use hard or soft line wraps. It is
 recommended to leave this module enabled.
-
-- SYNTAX                                              *pantondoc-syntax-module*
-
-If enabled, vim-pantondoc will use highlighting for pandoc-markdown files. Most
-people will want to enable this, but disabling it might help with performance.
 
 - FOLDING                                            *pantondoc-folding-module*
 
@@ -161,12 +155,6 @@ SETTINGS                                                   *pantondoc-settings*
 	a: autoformat
 	s: use soft wraps
 
-- *g:pantondoc_highlighting_flags*
-  default = "i"
-
-    s: highlight span styles (italics, bold)
-	i: highlight implicit references
-
 - *g:pantondoc_executors_register_from_cache*
   default = 1
 
@@ -190,10 +178,10 @@ SETTINGS                                                   *pantondoc-settings*
   Where to look for bibliographies:
 
     b: use files with the same name as the current file, in the working dir
-	c: use any bibliograhy in the working dir
-	l: look in pandoc's local dir
-	t: look in TeX's texmf
-	g: append items in g:pantondoc_bibs
+    c: use any bibliograhy in the working dir
+    l: look in pandoc's local dir
+    t: look in TeX's texmf
+    g: append items in g:pantondoc_bibs
 
 - *g:pantondoc_biblio_use_bibtool*
   default = 0

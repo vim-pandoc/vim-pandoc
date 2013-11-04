@@ -41,7 +41,6 @@ if !exists("g:pantondoc_enabled_modules")
 				\"menu",
 				\"metadata",
 				\"motions",
-				\"syntax",
 				\"tables" ]
 endif
 
@@ -66,16 +65,6 @@ endif
 " a: auto format (only used if h is set)
 if !exists("g:pantondoc_formatting_settings")
 	let g:pantondoc_formatting_settings = "h"
-endif
-
-" Syntax: {{{2
-
-" Highlighting flags {{{3
-" s: highlight spans
-" i: highlight implicit references
-
-if !exists("g:pantondoc_highlighting_flags")
-	let g:pantondoc_highlighting_flags = "i"
 endif
 
 " Executors: {{{2
@@ -134,7 +123,7 @@ augroup pantondoc
 augroup END
 
 augroup pandoc
-	au BufNewFile,BufRead *.pandoc,*.pdk,*.pd set filetype=pandoc
+	au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
 	if g:pantondoc_use_pandoc_markdown == 1
 		au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
 	endif
