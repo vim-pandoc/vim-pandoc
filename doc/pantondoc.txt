@@ -1,4 +1,4 @@
-*pantondoc*                 for vim 7.3           Last change: 06/02/2012 
+*pantondoc*                                           Last change: 04/11/2013 
 
 
 	                                            ▎            
@@ -7,7 +7,6 @@
 	      ▎__/ \_/▎_/  ▎  ▎_/▎_/\__/   ▎  ▎_/\_/▎_/\__/ \___/
 	     /▎              
 	     \▎                                                 
-	                                                         ❡ 
 
 
 
@@ -15,8 +14,9 @@ vim-pantondoc is a experimental version of vim-pandoc. It features a more
 modular design, is more configurable and has advanced pandoc integration. It
 aims to provide an optimal writing experience using vim.
 
-=== CONTENTS ===
+=== CONTENTS === {{{
 
+- INSTALLATION |pantondoc-installation|
 - MODULES
     - FORMATTING |pantondoc-formatting-module|
     - FOLDING |pantondoc-folding-module|
@@ -27,10 +27,35 @@ aims to provide an optimal writing experience using vim.
     - COMPLETION |pantondoc-completion-module|
     - EXTERNALS |pantondoc-externals-module|
 - CONFIGURATION
-	- SETTINGS |pantondoc-settings|
+    - SETTINGS |pantondoc-settings|
+}}}
+=== INSTALLATION === {{{                              *pantondoc-installation*
 
-=== MODULES ===
-                                                            *pantondoc-modules*
+- Requisites 
+
+vim-pantondoc uses the python API releases in vim 7.4. To check if the
+dependencies are satisfied, check if
+
+    :echo has("python") && v:version >= 704
+
+outputs "1".
+
+- Using Vundle (recommended)
+
+  Just add
+
+    Bundle 'fmoralesc/vim-pantondoc'
+
+  to your ~/.vimrc file and run :BundleInstall
+
+The repo is pathogen compatible and you can also just drop it in runtimepath.
+
+- Syntax
+
+vim-pantondoc doesn't bundle a syntax file for pandoc markdown files. Please
+use https://github.com/fmoralesc/vim-pandoc-syntax for this.
+}}}
+=== MODULES === {{{                                         *pantondoc-modules*
 
 vim-pantondoc is split in several modules.
 
@@ -39,17 +64,50 @@ vim-pantondoc is split in several modules.
 Handles some writing settings, like the use hard or soft line wraps. It is
 recommended to leave this module enabled.
 
+The module behavior is configured through the |g:pantondoc_formatting_settings|
+variable.
+
 - FOLDING                                            *pantondoc-folding-module*
 
 Provides basic folding support for markdown and textile files.
 
-- COMMAND                                        *pantondoc-command-module*
+- COMMAND                                            *pantondoc-command-module*
 
-Sets up a Pandoc command which handles pandoc execution.
+The command module sets up a buffer-local *:Pandoc* command which handles
+pandoc execution. The command builds an incantation for pandoc using
+vim-pantondocs configuration and the current state of the buffer
+(bibliographies found, etc.).
+
+The syntax of the :Pandoc command is as follows:
+
+    :Pandoc[!] OUTPUT-FORMAT ARGS
+
+Where OUTPUT-FORMAT is the value you would normaly pass to the -t option in
+pandoc, and ARGS are auxliary arguments you want to pass pandoc. For example,
+
+    :Pandoc beamer -Vlang:spanish
+
+will create an incantation like:
+    
+    pandoc -t beamer -Vlang:spanish -o file.pdf file.pdc
+
+Depending on the value of |g:pantondoc_use_message_buffers|, once pandoc runs
+a buffer will open displaying the command output. You can dismiss this buffer
+pressing <Esc>.
+
+If you write a bang ('!') after the command, vim-pantondoc will try to open
+the created file in its associated program.
+
+The :Pandoc command has argument completion for supported output formats.
+
+NOTE: the old executors system allowed for the execution of command pipelines,
+which are no longer supported. If you want to pass the file through a filter,
+use pandoc's -F option.
 
 - MENU                                                  *pantondoc-menu-module*
 
-Creates a menu for pandoc handled files.
+Creates a menu for pandoc handled files. If the `command` module is enables,
+you can build your documents from it.
 
 - MOTIONS                                            *pantondoc-motions-module*
 
@@ -63,8 +121,8 @@ Provides with support for bibliographic info completion and retrieval.
 
 Provides omni completion. If the 'bibliographies' module is active, it will
 complete bibliographic references.
-
-=== CONFIGURATION ===
+}}}
+=== CONFIGURATION === {{{1
 
 SETTINGS                                                   *pantondoc-settings*
 
@@ -117,4 +175,4 @@ SETTINGS                                                   *pantondoc-settings*
   Use bibtool for queries, if available (might help performance).
 
 
-vim: set ft=help :
+vim: set ft=help fdm=marker :
