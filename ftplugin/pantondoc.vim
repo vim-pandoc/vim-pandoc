@@ -17,19 +17,9 @@ if index(g:pantondoc_enabled_modules, "folding") >= 0
 	call pantondoc_folding#InitFolding()
 endif
 
-" Bibliographies: {{{2
-if index(g:pantondoc_enabled_modules, "bibliographies") >= 0
-	call pantondoc_biblio#InitBiblio()
-endif
-
 " Completion: {{{2
 if index(g:pantondoc_enabled_modules, "completion") >= 0
 	call pantondoc_completion#InitCompletion()
-endif
-
-" Command: {{{2
-if index(g:pantondoc_enabled_modules, "command") >= 0
-	call pantondoc_command#InitCommand()
 endif
 
 " Movement: {{{2
@@ -37,14 +27,19 @@ if index(g:pantondoc_enabled_modules, "motions") >= 0
 	call pantondoc_motions#RegisterMotions()
 endif
 
-" Tables: {{{2
-if index(g:pantondoc_enabled_modules, "tables") >= 0
-	call pantondoc_tables#InitTables()
-endif
-
 " Metadata: {{{2
 if index(g:pantondoc_enabled_modules, "metadata") >= 0
 	call pantondoc_metadata#InitMetadata()
+endif
+
+" Bibliographies: {{{2
+if index(g:pantondoc_enabled_modules, "bibliographies") >= 0
+	call pantondoc_biblio#InitBiblio()
+endif
+
+" Command: {{{2
+if index(g:pantondoc_enabled_modules, "command") >= 0
+	call pantondoc_command#InitCommand()
 endif
 
 " Menu: {{{2

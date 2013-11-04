@@ -6,7 +6,7 @@
 " Version: alpha-mark2 }}}1
 
 " Load? {{{1
-if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp || v:version < 704
+if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
 	finish
 endif
 let g:loaded_pantondoc = 1
@@ -39,8 +39,7 @@ if !exists("g:pantondoc_enabled_modules")
 				\"formatting",
 				\"menu",
 				\"metadata",
-				\"motions",
-				\"tables" ]
+				\"motions" ]
 endif
 "}}}
 "Markups to handle {{{3
@@ -115,17 +114,17 @@ endif
 " g:pantondoc_use_pandoc_markdown
  
 augroup pantondoc
-	let s:exts = []
-	for ext in g:pantondoc_handled_filetypes
-		call extend(s:exts, map(pantondoc_extensions_table[ext], '"*." . v:val'))
-	endfor
-	execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
+    let s:exts = []
+    for ext in g:pantondoc_handled_filetypes
+	call extend(s:exts, map(pantondoc_extensions_table[ext], '"*." . v:val'))
+    endfor
+    execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
 augroup END
 
 augroup pandoc
-	au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
-	if g:pantondoc_use_pandoc_markdown == 1
-		au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
-	endif
+    au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
+    if g:pantondoc_use_pandoc_markdown == 1
+	au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
+    endif
 augroup END
 " }}}1
