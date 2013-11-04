@@ -14,11 +14,11 @@ def find_bibfiles():
     if "b" in sources and vim.current.buffer.name != None:
         file_name = ".".join(os.path.relpath(vim.current.buffer.name).split(".")[:-1])
         # we check for files named after the current file in the current dir
-        bibfiles.extend([f for f in glob(file_name + ".*") if f.split(".")[-1] in bib_extensions])
+        bibfiles.extend([os.path.abspath(f) for f in glob(file_name + ".*") if f.split(".")[-1] in bib_extensions])
 
     # we search for any bibliography in the current dir
     if "c" in sources:
-        bibfiles.extend([f for f in glob("*.*") if f.split(".")[-1] in bib_extensions])
+        bibfiles.extend([os.path.abspath(f) for f in glob("*.*") if f.split(".")[-1] in bib_extensions])
 
     # we search in pandoc's local data dir
     if "l" in sources:
@@ -28,21 +28,21 @@ def find_bibfiles():
         elif os.path.exists(os.path.expandvars("%APPDATA%/pandoc/")):
             b = os.path.expandvars("%APPDATA%/pandoc/")
         if b != "":
-            bibfiles.extend([f for f in glob(b + "default.*") if f.split(".")[-1] in bib_extensions])
+            bibfiles.extend([os.path.abspath(f) for f in glob(b + "default.*") if f.split(".")[-1] in bib_extensions])
 
     # we search for bibliographies in texmf
     if "t" in sources and vim.eval("executable('kpsewhich')") != '0':
         texmf = sp.Popen(["kpsewhich", "-var-value", "TEXMFHOME"], stdout=sp.PIPE, stderr=sp.PIPE).\
                     communicate()[0].strip()
         if os.path.exists(texmf):
-            bibfiles = [f for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions]
+            bibfiles.extend([os.path.abspath(f) for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions])
 
     # we append the items in g:pandoc_bibfiles, if set
     if "g" in sources and vim.eval("exists('g:pantondoc_bibs')") != "0":
         bibfiles.extend(vim.eval("g:pantondoc_bibs"))
 
     # we check if the items in bibfiles are readable and not directories
-    bibfiles = list(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles))
+    bibfiles = list(set(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles)))
 
     vim.command("return " + str(bibfiles))
 
