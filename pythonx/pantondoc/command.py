@@ -127,4 +127,4 @@ class PandocCommand(object):
 
             Popen([pandoc_open_command,  output_file_path + pandoc_open_command_tail], stdout=PIPE, stderr=PIPE)
 
-command = PandocCommand()
+pandoc = PandocCommand()

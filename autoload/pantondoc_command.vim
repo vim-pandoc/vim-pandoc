@@ -1,12 +1,19 @@
 function! pantondoc_command#InitCommand()
     if has("python")
-        command! -buffer -bang -nargs=? Pandoc call pantondoc_command#Pandoc("<args>", "<bang>")
+        command! -buffer -bang -nargs=? -complete=customlist,pantondoc_command#PandocComplete Pandoc call pantondoc_command#Pandoc("<args>", "<bang>")
     endif
 endfunction
 
 function! pantondoc_command#Pandoc(args, bang)
     if has("python")
-	py import pantondoc.command
-	py pantondoc.command.command(vim.eval("a:args"), vim.eval("a:bang") != '')
+	py from pantondoc.command import pandoc
+	py pandoc(vim.eval("a:args"), vim.eval("a:bang") != '')
+    endif
+endfunction
+
+function! pantondoc_command#PandocComplete(a, c, pos)
+    if has("python")
+	py from pantondoc.command import output_extensions
+	return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(output_extensions.keys()))")
     endif
 endfunction
