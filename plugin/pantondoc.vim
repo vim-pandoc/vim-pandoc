@@ -67,6 +67,14 @@ if !exists("g:pantondoc_formatting_settings")
 	let g:pantondoc_formatting_settings = "h"
 endif
 "}}}
+
+" Equalprg: {{{2
+
+" Use pandoc as equalprg?
+if !exists("g:pantondoc_use_pandoc_equalprg")
+    let g:pantondoc_use_pandoc_equalprg = 1
+endif
+" }}}
 "}}}
 
 " Command: {{{2
