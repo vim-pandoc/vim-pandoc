@@ -1,17 +1,18 @@
 function! pantondoc_biblio#InitBiblio()
-	let b:pantondoc_bibs = pantondoc_biblio#Find_Bibliographies()
+    let b:pantondoc_bibs = pantondoc_biblio#Find_Bibliographies()
 endfunction
 
 function! pantondoc_biblio#Find_Bibliographies()
-	if has("python")
-	    python import pantondoc_bib
-	    return pyeval("pantondoc_bib.find_bibfiles()")
-	endif
+    if has("python")
+	python import pantondoc.bib
+	return pyeval("pantondoc.bib.find_bibfiles()")
+    endif
+    return []
 endfunction
 
 function! pantondoc_biblio#GetSuggestions(partkey)
-	if has("python")
-	    python import pantondoc_bib
-	    return pyeval("pantondoc_bib.get_suggestions()")
-	endif
+    if has("python")
+	python import pantondoc.bib
+	return pyeval("pantondoc.bib.get_suggestions()")
+    endif
 endfunction
