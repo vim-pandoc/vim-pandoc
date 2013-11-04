@@ -7,6 +7,17 @@ function! pantondoc_formatting#InitFormatting()
 		echoerr "The value of g:pantondoc_formatting_settings is inconsistent"
 	endif
 
+	" # Use pandoc to tidy up text
+	"
+	" NOTE: If you use this on your entire file, it will wipe out title blocks.
+	"
+	if g:pantondoc_use_pandoc_equalprg > 0	
+	    let &l:equalprg="pandoc -t markdown --reference-links"
+	    if &textwidth > 0
+		let &l:equalprg.=" --columns " . &textwidth
+	    endif
+	endif
+
 	" Don't add two spaces at the end of punctuation when joining lines
 	setlocal nojoinspaces
 
