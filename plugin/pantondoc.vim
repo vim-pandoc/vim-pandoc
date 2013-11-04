@@ -3,7 +3,7 @@
 " File: pantondoc.vim
 " Description: experimental pandoc support for vim
 " Author: Felipe Morales
-" Version: alpha1 }}}1
+" Version: alpha-mark2 }}}1
 
 " Load? {{{1
 if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
@@ -34,8 +34,7 @@ if !exists("g:pantondoc_enabled_modules")
 	let g:pantondoc_enabled_modules = [
 				\"bibliographies",
 				\"completion",
-				\"executors",
-				\"externals",
+				\"command",
 				\"folding",
 				\"formatting",
 				\"menu",
@@ -43,7 +42,7 @@ if !exists("g:pantondoc_enabled_modules")
 				\"motions",
 				\"tables" ]
 endif
-
+"}}}
 "Markups to handle {{{3
 if !exists("g:pantondoc_handled_filetypes")
 	let g:pantondoc_handled_filetypes = [
@@ -51,11 +50,13 @@ if !exists("g:pantondoc_handled_filetypes")
 				\"rst",
 				\"textile"]
 endif
-
+"}}}
 " Use pandoc extensions to markdown for all markdown files {{{3
 if !exists("g:pantondoc_use_pandoc_markdown")
 	let g:pantondoc_use_pandoc_markdown = 0
 endif
+"}}}
+"}}}
 
 " Formatting: {{{2
  
@@ -66,23 +67,22 @@ endif
 if !exists("g:pantondoc_formatting_settings")
 	let g:pantondoc_formatting_settings = "h"
 endif
+"}}}
+"}}}
 
-" Executors: {{{2
+" Command: {{{2
 
-" Must pandoc/markdown2pdf executors be created from the cache? {{{3
-if !exists("g:pantondoc_executors_register_from_cache")
-	let g:pantondoc_executors_register_from_cache  = 1
-endif
-
-" Save user executors {{{3
-if !exists("g:pantondoc_executors_save_new")
-	let g:pantondoc_executors_save_new = 1
+" Use message buffers
+if !exists("g:pantondoc_use_message_buffers")
+    let g:pantondoc_use_message_buffers = 1
 endif
 
 " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3
-if !exists("g:pantondoc_executors_latex_engine")
-	let g:pantondoc_executors_latex_engine = "xelatex"
+if !exists("g:pantondoc_command_latex_engine")
+	let g:pantondoc_command_latex_engine = "xelatex"
 endif
+"}}}
+"}}}
 
 " Bibliographies: {{{2
 
@@ -96,17 +96,17 @@ endif
 if !exists("g:pantondoc_biblio_sources")
 	let g:pantondoc_biblio_sources = "bcg"
 endif
-
-" Use bibtool for queries?
+"}}}
+" Use bibtool for queries? {{{3
 if !exists("g:pantondoc_biblio_use_bibtool")
 	let g:pantondoc_biblio_use_bibtool = 0
 endif
-
-" A list of files to add to b:pantondoc_bibs if "g" is in
-" g:pantondoc_biblio_sources
+"}}}
+" Files to add to b:pantondoc_bibs if "g" is in g:pantondoc_biblio_sources {{{3
 if !exists("g:pantondoc_bibs")
 	let g:pantondoc_bibs = []
 endif
+" }}}
 " }}}1
 
 " Autocommands: {{{1
@@ -128,15 +128,4 @@ augroup pandoc
 		au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
 	endif
 augroup END
-" }}}1
-
-" Import pantondoc lib {{{1
-" if we have python, we will want to load the pantondoc lib asap
-if has("python")
-python<<EOF
-import vim, sys
-sys.path.append(vim.eval("expand('<sfile>:p:h')"))
-import pantondoc
-EOF
-endif
 " }}}1

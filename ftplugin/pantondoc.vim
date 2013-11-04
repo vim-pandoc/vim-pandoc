@@ -17,9 +17,19 @@ if index(g:pantondoc_enabled_modules, "folding") >= 0
 	call pantondoc_folding#InitFolding()
 endif
 
-" Executors: {{{2
-if index(g:pantondoc_enabled_modules, "executors") >= 0
-	call pantondoc_executors#InitExecutors()
+" Bibliographies: {{{2
+if index(g:pantondoc_enabled_modules, "bibliographies") >= 0
+	call pantondoc_biblio#InitBiblio()
+endif
+
+" Completion: {{{2
+if index(g:pantondoc_enabled_modules, "completion") >= 0
+	call pantondoc_completion#InitCompletion()
+endif
+
+" Command: {{{2
+if index(g:pantondoc_enabled_modules, "command") >= 0
+	call pantondoc_command#InitCommand()
 endif
 
 " Movement: {{{2
@@ -32,16 +42,6 @@ if index(g:pantondoc_enabled_modules, "tables") >= 0
 	call pantondoc_tables#InitTables()
 endif
 
-" Bibliographies: {{{2
-if index(g:pantondoc_enabled_modules, "bibliographies") >= 0
-	call pantondoc_biblio#InitBiblio()
-endif
-
-" Ids: {{{2
-if index(g:pantondoc_enabled_modules, "completion") >= 0
-	call pantondoc_completion#InitCompletion()
-endif
-
 " Metadata: {{{2
 if index(g:pantondoc_enabled_modules, "metadata") >= 0
 	call pantondoc_metadata#InitMetadata()
@@ -51,9 +51,3 @@ endif
 if index(g:pantondoc_enabled_modules, "menu") >= 0
 	call pantondoc_menu#CreateMenu()
 endif
-
-" Externals: {{{2
-if index(g:pantondoc_enabled_modules, "externals") >= 0
-	runtime plugin/pantondoc/externals/*.vim
-endif
-
