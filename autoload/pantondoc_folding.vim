@@ -1,6 +1,8 @@
 function! pantondoc_folding#InitFolding()
 	setlocal foldmethod=expr
-	if &ft == "markdown" || &ft == "pandoc"
+	if &ft == "markdown" 
+		setlocal foldexpr=pantondoc_folding#MarkdownLevel()
+	elseif &ft == "pandoc"
 		setlocal foldexpr=pantondoc_folding#MarkdownLevel()
 	elseif &ft == "textile"
 		setlocal foldexpr=pantondoc_folding#TextileLevel()
