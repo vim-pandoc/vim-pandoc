@@ -14,6 +14,10 @@ vim-pantondoc
 Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
 
 **IMPORTANT**: Requires vim 7.4 (makes use of the new python facilities).
+Doesn't provide syntax support. Use
+[fmoralesc/vim-pandoc-syntax](https://github.com/fmoralesc/vim-pandoc-syntax)
+alongside this for that.
+
 
 ## Features (*I*mplemented or *P*laned)
 
@@ -26,4 +30,3 @@ Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
   information on the bibliography items can be gathered from tooltips, where
   supported.
 * Annotations: add metadata to your files (comments, TODOs, etc.) (P)
-* Table management. (P)
