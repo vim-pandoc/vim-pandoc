@@ -58,6 +58,7 @@ class PandocCommand(object):
                 else ""
 
         try:
+            # TODO: parse `pandoc --help` to populate getopt
             c_opts, c_args = getopt.gnu_getopt(args.split(), "f:RSF:psM:V:D:H:B:A:5NT:c:m:")
         except getopt.GetoptError:
             c_args = []
