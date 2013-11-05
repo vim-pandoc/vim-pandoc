@@ -6,6 +6,8 @@ function! pantondoc_menu#CreateMenu()
 	amenu .603 Pantondoc.Pandoc.Beamer\ \(Open\) :Pandoc! beamer<CR>
 	amenu .604 Pantondoc.Pandoc.&ODT :Pandoc odt<CR>
 	amenu .605 Pantondoc.Pandoc.ODT\ \(Open\) :Pandoc! odt<CR>
+	amenu .604 Pantondoc.Pandoc.&HTML :Pandoc html -s<CR>
+	amenu .605 Pantondoc.Pandoc.HTML\ \(Open\) :Pandoc! html -s<CR>
 	amenu .699 Pantondoc.-Sep1- :
     endif
     " TODO: config menu, needs configuration toggle functions first
