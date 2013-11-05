@@ -1,7 +1,9 @@
+" sets up folding according to filetype 
 function! pantondoc_folding#InitFolding()
 	setlocal foldmethod=expr
 	if &ft == "markdown" 
 		setlocal foldexpr=pantondoc_folding#MarkdownLevel()
+	" for some reason, || didn't work
 	elseif &ft == "pandoc"
 		setlocal foldexpr=pantondoc_folding#MarkdownLevel()
 	elseif &ft == "textile"

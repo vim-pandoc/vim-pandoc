@@ -1,4 +1,5 @@
 function! pantondoc_formatting#InitFormatting()
+	" set up soft or hard wrapping modes
 	if stridx(g:pantondoc_formatting_settings, "h") >= 0 && stridx(g:pantondoc_formatting_settings, "s") < 0
 		call pantondoc_formatting#UseHardWraps()
 	elseif stridx(g:pantondoc_formatting_settings, "s") >= 0 && stridx(g:pantondoc_formatting_settings, "h") < 0

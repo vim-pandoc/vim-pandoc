@@ -1,3 +1,4 @@
+" set the correct omnifunc completion
 function! pantondoc_completion#InitCompletion()
     if has("python")
 	setlocal omnifunc=pantondoc_completion#Pantondoc_Complete

@@ -3,7 +3,8 @@
 " File: pantondoc.vim
 " Description: experimental pandoc support for vim
 " Author: Felipe Morales
-" Version: alpha-mark2 }}}1
+" Version: alpha-mark2 
+" }}}1
 
 " Load? {{{1
 if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
@@ -14,6 +15,7 @@ let g:loaded_pantondoc = 1
 
 " Globals: {{{1
 
+" we use this to configure to what filetypes we attach to
 let pantondoc_extensions_table = {
 			\"extra": ["text", "txt"],
 			\"html": ["html", "htm"],
@@ -26,6 +28,8 @@ let pantondoc_extensions_table = {
 " }}}1
 
 " Defaults: {{{1
+
+" we set the default values for the configuration here
 
 " General: {{{2
 "
@@ -55,8 +59,6 @@ if !exists("g:pantondoc_use_pandoc_markdown")
 	let g:pantondoc_use_pandoc_markdown = 0
 endif
 "}}}
-"}}}
-
 " Formatting: {{{2
  
 " Formatting mode {{{3
@@ -75,8 +77,6 @@ if !exists("g:pantondoc_use_pandoc_equalprg")
     let g:pantondoc_use_pandoc_equalprg = 1
 endif
 " }}}
-"}}}
-
 " Command: {{{2
 
 " Use message buffers
@@ -90,7 +90,6 @@ if !exists("g:pantondoc_command_latex_engine")
 endif
 "}}}
 "}}}
-
 " Bibliographies: {{{2
 
 " Places to look for bibliographies {{{3
@@ -120,7 +119,9 @@ endif
 " We must do this here instead of ftdetect because we need to be able to use
 " the value of g:pantondoc_handled_filetypes and
 " g:pantondoc_use_pandoc_markdown
- 
+
+" augroup pantondoc {{{2
+" this loads the pantondoc functionality for configured extensions 
 augroup pantondoc
     let s:exts = []
     for ext in g:pantondoc_handled_filetypes
@@ -128,11 +129,14 @@ augroup pantondoc
     endfor
     execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
 augroup END
-
+"}}}
+" augroup pandoc {{{2
+" this sets the fiiletype for pandoc files
 augroup pandoc
     au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
     if g:pantondoc_use_pandoc_markdown == 1
 	au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
     endif
 augroup END
+"}}}
 " }}}1

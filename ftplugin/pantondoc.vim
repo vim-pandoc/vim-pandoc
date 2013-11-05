@@ -6,6 +6,8 @@
 " Version: alpha.mark2 }}}1
 
 " Modules: {{{1
+" depending on the value of g:pantondoc_enabled_modules, we initialize stuff,
+" so this ftplugin is simply a loader.
 "
 " Formatting: {{{2
 if index(g:pantondoc_enabled_modules, "formatting") >= 0
