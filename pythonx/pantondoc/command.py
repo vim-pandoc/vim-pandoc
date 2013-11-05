@@ -84,7 +84,11 @@ class PandocCommand(object):
                                                   input_arg]))
 
         # execute
-        output = Popen(shlex.split(run_command), stdout=PIPE, stderr=PIPE).communicate()[0]
+        try:
+            out, err = Popen(shlex.split(run_command), stdout=PIPE, stderr=PIPE).communicate()
+        except:
+            vim.command('echoe "pantondoc: could not execute pandoc"')
+            return
 
         if bool(vim.vars["pantondoc_use_message_buffers"]):
             vim.command("setlocal splitbelow")
@@ -93,8 +97,10 @@ class PandocCommand(object):
             vim.current.buffer[0] = "# Press <Esc> to close this"
             vim.current.buffer.append("▶ " + run_command)
             try:
-                for line in output.split("\n"):
-                    vim.current.buffer.append(line)
+                for line in out.split("\n"):
+                    vim.current.buffer.append("out: " + line)
+                for line in err.split("\n"):
+                    vim.current.buffer.append("ERROR: " + line)
             except:
                 pass
             vim.command("setlocal nomodified")
@@ -125,6 +131,6 @@ class PandocCommand(object):
             else:
                 pandoc_open_command_tail = ''
 
-            Popen([pandoc_open_command,  output_file_path + pandoc_open_command_tail], stdout=PIPE, stderr=PIPE)
+            Popen([pandoc_open_command,  output_file_path + pandoc_open_command_tail])
 
 pandoc = PandocCommand()
