@@ -124,7 +124,7 @@ class PandocCommand(object):
             elif sys.platform.startswith("linux"):
                 pandoc_open_command = "xdg-open" # freedesktop/linux
             elif sys.platform.startswith("win"):
-                pandoc_open_command = 'cmd /x \"start' # Windows
+                pandoc_open_command = 'cmd /c \"start' # Windows
             # On windows, we pass commands as an argument to `start`,
             # which is a cmd.exe builtin, so we have to quote it
             if sys.platform.startswith("win"):
