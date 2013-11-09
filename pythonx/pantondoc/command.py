@@ -1,6 +1,7 @@
 # encoding=utf-8
 
 import vim
+import re
 import sys
 import os.path
 import getopt
@@ -41,9 +42,36 @@ output_extensions = {
     "textile": "txt",
 }
 
+class PandocHelpParser(object):
+    def __init__(self):
+        self.help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
+        self.longopts = self.get_longopts()
+        self.shortopts = self.get_shortopts()
+
+    def get_longopts(self):
+        return map(lambda i: i.replace("--", ""), \
+                   filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
+                          [ i.group() for i in re.finditer("-(-\w+)+", self.help_data)]))
+
+    def get_shortopts(self):
+        no_args = map(lambda i: i.replace("-", "").strip(), \
+                      filter(lambda i: i not in ("-v ", "-h "), \
+                             [i.group() for i in re.finditer("-\w\s(?!\w+)", self.help_data)]))
+
+        # -m doesn't comply with the format of the other short options in pandoc 1.12
+        # if you need to pass an URL, use the long versions
+        no_args.append("m")
+
+        args = map(lambda i: i.replace("-", "").strip(), \
+                      filter(lambda i: i not in ("-t ", "-w "), \
+                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", self.help_data)]))
+
+
+        return "".join(no_args) + "".join(map(lambda i: i + ":", args))
+
 class PandocCommand(object):
     def __init__(self):
-        pass
+        self.opts = PandocHelpParser()
 
     def __call__(self, args, should_open):
         # build arguments to pass pandoc
@@ -58,8 +86,7 @@ class PandocCommand(object):
                 else ""
 
         try:
-            # TODO: parse `pandoc --help` to populate getopt
-            c_opts, c_args = getopt.gnu_getopt(args.split(), "f:RSF:psM:V:D:H:B:A:5NT:c:m:")
+            c_opts, c_args = getopt.gnu_getopt(args.split(), self.opts.shortopts, self.opts.longopts)
         except getopt.GetoptError:
             c_args = []
             c_opts = []
