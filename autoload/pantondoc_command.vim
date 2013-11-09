@@ -16,7 +16,7 @@ endfunction
 " the Pandoc command argument completion func, requires python support
 function! pantondoc_command#PandocComplete(a, c, pos)
     if has("python")
-	py from pantondoc.command import output_extensions
-	return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(output_extensions.keys()))")
+	py from pantondoc.command import PandocHelpParser
+	return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
     endif
 endfunction

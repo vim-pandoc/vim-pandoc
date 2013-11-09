@@ -8,55 +8,21 @@ import getopt
 import shlex
 from subprocess import Popen, PIPE
 
-output_extensions = {
-    "asciidoc": "txt",
-    "beamer": "pdf",
-    "docx": "docx",
-    "dzslides": "html",
-    "epub": "epub",
-    "epub3": "epub3",
-    "fb2": "fb2",
-    "html"  : "html",
-    "html5" : "html",
-    "latex" : "ltx",
-    "man": "man",
-    "markdown" : "md",
-    "markdown_github" : "md",
-    "markdown_mmd" : "md",
-    "markdown_phpextra" : "md",
-    "markdown_strict" : "md",
-    "mediawiki": "html",
-    "native": "hs",
-    "odt":  "odt",
-    "opendocument": "odt",
-    "opml": "opml",
-    "org":  "org",
-    "pdf": "pdf",
-    "plain": "txt",
-    "revealjs": "html",
-    "rtf":  "rtf",
-    "s5": "html",
-    "slideous": "html",
-    "slidy": "html",
-    "texinfo": "info",
-    "textile": "txt",
-}
-
 class PandocHelpParser(object):
     def __init__(self):
-        self.help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
+        self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
         self.longopts = self.get_longopts()
         self.shortopts = self.get_shortopts()
 
     def get_longopts(self):
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
-                          [ i.group() for i in re.finditer("-(-\w+)+", self.help_data)]))
+                          [ i.group() for i in re.finditer("-(-\w+)+", self._help_data)]))
 
     def get_shortopts(self):
         no_args = map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-v ", "-h "), \
-                             [i.group() for i in re.finditer("-\w\s(?!\w+)", self.help_data)]))
+                             [i.group() for i in re.finditer("-\w\s(?!\w+)", self._help_data)]))
 
         # -m doesn't comply with the format of the other short options in pandoc 1.12
         # if you need to pass an URL, use the long versions
@@ -64,10 +30,73 @@ class PandocHelpParser(object):
 
         args = map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-t ", "-w "), \
-                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", self.help_data)]))
+                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", self._help_data)]))
 
 
         return "".join(no_args) + "".join(map(lambda i: i + ":", args))
+
+    @staticmethod
+    def _get_formats():
+        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
+        return " ".join(re.findall('(\w+[,\n])+', data)).split("\n")[:2]
+
+    @staticmethod
+    def _get_input_formats():
+        return map(lambda i: i.strip(), PandocHelpParser._get_formats()[0].split(", "))
+
+    @staticmethod
+    def _get_output_formats():
+        return map(lambda i: i.strip(), PandocHelpParser._get_formats()[1].split(", "))
+
+    @staticmethod
+    def get_output_formats_table():
+        table = {}
+        for i in PandocHelpParser._get_output_formats():
+            if i in ("asciidoc", "plain"):
+                table[i] = "txt"
+            elif i in ("beamer", "pdf"):
+                table[i] = "pdf"
+            elif i in ("dzslides", "html", "html5", "mediawiki", "revealjs", "s5", "slideous", "slidy"):
+                table[i] = "html"
+            elif i in  ("markdown", "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict"):
+                table[i] = "md"
+            elif i in ("odt", "opendocument"):
+                table[i] = "odt"
+            elif i == "native":
+                table[i] = "hs"
+            elif i == "texinfo":
+                table[i] = "info"
+            elif i == "latex":
+                table[i] = "ltx"
+            else:
+                table[i] = i
+        return table
+
+    @staticmethod
+    def get_input_formats_table():
+        """
+        gets a dict with input formats associated to vim filetypes
+        """
+        table = {}
+        for i in PandocHelpParser._get_input_formats():
+            if re.match("markdown", i):
+                if vim.vars["pantondoc_use_pandoc_markdown"] != 0:
+                    table[i] = "pandoc"
+                else:
+                    if i == "markdown_strict":
+                        table[i] = "markdown"
+                    else:
+                        table[i] = "pandoc"
+            # requires wikipeadia.vim
+            elif i == "mediawiki":
+                table[i] = "Wikipedia"
+            elif i == "docbook":
+                table[i] = "docbk"
+            elif i == "native":
+                table[i] = "haskell"
+            else:
+                table[i] = i
+        return table
 
 class PandocCommand(object):
     def __init__(self):
@@ -91,9 +120,9 @@ class PandocCommand(object):
             c_args = []
             c_opts = []
 
-        output_format = c_args[0] if len(c_args) > 0 and c_args[0] in output_extensions.keys() else "html"
+        output_format = c_args[0] if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
-        output_file_path = vim.eval('expand("%:r")') + '.' + output_extensions[output_format]
+        output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
         output_arg = '-o "' + output_file_path + '"'
 
         engine_arg = "--latex-engine=" + vim.vars["pantondoc_command_latex_engine"] if output_format in ["pdf", "beamer"] else ""
