@@ -7,6 +7,7 @@ import os.path
 import getopt
 import shlex
 from subprocess import Popen, PIPE
+import tempfile
 
 class PandocHelpParser(object):
     def __init__(self):
@@ -101,6 +102,9 @@ class PandocHelpParser(object):
 class PandocCommand(object):
     def __init__(self):
         self.opts = PandocHelpParser()
+        self._output_file_path = None
+        self._run_command = None
+        self._out = None
 
     def __call__(self, args, should_open):
         # build arguments to pass pandoc
@@ -122,8 +126,8 @@ class PandocCommand(object):
 
         output_format = c_args[0] if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
-        output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
-        output_arg = '-o "' + output_file_path + '"'
+        self._output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
+        output_arg = '-o "' + self._output_file_path + '"'
 
         engine_arg = "--latex-engine=" + vim.vars["pantondoc_command_latex_engine"] if output_format in ["pdf", "beamer"] else ""
 
@@ -131,63 +135,80 @@ class PandocCommand(object):
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
-        run_command = " ".join(filter(lambda i: i != "", ["pandoc", \
-                                                  bib_arg, \
-                                                  strict_arg, \
-                                                  output_format_arg, \
-                                                  engine_arg, \
-                                                  output_arg, \
-                                                  extra_args, \
-                                                  input_arg]))
+        self._run_command = " ".join(filter(lambda i: i != "", ["pandoc", \
+                                                                bib_arg, \
+                                                                strict_arg, \
+                                                                output_format_arg, \
+                                                                engine_arg, \
+                                                                output_arg, \
+                                                                extra_args, \
+                                                                input_arg]))
 
         # execute
-        try:
-            out, err = Popen(shlex.split(run_command), stdout=PIPE, stderr=PIPE).communicate()
-        except:
-            vim.command('echoe "pantondoc: could not execute pandoc"')
-            return
+        self.execute(should_open)
 
-        if bool(vim.vars["pantondoc_use_message_buffers"]):
-            vim.command("setlocal splitbelow")
-
-            vim.command("5new")
-            vim.current.buffer[0] = "# Press <Esc> to close this"
-            vim.current.buffer.append("▶ " + run_command)
-            try:
-                for line in out.split("\n"):
-                    vim.current.buffer.append("out: " + line)
-                for line in err.split("\n"):
-                    vim.current.buffer.append("ERROR: " + line)
-            except:
-                pass
-            vim.command("setlocal nomodified")
-            vim.command("setlocal nomodifiable")
-            # pressing <esc> on the buffer will delete it
-            vim.command("map <buffer> <esc> :bd<cr>")
-            # we will highlight some elements in the buffer
-            vim.command("syn match PandocOutputMarks /^>>/")
-            vim.command("syn match PandocCommand /^▶.*$/hs=s+1")
-            vim.command("syn match PandocInstructions /^#.*$/")
-            vim.command("hi! link PandocOutputMarks Operator")
-            vim.command("hi! link PandocCommand Statement")
-            vim.command("hi! link PandocInstructions Comment")
-        print("pantondoc: ran " + run_command)
-
-        # open file if needed
-        if os.path.exists(output_file_path) and should_open:
-            if sys.platform == "darwin":
-                pandoc_open_command = "open" #OSX
-            elif sys.platform.startswith("linux"):
-                pandoc_open_command = "xdg-open" # freedesktop/linux
-            elif sys.platform.startswith("win"):
-                pandoc_open_command = 'cmd /c \"start' # Windows
-            # On windows, we pass commands as an argument to `start`,
-            # which is a cmd.exe builtin, so we have to quote it
-            if sys.platform.startswith("win"):
-                pandoc_open_command_tail = '"'
+    def execute(self, should_open):
+        with open("/tmp/pandoc.out", 'w') as tmp:
+            if vim.bindeval("has('clientserver')"):
+                async_runner = os.path.join(os.path.dirname(__file__), "async.py")
+                servername_arg = "--servername=" + vim.bindeval("v:servername")
+                open_arg  = "--open" if should_open else "--noopen"
+                async_command = " ".join([async_runner, servername_arg, open_arg, self._run_command])
+                try:
+                    pid = Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
+                except:
+                    vim.command('echoe "pantondoc: could not execute pandoc asynchronously"')
             else:
-                pandoc_open_command_tail = ''
+                try:
+                    Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp).wait()
+                except:
+                    vim.command('echoe "pantondoc: could not execute pandoc"')
+                    return
 
-            Popen([pandoc_open_command,  output_file_path + pandoc_open_command_tail])
+                self.on_done(should_open)
+
+    def on_done(self, should_open):
+        if self._run_command and self._output_file_path:
+            if vim.bindeval("g:pantondoc_use_message_buffers"):
+                vim.command("setlocal splitbelow")
+
+                vim.command("5new pandoc\ output")
+                vim.current.buffer[0] = "# Press <Esc> to close this"
+                vim.current.buffer.append("▶ " + self._run_command)
+                if vim.bindeval('filereadable("/tmp/pandoc.out")'):
+                    vim.command("silent r /tmp/pandoc.out")
+                    os.remove("/tmp/pandoc.out")
+                vim.command("setlocal buftype=nofile")
+                vim.command("setlocal nobuflisted")
+                # pressing <esc> on the buffer will delete it
+                vim.command("map <buffer> <esc> :bd<cr>")
+                # we will highlight some elements in the buffer
+                vim.command("syn match PandocOutputMarks /^>>/")
+                vim.command("syn match PandocCommand /^▶.*$/hs=s+1")
+                vim.command("syn match PandocInstructions /^#.*$/")
+                vim.command("hi! link PandocOutputMarks Operator")
+                vim.command("hi! link PandocCommand Statement")
+                vim.command("hi! link PandocInstructions Comment")
+
+            # open file if needed
+            if os.path.exists(self._output_file_path) and should_open:
+                if sys.platform == "darwin":
+                    pandoc_open_command = "open" #OSX
+                elif sys.platform.startswith("linux"):
+                    pandoc_open_command = "xdg-open" # freedesktop/linux
+                elif sys.platform.startswith("win"):
+                    pandoc_open_command = 'cmd /c \"start' # Windows
+                # On windows, we pass commands as an argument to `start`,
+                # which is a cmd.exe builtin, so we have to quote it
+                if sys.platform.startswith("win"):
+                    pandoc_open_command_tail = '"'
+                else:
+                    pandoc_open_command_tail = ''
+
+                pid = Popen([pandoc_open_command,  self._output_file_path + pandoc_open_command_tail])
+
+            # we reset this
+            self._output_file_path = None
+            self._run_command = None
 
 pandoc = PandocCommand()

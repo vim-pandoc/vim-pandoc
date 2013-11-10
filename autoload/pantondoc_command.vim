@@ -20,3 +20,11 @@ function! pantondoc_command#PandocComplete(a, c, pos)
 	return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
     endif
 endfunction
+
+function! pantondoc_command#PandocAsyncCallback(should_open)
+    if has("python")
+	py from pantondoc.command import pandoc
+	py pandoc.on_done(vim.eval("a:should_open") == '1')
+    endif
+endfunction
+
