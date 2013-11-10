@@ -39,7 +39,7 @@ class PandocHelpParser(object):
     @staticmethod
     def _get_formats():
         data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        return " ".join(re.findall('(\w+[,\n])+', data)).split("\n")[:2]
+        return " ".join(re.findall('(\w+\**[,\n])+', data)).split("\n")[:2]
 
     @staticmethod
     def _get_input_formats():
@@ -47,7 +47,7 @@ class PandocHelpParser(object):
 
     @staticmethod
     def _get_output_formats():
-        return map(lambda i: i.strip(), PandocHelpParser._get_formats()[1].split(", "))
+        return map(lambda i: i.strip().replace("*", ""), PandocHelpParser._get_formats()[1].split(", "))
 
     @staticmethod
     def get_output_formats_table():
