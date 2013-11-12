@@ -66,7 +66,7 @@ endif
 " h: use hard wraps
 " a: auto format (only used if h is set)
 if !exists("g:pantondoc_formatting_settings")
-	let g:pantondoc_formatting_settings = "h"
+	let g:pantondoc_formatting_settings = "s"
 endif
 "}}}
 
