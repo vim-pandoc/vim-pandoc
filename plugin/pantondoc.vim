@@ -120,6 +120,15 @@ endif
 " the value of g:pantondoc_handled_filetypes and
 " g:pantondoc_use_pandoc_markdown
 
+" augroup pandoc {{{2
+" this sets the fiiletype for pandoc files
+augroup pandoc
+    au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
+    if g:pantondoc_use_pandoc_markdown == 1
+	au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
+    endif
+augroup END
+"}}}
 " augroup pantondoc {{{2
 " this loads the pantondoc functionality for configured extensions 
 augroup pantondoc
@@ -128,15 +137,6 @@ augroup pantondoc
 	call extend(s:exts, map(pantondoc_extensions_table[ext], '"*." . v:val'))
     endfor
     execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
-augroup END
-"}}}
-" augroup pandoc {{{2
-" this sets the fiiletype for pandoc files
-augroup pandoc
-    au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
-    if g:pantondoc_use_pandoc_markdown == 1
-	au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
-    endif
 augroup END
 "}}}
 " }}}1
