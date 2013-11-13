@@ -27,11 +27,11 @@ function! pantondoc_folding#MarkdownLevel()
     elseif getline(v:lnum) =~ '^###### .*$'
 	return ">6"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
-	if synIDattr(synID(v:lnum, 1, 1), "name") == "pandocSetexHeader"
+	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
 	    return ">1"
 	endif
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
-	if synIDattr(synID(v:lnum, 1, 1), "name") == "pandocSetexHeader"
+	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
 	    return ">2"
 	endif
 	" support for arbitrary folds through special comments
