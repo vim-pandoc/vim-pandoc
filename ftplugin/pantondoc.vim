@@ -24,9 +24,9 @@ if index(g:pantondoc_enabled_modules, "completion") >= 0
 	call pantondoc_completion#InitCompletion()
 endif
 
-" Movement: {{{2
-if index(g:pantondoc_enabled_modules, "motions") >= 0
-	call pantondoc_motions#RegisterMotions()
+" Keyboard: {{{2
+if index(g:pantondoc_enabled_modules, "keyboard") >= 0
+	call pantondoc_keyboard#InitKeyboard()
 endif
 
 " Metadata: {{{2

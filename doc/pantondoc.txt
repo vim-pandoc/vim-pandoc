@@ -109,9 +109,14 @@ use pandoc's -F option.
 Creates a menu for pandoc handled files. If the `command` module is enables,
 you can build your documents from it.
 
-- MOTIONS                                            *pantondoc-motions-module*
+- KEYBOARD                                            *pantondoc-keyboard-module*
 
-Registers some custom motions to navigate documents.
+Registers some custom mappings for applying text styles, navigating the
+documents and more. Currently, it:
+
+* creates operators to italicize and bold text.
+* creates mapping for navigation to and from references (uses the 'r' mark by
+  default, configurable with |g:pantondoc_mark|.
 
 - BIBLIOGRAPHIES                              *pantondoc-bibliographies-module*
 
@@ -174,5 +179,10 @@ SETTINGS                                                   *pantondoc-settings*
 
   Use bibtool for queries, if available (might help performance).
 
+- *g:pantondoc_mark*
+  default = "r"
+
+  What mark to use (i.e, when navigating references, to keep track of original
+  position).
 
 vim: set ft=help fdm=marker :

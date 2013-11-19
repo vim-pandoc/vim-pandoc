@@ -43,7 +43,7 @@ if !exists("g:pantondoc_enabled_modules")
 				\"formatting",
 				\"menu",
 				\"metadata",
-				\"motions" ]
+				\"keyboard" ]
 endif
 "}}}
 "Markups to handle {{{3
@@ -113,6 +113,13 @@ if !exists("g:pantondoc_bibs")
 	let g:pantondoc_bibs = []
 endif
 " }}}
+" }}}2
+
+" Keyboard:
+"
+if !exists("g:pantondoc_mark")
+    let g:pantondoc_mark = "r"
+endif
 " }}}1
 
 " Autocommands: {{{1
