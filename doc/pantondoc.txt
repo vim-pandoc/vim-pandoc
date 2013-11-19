@@ -53,7 +53,7 @@ The repo is pathogen compatible and you can also just drop it in runtimepath.
 - Syntax
 
 vim-pantondoc doesn't bundle a syntax file for pandoc markdown files. Please
-use https://github.com/fmoralesc/vim-pandoc-syntax for this.
+use https://github.com/vim-pandoc/vim-pandoc-syntax for this.
 }}}
 === MODULES === {{{                                         *pantondoc-modules*
 

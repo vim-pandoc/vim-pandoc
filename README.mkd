@@ -13,13 +13,16 @@ vim-pantondoc
 
 Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
 
+As of commit c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is
+considered to be in feature parity with vim-pandoc.
+
 **IMPORTANT**: Requires vim 7.4 (makes use of the new python facilities).
 Doesn't provide syntax support. Use
-[fmoralesc/vim-pandoc-syntax](https://github.com/fmoralesc/vim-pandoc-syntax)
+[vim-pandoc/vim-pandoc-syntax](https://github.com/vim-pandoc/vim-pandoc-syntax)
 alongside this for that.
 
 
-## Features (*I*mplemented or *P*laned)
+## Features (Implemented or Planed)
 
 * Modular architecure. (I)
 * pandoc-markdown syntax can be set to be used only for certain file
