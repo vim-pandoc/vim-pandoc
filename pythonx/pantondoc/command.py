@@ -148,7 +148,7 @@ class PandocCommand(object):
         self.execute(should_open)
 
     def execute(self, should_open):
-        with open("/tmp/pandoc.out", 'w') as tmp:
+        with open("pandoc.out", 'w') as tmp:
             if vim.bindeval("has('clientserver')"):
                 async_runner = os.path.join(os.path.dirname(__file__), "async.py")
                 servername_arg = "--servername=" + vim.bindeval("v:servername")
@@ -175,9 +175,9 @@ class PandocCommand(object):
                 vim.command("5new pandoc\ output")
                 vim.current.buffer[0] = "# Press <Esc> to close this"
                 vim.current.buffer.append("▶ " + self._run_command)
-                if vim.bindeval('filereadable("/tmp/pandoc.out")'):
-                    vim.command("silent r /tmp/pandoc.out")
-                    os.remove("/tmp/pandoc.out")
+                if vim.bindeval('filereadable("pandoc.out")'):
+                    vim.command("silent r pandoc.out")
+                    os.remove("pandoc.out")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal nobuflisted")
                 # pressing <esc> on the buffer will delete it
