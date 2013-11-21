@@ -3,7 +3,6 @@
 " File: pantondoc.vim
 " Description: experimental pandoc support for vim
 " Author: Felipe Morales
-" Version: alpha-mark2 
 " }}}1
 
 " Load? {{{1
