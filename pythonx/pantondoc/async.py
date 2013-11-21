@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 if __name__ == "__main__":
     import sys
@@ -7,7 +7,7 @@ if __name__ == "__main__":
     from subprocess import Popen
 
     # run the command
-    with open("/tmp/pandoc.out", 'w') as tmp:
+    with open("pandoc.out", 'w') as tmp:
         Popen(sys.argv[3:], stdout=tmp, stderr=tmp).wait()
 
     # once it's done, we cal back the server that called us to notify
