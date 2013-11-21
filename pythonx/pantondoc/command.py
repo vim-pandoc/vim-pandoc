@@ -113,7 +113,7 @@ class PandocCommand(object):
                 len(buffer_bibliographies) > 0 \
                 else ""
 
-        strict_arg = "--strict" if \
+        strict_arg = "-r markdown_strict" if \
                 vim.current.buffer.options["ft"] == "markdown" and \
                 not bool(vim.vars["pantondoc_use_pandoc_markdown"]) \
                 else ""
