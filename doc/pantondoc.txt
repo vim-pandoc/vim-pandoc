@@ -10,9 +10,11 @@
 
 
 
-vim-pantondoc is a experimental version of vim-pandoc. It features a more 
-modular design, is more configurable and has advanced pandoc integration. It
-aims to provide an optimal writing experience using vim.
+vim-pantondoc provides pandoc support for vim (sans syntax highlighting; for
+that, use vim-pandoc-syntax). Originally, it was a rewrite of vim-pandoc,
+featuring a more modular design. Its design allows for better configurability
+and advanced pandoc integration. Its aim is to provide an optimal document
+writing experience using vim.
 
 === CONTENTS === {{{
 
@@ -44,7 +46,7 @@ outputs "1".
 
   Just add
 
-    Bundle 'fmoralesc/vim-pantondoc'
+    Bundle 'vim-pandoc/vim-pantondoc'
 
   to your ~/.vimrc file and run :BundleInstall
 
@@ -55,6 +57,7 @@ The repo is pathogen compatible and you can also just drop it in runtimepath.
 vim-pantondoc doesn't bundle a syntax file for pandoc markdown files. Please
 use https://github.com/vim-pandoc/vim-pandoc-syntax for this.
 }}}
+
 === MODULES === {{{                                         *pantondoc-modules*
 
 vim-pantondoc is split in several modules.

@@ -11,13 +11,19 @@
 vim-pantondoc
 =============
 
-Experimental writer plugin for vim (heavily rearchitecured vim-pandoc).
+vim-pantondoc provides pandoc support for vim (sans syntax highlighting, see
+below). Originally, it was a rewrite of
+[vim-pandoc](http://github.com/vim-pandoc/vim-pandoc), featuring a more modular
+design. This allows for better configurability and advanced pandoc integration.
+Its aim is to provide an optimal document writing experience using vim.
 
 As of commit c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is
 considered to be in feature parity with vim-pandoc.
 
-**IMPORTANT**: Requires vim 7.4 (makes use of the new python facilities).
-Doesn't provide syntax support. Use
+**IMPORTANT**: 
+
+* Requires vim 7.4 (makes use of the new python facilities).
+* Doesn't provide syntax support. Use
 [vim-pandoc/vim-pandoc-syntax](https://github.com/vim-pandoc/vim-pandoc-syntax)
 alongside this for that.
 
@@ -33,3 +39,4 @@ alongside this for that.
   information on the bibliography items can be gathered from tooltips, where
   supported.
 * Annotations: add metadata to your files (comments, TODOs, etc.) (P)
+* Useful custom mappings for markdown writers (partially implemented).
