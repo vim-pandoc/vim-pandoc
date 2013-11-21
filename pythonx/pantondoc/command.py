@@ -127,7 +127,16 @@ class PandocCommand(object):
 
         engine_arg = "--latex-engine=" + vim.vars["pantondoc_command_latex_engine"] if output_format in ["pdf", "beamer"] else ""
 
-        extra_args = " ".join([opt[0] +  opt[1] for opt in c_opts])
+        extra = []
+        for opt in c_opts:
+            # if it begins with ~, it will expand, otherwise, it will just copy
+            val = os.path.expanduser(opt[1])
+            if os.path.isabs(val) and os.path.exists(val):
+                extra.append(opt[0] + ' "' + val + '"')
+            else:
+                extra.append(opt[0] + opt[1])
+
+        extra_args = " ".join(extra)
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
@@ -166,9 +175,13 @@ class PandocCommand(object):
     def on_done(self, should_open):
         if self._run_command and self._output_file_path:
             if vim.bindeval("g:pantondoc_use_message_buffers"):
-                vim.command("setlocal splitbelow")
+                vim.command("let split = &splitbelow")
+                vim.command("set splitbelow")
 
                 vim.command("5new pandoc\ output")
+                vim.command("let &splitbelow = split")
+                vim.command("setlocal wrap")
+                vim.command("setlocal linebreak")
                 vim.current.buffer[0] = "# Press <Esc> to close this"
                 vim.current.buffer.append("▶ " + self._run_command)
                 vim.command("normal! G")
