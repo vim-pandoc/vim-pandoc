@@ -171,6 +171,7 @@ class PandocCommand(object):
                 vim.command("5new pandoc\ output")
                 vim.current.buffer[0] = "# Press <Esc> to close this"
                 vim.current.buffer.append("▶ " + self._run_command)
+                vim.command("normal! G")
                 if vim.bindeval('filereadable("pandoc.out")'):
                     vim.command("silent r pandoc.out")
                     os.remove("pandoc.out")
