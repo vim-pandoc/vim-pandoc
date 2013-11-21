@@ -1,6 +1,8 @@
 " creates the Pandoc command, requires python support
 function! pantondoc_command#InitCommand()
     if has("python")
+	" let's make sure it gets loaded
+	py import vim
         command! -buffer -bang -nargs=? -complete=customlist,pantondoc_command#PandocComplete Pandoc call pantondoc_command#Pandoc("<args>", "<bang>")
     endif
 endfunction
