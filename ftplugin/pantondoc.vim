@@ -48,3 +48,5 @@ endif
 if index(g:pantondoc_enabled_modules, "menu") >= 0
 	call pantondoc_menu#CreateMenu()
 endif
+
+let b:pantondoc_loaded = 1
