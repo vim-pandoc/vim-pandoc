@@ -6,16 +6,17 @@ if __name__ == "__main__":
     import shlex
     from subprocess import Popen
 
-    # run the command
-    with open("pandoc.out", 'w') as tmp:
-        Popen(sys.argv[3:], stdout=tmp, stderr=tmp).wait()
-
-    # once it's done, we cal back the server that called us to notify
     opts = dict(getopt.getopt(sys.argv[1:3], "", ["servername=", "open", "noopen"])[0])
     servername = opts["--servername"]
     should_open = '1' if "--open" in opts else '0'
 
-    command = " ".join(["vim --servername", servername,  \
-          "--remote-expr \"pantondoc_command#PandocAsyncCallback(" + should_open + ")\""])
+    # run the command
+    with open("pandoc.out", 'w') as tmp:
+        com = Popen(sys.argv[3:], stdout=tmp, stderr=tmp)
+        com.wait()
+        returncode = str(com.returncode)
 
+    # once it's done, we cal back the server that called us to notify
+    command = " ".join(["vim --servername", servername,  \
+          "--remote-expr \"pantondoc_command#PandocAsyncCallback(" + should_open + ", " + returncode + ")\""])
     Popen(shlex.split(command))

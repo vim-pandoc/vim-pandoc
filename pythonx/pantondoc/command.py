@@ -165,16 +165,17 @@ class PandocCommand(object):
                     vim.command('echoe "pantondoc: could not execute pandoc asynchronously"')
             else:
                 try:
-                    Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp).wait()
+                    com = Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp)
+                    com.wait()
                 except:
                     vim.command('echoe "pantondoc: could not execute pandoc"')
                     return
 
-                self.on_done(should_open)
+                self.on_done(should_open, com.returncode)
 
-    def on_done(self, should_open):
+    def on_done(self, should_open, returncode):
         if self._run_command and self._output_file_path:
-            if vim.bindeval("g:pantondoc_use_message_buffers"):
+            if vim.bindeval("g:pantondoc_use_message_buffers") and returncode != '0':
                 vim.command("let split = &splitbelow")
                 vim.command("set splitbelow")
 
@@ -187,7 +188,6 @@ class PandocCommand(object):
                 vim.command("normal! G")
                 if vim.bindeval('filereadable("pandoc.out")'):
                     vim.command("silent r pandoc.out")
-                    os.remove("pandoc.out")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal nobuflisted")
                 # pressing <esc> on the buffer will delete it
@@ -199,6 +199,12 @@ class PandocCommand(object):
                 vim.command("hi! link PandocOutputMarks Operator")
                 vim.command("hi! link PandocCommand Statement")
                 vim.command("hi! link PandocInstructions Comment")
+
+            if os.path.exists("pandoc.out"):
+                os.remove("pandoc.out")
+            vim.command("echohl Statement")
+            vim.command("echom 'pantondoc:execute:" + self._run_command + "'")
+            vim.command("echohl None")
 
             # open file if needed
             if os.path.exists(self._output_file_path) and should_open:

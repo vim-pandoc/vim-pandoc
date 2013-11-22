@@ -23,10 +23,10 @@ function! pantondoc_command#PandocComplete(a, c, pos)
     endif
 endfunction
 
-function! pantondoc_command#PandocAsyncCallback(should_open)
+function! pantondoc_command#PandocAsyncCallback(should_open, returncode)
     if has("python")
 	py from pantondoc.command import pandoc
-	py pandoc.on_done(vim.eval("a:should_open") == '1')
+	py pandoc.on_done(vim.eval("a:should_open") == '1', vim.eval("a:returncode"))
     endif
 endfunction
 
