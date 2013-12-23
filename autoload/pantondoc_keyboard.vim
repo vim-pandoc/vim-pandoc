@@ -83,7 +83,7 @@ endfunction
 " }}}1
 " Inserts: {{{1
 function! pantondoc_keyboard#Insert_Ref()
-    execute "normal! ya\[o\<cr>\<esc>p$a:"
+    execute "normal! ya\[o\<cr>\<esc>p$a: "
 endfunction
 " }}}1
 
