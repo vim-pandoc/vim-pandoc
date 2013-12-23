@@ -7,6 +7,8 @@ function! pantondoc_keyboard#InitKeyboard()
     vnoremap <buffer> <silent> <localleader>b :<C-U>call pantondoc_keyboard#BOLD(visualmode())<CR>
     noremap <buffer> <silent> <localleader>rg :call pantondoc_keyboard#GOTO_Ref()<CR>
     noremap <buffer> <silent> <localleader>rb :call pantondoc_keyboard#BACKFROM_Ref()<CR>
+    "" Add new reference link (or footnote link) after current paragraph. 
+    noremap <buffer> <silent> <localleader>nr :call pantondoc_keyboard#Insert_Ref()<cr>a
 endfunction
 
 " Italicize: {{{1
@@ -79,6 +81,12 @@ function! pantondoc_keyboard#BOLD(type)
     let &selection = sel_save
 endfunction
 " }}}1
+" Inserts: {{{1
+function! pantondoc_keyboard#Insert_Ref()
+    execute "normal! ya\[o\<cr>\<esc>p$a:"
+endfunction
+" }}}1
+
 " Navigation: {{{1
 
 function! pantondoc_keyboard#GOTO_Ref()
