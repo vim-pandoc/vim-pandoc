@@ -8,6 +8,8 @@ import getopt
 import shlex
 from subprocess import Popen, PIPE
 import tempfile
+import fileinput
+from pantondoc import bib
 
 class PandocHelpParser(object):
     def __init__(self):
@@ -108,7 +110,10 @@ class PandocCommand(object):
 
     def __call__(self, args, should_open):
         # build arguments to pass pandoc
+
         buffer_bibliographies = vim.eval('b:pantondoc_bibs')
+        if len(buffer_bibliographies) < 1:
+            buffer_bibliographies = bib.find_bibfiles()
         bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
                 len(buffer_bibliographies) > 0 \
                 else ""

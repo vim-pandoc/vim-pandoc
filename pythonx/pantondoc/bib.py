@@ -164,6 +164,8 @@ def get_json_suggestions(text, query):
 
 def get_suggestions():
     bibs = vim.eval("b:pantondoc_bibs")
+    if len(bibs) < 1:
+       bibs = find_bibfiles()
     query = vim.eval("a:partkey")
 
     matches = []
@@ -188,6 +190,7 @@ def get_suggestions():
 
         matches.extend(ids)
 
-    matches = sorted(matches, key=operator.itemgetter("word"))
+    if len(matches) > 0:
+        matches = sorted(matches, key=operator.itemgetter("word"))
     return matches
 
