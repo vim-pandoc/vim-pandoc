@@ -33,6 +33,8 @@ function! pantondoc_folding#MarkdownLevel()
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
 	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
 	    return ">2"
+    else
+        return "="
 	endif
 	" support for arbitrary folds through special comments
     elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
