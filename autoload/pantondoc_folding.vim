@@ -41,6 +41,12 @@ function! pantondoc_folding#MarkdownLevel()
 	return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
 	return "s1"
+    elseif getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
+    if v:lnum == 1
+        return ">1"
+    else
+        return "<1"
+    endif
     else
 	return "="
     endif
