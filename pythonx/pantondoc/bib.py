@@ -12,9 +12,9 @@ def find_bibfiles():
     sources = vim.vars["pantondoc_biblio_sources"]
     bibfiles = []
     if "b" in sources and vim.current.buffer.name not in (None, ""):
-        file_name = ".".join(os.path.relpath(vim.current.buffer.name).split(".")[:-1])
+        file_name, ext = os.path.splitext(vim.current.buffer.name)
         # we check for files named after the current file in the current dir
-        bibfiles.extend([os.path.abspath(f) for f in glob(file_name + ".*") if f.split(".")[-1] in bib_extensions])
+        bibfiles.extend([os.path.abspath(f) for f in glob(file_name + ".*") if os.path.splitext(f)[1] in bib_extensions])
 
     # we search for any bibliography in the current dir
     if "c" in sources:
