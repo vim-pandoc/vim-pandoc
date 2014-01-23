@@ -15,7 +15,11 @@ endfunction
 "
 function! pantondoc_folding#MarkdownLevel()
     if getline(v:lnum) =~ '^# .*$'
-	return ">1"
+	if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
+	    return ">1"
+	else
+	    return "="
+	endif
     elseif getline(v:lnum) =~ '^## .*$'
 	return ">2"
     elseif getline(v:lnum) =~ '^### .*$'
@@ -33,20 +37,20 @@ function! pantondoc_folding#MarkdownLevel()
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
 	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
 	    return ">2"
-    else
-        return "="
+	else
+	    return "="
 	endif
-	" support for arbitrary folds through special comments
+    " support for arbitrary folds through special comments
     elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
 	return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
 	return "s1"
     elseif getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
-    if v:lnum == 1
-        return ">1"
-    else
-        return "<1"
-    endif
+	if v:lnum == 1
+	    return ">1"
+	else
+	    return "<1"
+	endif
     else
 	return "="
     endif
@@ -70,11 +74,11 @@ function! pantondoc_folding#TextileLevel()
     elseif getline(v:lnum) =~ '^.. .*fold end'
 	return "s1"
     elseif getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
-    if v:lnum == 1
-        return ">1"
-    else
-        return "<1"
-    endif
+	if v:lnum == 1
+	    return ">1"
+	else
+	    return "<1"
+	endif
     else
 	return "="
     endif
