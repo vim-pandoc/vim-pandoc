@@ -14,6 +14,19 @@ endfunction
 " http://stackoverflow.com/questions/3828606/vim-markdown-folding/4677454#4677454
 "
 function! pantondoc_folding#MarkdownLevel()
+    if g:pantondoc_folding_fold_yaml == 1
+	if getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
+	    if v:lnum == 1
+		return ">1"
+	    elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlkey" 
+		return "<1"
+	    elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "pandocYAMLHeader" 
+		return "<1"
+	    else 
+		return "="
+	    endif
+	endif
+    endif
     if getline(v:lnum) =~ '^# .*$'
 	if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
 	    return ">1"
@@ -45,12 +58,6 @@ function! pantondoc_folding#MarkdownLevel()
 	return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
 	return "s1"
-    elseif getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
-	if v:lnum == 1
-	    return ">1"
-	else
-	    return "<1"
-	endif
     else
 	return "="
     endif

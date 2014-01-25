@@ -114,11 +114,18 @@ endif
 " }}}
 " }}}2
 
-" Keyboard:
+" Keyboard: {{{2
 "
 if !exists("g:pantondoc_mark")
     let g:pantondoc_mark = "r"
 endif
+" }}}2
+"
+" Folding: {{{2
+if !exists("g:pantondoc_folding_fold_yaml")
+    let g:pantondoc_folding_fold_yaml = 1
+endif
+" }}}2
 " }}}1
 
 " Autocommands: {{{1
