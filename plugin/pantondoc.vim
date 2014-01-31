@@ -123,7 +123,7 @@ endif
 "
 " Folding: {{{2
 if !exists("g:pantondoc_folding_fold_yaml")
-    let g:pantondoc_folding_fold_yaml = 1
+    let g:pantondoc_folding_fold_yaml = 0
 endif
 " }}}2
 " }}}1
