@@ -24,6 +24,9 @@ let pantondoc_extensions_table = {
 			\"native" : ["hs"],
 			\"rst" : ["rst"],
 			\"textile": ["textile"] }
+let modules_that_require_704 = [
+			\"command",
+			\"bibliographies"]
 " }}}1
 
 " Defaults: {{{1
@@ -35,14 +38,27 @@ let pantondoc_extensions_table = {
 " Enabled modules {{{3
 if !exists("g:pantondoc_enabled_modules")
 	let g:pantondoc_enabled_modules = [
-				\"bibliographies",
 				\"completion",
-				\"command",
 				\"folding",
 				\"formatting",
 				\"menu",
 				\"metadata",
 				\"keyboard" ]
+	if (v:version >= 704)
+		call extend(g:pantondoc_enabled_modules, modules_that_require_704)
+	endif
+else
+	let disabled = []
+	for module in modules_that_require_704
+		let idx = index(g:pantondoc_enabled_modules, module)
+		if (idx >= 0)
+			call add(disabled, module)
+			call remove(g:pantondoc_enabled_modules, idx)
+		endif
+	endfor
+	let msg = join(disabled, ", ")
+	echomsg 'The following modules require vim >= 7.4 and have been disabled '.
+		   \'for now: ' . msg
 endif
 "}}}
 "Markups to handle {{{3
