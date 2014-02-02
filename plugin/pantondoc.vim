@@ -46,7 +46,9 @@ if !exists("g:pantondoc_enabled_modules")
 				\"keyboard" ]
 	if (v:version >= 704)
 		call extend(g:pantondoc_enabled_modules, modules_that_require_704)
-	else
+	endif
+else
+	if (v:version < 704)
 		let disabled = []
 		for module in modules_that_require_704
 			let idx = index(g:pantondoc_enabled_modules, module)
@@ -56,8 +58,8 @@ if !exists("g:pantondoc_enabled_modules")
 			endif
 		endfor
 		let msg = join(disabled, ", ")
-		echomsg 'The following modules require vim >= 7.4 and have been disabled '.
-			\'for now: ' . msg
+		echomsg 'The following modules require vim >= 7.4 and have been '
+			   \'disabled for now: ' . msg
 	endif
 endif
 "}}}
