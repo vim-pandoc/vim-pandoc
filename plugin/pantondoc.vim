@@ -45,13 +45,22 @@ if !exists("g:pantondoc_enabled_modules")
 				\"keyboard" ]
 endif
 
-" Auxiliary module blacklist.
+" Auxiliary module blacklist. {{{3
 if !exists("g:pantondoc_disabled_modules")
     let g:pantondoc_disabled_modules = []
-    if v:version < 704
-	let g:pantondoc_disabled_modules = extend(g:pantondoc_disabled_modules, ["bibliographies", "command"])
-	" commented out because it is intrusive
-	"echoerr "pantondoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
+endif
+if v:version < 704
+    for incompatible_module in ["bibliographies", "command"]
+	" user might have disabled them himself, check that
+	if index(g:pantondoc_disabled_modules, incompatible_module) == -1
+	    let g:pantondoc_disabled_modules = add(g:pantondoc_disabled_modules, incompatible_module)
+	    let s:module_disabled = 1
+	endif
+    endfor
+    " only message the user if we have extended g:pantondoc_disabled_modules
+    " automatically
+    if s:module_disabled == 1 
+	echomsg "pantondoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
     endif
 endif
 "}}}
