@@ -1,9 +1,9 @@
-function! pantondoc_formatting#InitFormatting()
+function! pantondoc#formatting#Init()
 	" set up soft or hard wrapping modes
 	if stridx(g:pantondoc_formatting_settings, "h") >= 0 && stridx(g:pantondoc_formatting_settings, "s") < 0
-		call pantondoc_formatting#UseHardWraps()
+		call pantondoc#formatting#UseHardWraps()
 	elseif stridx(g:pantondoc_formatting_settings, "s") >= 0 && stridx(g:pantondoc_formatting_settings, "h") < 0
-		call pantondoc_formatting#UseSoftWraps()
+		call pantondoc#formatting#UseSoftWraps()
 	else
 		echoerr "The value of g:pantondoc_formatting_settings is inconsistent"
 	endif
@@ -32,7 +32,7 @@ function! pantondoc_formatting#InitFormatting()
 	endif
 endfunction
 
-function! pantondoc_formatting#UseHardWraps()
+function! pantondoc#formatting#UseHardWraps()
 	" reset settings that might have changed by UseSoftWraps
 	setlocal formatoptions&
 	setlocal linebreak&
@@ -62,7 +62,7 @@ function! pantondoc_formatting#UseHardWraps()
 	endif
 endfunction
 
-function! pantondoc_formatting#UseSoftWraps()
+function! pantondoc#formatting#UseSoftWraps()
 	" reset settings that might have been changed by UseHardWraps
 	setlocal textwidth&
 	setlocal formatoptions&

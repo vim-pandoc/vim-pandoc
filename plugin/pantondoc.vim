@@ -44,6 +44,16 @@ if !exists("g:pantondoc_enabled_modules")
 				\"metadata",
 				\"keyboard" ]
 endif
+
+" Auxiliary module blacklist.
+if !exists("g:pantondoc_disabled_modules")
+    let g:pantondoc_disabled_modules = []
+    if v:version < 704
+	let g:pantondoc_disabled_modules = extend(g:pantondoc_disabled_modules, ["bibliographies", "command"])
+	" commented out because it is intrusive
+	"echoerr "pantondoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
+    endif
+endif
 "}}}
 "Markups to handle {{{3
 if !exists("g:pantondoc_handled_filetypes")

@@ -1,4 +1,8 @@
-function! pantondoc_menu#CreateMenu()
+function! pantondoc#menu#Init()
+    call pantondoc#menu#CreateMenu()
+endfunction
+
+function! pantondoc#menu#CreateMenu()
     if index(g:pantondoc_enabled_modules, "command") >= 0
 	amenu .600 Pantondoc.Pandoc.&Pdf :Pandoc pdf<CR>
 	amenu .601 Pantondoc.Pandoc.Pdf\ \(Open\) :Pandoc! pdf<CR>

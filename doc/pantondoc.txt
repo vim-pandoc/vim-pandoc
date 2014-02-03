@@ -143,10 +143,16 @@ SETTINGS                                                   *pantondoc-settings*
 - *g:pantondoc_enabled_modules* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "externals", "metadata", "menu", "executors", "motions"]
+  "metadata", "menu", "executors", "motions"]
 
   A list of the modules to enable on the files determined by
   |g:pantondoc_handled_filetypes|. See |vim-pantondoc-modules|.
+
+- *g:pantondoc_disabled_modules*
+
+  default = [], (["bibliographies", "command"] in vim < 7.4)
+
+  Auxiliary module blacklist.
 
 - *g:pantondoc_formatting_settings*
   default = "h"

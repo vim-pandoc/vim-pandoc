@@ -18,5 +18,5 @@ if __name__ == "__main__":
 
     # once it's done, we cal back the server that called us to notify
     command = " ".join(["vim --servername", servername,  \
-          "--remote-expr \"pantondoc_command#PandocAsyncCallback(" + should_open + ", " + returncode + ")\""])
+          "--remote-expr \"pantondoc#command#PandocAsyncCallback(" + should_open + ", " + returncode + ")\""])
     Popen(shlex.split(command))

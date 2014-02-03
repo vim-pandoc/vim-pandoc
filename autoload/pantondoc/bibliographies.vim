@@ -1,10 +1,10 @@
-" populates b:pantondoc_bibs
-function! pantondoc_biblio#InitBiblio()
-    let b:pantondoc_bibs = pantondoc_biblio#Find_Bibliographies()
+" populates b:pantondoc#bibs
+function! pantondoc#bibliographies#Init()
+    let b:pantondoc_bibs = pantondoc#bibliographies#Find_Bibliographies()
 endfunction
 
 " gives a list of bibliographies in g:pantondoc_biblio_sources
-function! pantondoc_biblio#Find_Bibliographies()
+function! pantondoc#bibliographies#Find_Bibliographies()
     if has("python")
 	python import pantondoc.bib
 	return pyeval("pantondoc.bib.find_bibfiles()")
@@ -14,7 +14,7 @@ endfunction
 
 " returns bibliographic suggestions.
 " called by our omnifunc, if completion is enabled
-function! pantondoc_biblio#GetSuggestions(partkey)
+function! pantondoc#bibliographies#GetSuggestions(partkey)
     if has("python")
 	python import pantondoc.bib
 	return pyeval("pantondoc.bib.get_suggestions()")

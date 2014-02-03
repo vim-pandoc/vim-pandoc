@@ -1,19 +1,19 @@
 " sets up folding according to filetype 
-function! pantondoc_folding#InitFolding()
+function! pantondoc#folding#Init()
     setlocal foldmethod=expr
     if &ft == "markdown" 
-	setlocal foldexpr=pantondoc_folding#MarkdownLevel()
+	setlocal foldexpr=pantondoc#folding#MarkdownLevel()
     elseif &ft == "pandoc"
-	setlocal foldexpr=pantondoc_folding#MarkdownLevel()
+	setlocal foldexpr=pantondoc#folding#MarkdownLevel()
     elseif &ft == "textile"
-	setlocal foldexpr=pantondoc_folding#TextileLevel()
+	setlocal foldexpr=pantondoc#folding#TextileLevel()
     endif
 endfunction
 
 " Taken from
 " http://stackoverflow.com/questions/3828606/vim-markdown-folding/4677454#4677454
 "
-function! pantondoc_folding#MarkdownLevel()
+function! pantondoc#folding#MarkdownLevel()
     if g:pantondoc_folding_fold_yaml == 1
 	if getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
 	    if v:lnum == 1
@@ -63,7 +63,7 @@ function! pantondoc_folding#MarkdownLevel()
     endif
 endfunction
 
-function! pantondoc_folding#TextileLevel()
+function! pantondoc#folding#TextileLevel()
     if getline(v:lnum) =~ '^h1\..*$'
 	return ">1"
     elseif getline(v:lnum) =~ '^h2\..*$'
