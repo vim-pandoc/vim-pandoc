@@ -28,7 +28,7 @@ function! pantondoc#completion#Complete(findstart, base)
 	    if index(g:pantondoc_enabled_modules, "bibliographies") >= 0 && 
 			\ s:completion_type == 'bib'
 		" suggest BibTeX entries
-		let suggestions = pantondoc#biblio#GetSuggestions(a:base)
+		let suggestions = pantondoc#bibliographies#GetSuggestions(a:base)
 	    endif
 	    return suggestions
 	endif
