@@ -20,7 +20,7 @@ for module in g:pantondoc_enabled_modules
 endfor
 
 for module in s:enabled_modules
-    call pantondoc#{module}#Init()
+    exe 'call pantondoc#' . module . '#Init()'
 endfor
 
 let b:pantondoc_loaded = 1
