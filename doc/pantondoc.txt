@@ -140,6 +140,13 @@ SETTINGS                                                   *pantondoc-settings*
   A list of the kinds of files pantondoc will attach to. 'extra' includes
   .text and .txt files.
 
+- *g:pantondoc_use_pandoc_markdown*
+  Default = 0
+
+  Should we set the pandoc filetype (and load vim-pandoc-syntax) for common
+  markdown extensions (*.md, *.mkd, etc)? We default to not because pandoc's
+  markdown variant and regular markdown are quite distinct.  
+
 - *g:pantondoc_enabled_modules* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
