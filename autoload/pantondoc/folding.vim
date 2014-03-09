@@ -85,7 +85,7 @@ endfunction
 " Syntax assisted (SA) foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelSA()
     " never fold within delimited codeblocks
-    if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
+    if synIDattr(synID(v:lnum, 1,1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
 	" atx and setex headers
 	if getline(v:lnum) =~ '^#\{1,6}'
 	    return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
