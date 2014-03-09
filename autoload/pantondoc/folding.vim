@@ -1,23 +1,20 @@
-" sets up folding according to filetype 
+" vim: foldmethod=marker :
+"
+" Init: {{{1
 function! pantondoc#folding#Init()
     setlocal foldmethod=expr
+    setlocal foldexpr=pantondoc#folding#FoldExpr()
     if &ft == "markdown" || &ft == "pandoc"
-	if exists("g:vim_pandoc_syntax_exists")
-	    setlocal foldexpr=pantondoc#folding#MarkdownLevelSA()
-	else
-	    setlocal foldexpr=pantondoc#folding#MarkdownLevelBasic()
-	endif
+	"setlocal foldtext=pantondoc#folding#MarkdownFoldText()
     elseif &ft == "textile"
-	setlocal foldexpr=pantondoc#folding#TextileLevel()
+	"setlocal foldtext=pantondoc#folding#TextileFoldText()
     endif
 endfunction
 
-" Markdown:
-"
-" Originally taken from http://stackoverflow.com/questions/3828606
-"
-" Syntax assisted foldexpr
-function! pantondoc#folding#MarkdownLevelSA()
+" Main foldexpr function, includes support for common stuff. {{{1 
+" Delegates to filetype specific functions.
+function! pantondoc#folding#FoldExpr()
+    " fold YAML headers
     if g:pantondoc_folding_fold_yaml == 1
 	if getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
 	    if v:lnum == 1
@@ -31,12 +28,63 @@ function! pantondoc#folding#MarkdownLevelSA()
 	    endif
 	endif
     endif
-    if getline(v:lnum) =~ '^# .*$'
-	if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
-	    return ">1"
+    " Delegate to filetype specific functions
+    if &ft == "markdown" || &ft == "pandoc"
+	" vim-pandoc-syntax sets this variable, so we can check if we can use
+	" syntax assistance in our foldexpr function
+	if exists("g:vim_pandoc_syntax_exists")
+	    return pantondoc#folding#MarkdownLevelSA()
+	" otherwise, we use a simple, but less featureful foldexpr
 	else
-	    return "="
+	    return pantondoc#folding#MarkdownLevelBasic()
 	endif
+    elseif &ft == "textile"
+	return pantondoc#folding#TextileLevel()
+    endif
+
+endfunction
+
+" Markdown: {{{1
+"
+" Originally taken from http://stackoverflow.com/questions/3828606
+"
+" Syntax assisted (SA) foldexpr {{{2
+function! pantondoc#folding#MarkdownLevelSA()
+    " never fold within delimited codeblocks
+    if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
+	" atx and setex headers
+	if getline(v:lnum) =~ '^# .*$'
+	    return ">1"
+	elseif getline(v:lnum) =~ '^## .*$'
+	    return ">2"
+	elseif getline(v:lnum) =~ '^### .*$'
+	    return ">3"
+	elseif getline(v:lnum) =~ '^#### .*$'
+	    return ">4"
+	elseif getline(v:lnum) =~ '^##### .*$'
+	    return ">5"
+	elseif getline(v:lnum) =~ '^###### .*$'
+	    return ">6"
+	elseif synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
+	    if getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
+		return ">1"
+	    elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
+		return ">2"
+	    endif
+	" support for arbitrary folds through special comments
+	elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
+	    return "a1"
+	elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
+	    return "s1"
+	endif
+    endif
+    return "="
+endfunction
+
+" Basic foldexpr {{{2
+function! pantondoc#folding#MarkdownLevelBasic()
+    if getline(v:lnum) =~ '^# .*$'
+	return ">1"
     elseif getline(v:lnum) =~ '^## .*$'
 	return ">2"
     elseif getline(v:lnum) =~ '^### .*$'
@@ -48,31 +96,22 @@ function! pantondoc#folding#MarkdownLevelSA()
     elseif getline(v:lnum) =~ '^###### .*$'
 	return ">6"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
-	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
-	    return ">1"
-	endif
+	return ">1"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
-	if synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
-	    return ">2"
-	else
-	    return "="
-	endif
-    " support for arbitrary folds through special comments
+	return ">2"
     elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
 	return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
 	return "s1"
-    else
-	return "="
     endif
+    return "="
 endfunction
 
-function! pantondoc#folding#MarkdownLevelBasic()
-    " temporary
-    call pantondoc#folding#MarkdownLevelSA()
+" Markdown foldtext {{{2
+function! pantondoc#folding#MarkdownFoldText()
 endfunction
 
-" Textile: 
+" Textile: {{{1
 "
 function! pantondoc#folding#TextileLevel()
     if getline(v:lnum) =~ '^h1\..*$'
@@ -91,13 +130,10 @@ function! pantondoc#folding#TextileLevel()
 	return "a1"
     elseif getline(v:lnum) =~ '^.. .*fold end'
 	return "s1"
-    elseif getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
-	if v:lnum == 1
-	    return ">1"
-	else
-	    return "<1"
-	endif
-    else
-	return "="
     endif
+    return "="
 endfunction
+
+function! pantondoc#folding#TextileFoldText()
+endfunction
+
