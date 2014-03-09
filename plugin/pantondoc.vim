@@ -74,7 +74,7 @@ endif
 "}}}
 " Use pandoc extensions to markdown for all markdown files {{{3
 if !exists("g:pantondoc_use_pandoc_markdown")
-	let g:pantondoc_use_pandoc_markdown = 0
+	let g:pantondoc_use_pandoc_markdown = 1
 endif
 "}}}
 " Formatting: {{{2

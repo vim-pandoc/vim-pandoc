@@ -141,11 +141,13 @@ SETTINGS                                                   *pantondoc-settings*
   .text and .txt files.
 
 - *g:pantondoc_use_pandoc_markdown*
-  Default = 0
+  Default = 1
 
   Should we set the pandoc filetype (and load vim-pandoc-syntax) for common
-  markdown extensions (*.md, *.mkd, etc)? We default to not because pandoc's
-  markdown variant and regular markdown are quite distinct.  
+  markdown extensions (*.md, *.mkd, etc)? Since regular markdown and pandoc's
+  markdown variant differ, someone might want to restrict those extensions to
+  regular markdown. In that case, we use vim's default syntax highlighting for
+  markdown.
 
 - *g:pantondoc_enabled_modules* 
 
