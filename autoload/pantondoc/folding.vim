@@ -51,18 +51,25 @@ endfunction
 
 " Main foldtext function. Like ...FoldExpr() {{{1
 function! pantondoc#folding#FoldText()
+    " first line of the fold
+    let f_line = getline(v:foldstart)
+    " second line of the fold
+    let n_line = getline(v:foldstart + 1)
+    " count of lines in the fold
     let line_count = v:foldend - v:foldstart + 1
     let line_count_text = " / " . line_count . " lines / "
-    if getline(v:foldstart+1) =~ "title:"
-	return v:folddashes . " [yaml] " . substitute(getline(v:foldstart+1), "title: ", "", "") . line_count_text
+
+    if n_line =~ "title:"
+	return v:folddashes . " [yaml] " . substitute(n_line, "title: ", "", "") . line_count_text
     endif
-    if getline(v:foldstart) =~ "fold-begin"
-	return v:folddashes . " [custom] " . matchstr(getline(v:foldstart), '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
+    if f_line =~ "fold-begin"
+	return v:folddashes . " [custom] " . matchstr(f_line, '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
     endif
-    if getline(v:foldstart) =~ "<div class="
-	return v:folddashes . " [". matchstr(getline(v:foldstart), '\(class="\)\@<=.*"\@='). "] " . getline(v:foldstart+1)[:30] . "..." . line_count_text
+    if f_line =~ "<div class="
+	return v:folddashes . " [". matchstr(f_line, '\(class="\)\@<=.*"\@='). "] " . n_line[:30] . "..." . line_count_text
     endif
-    return v:folddashes . " ".  getline(v:foldstart) . line_count_text
+    return v:folddashes . " ".  f_line . line_count_text
+
     " TODO:
 "    if &ft == "markdown" || &ft == "pandoc"
 "	return pantondoc#folding#MarkdownFoldText()
