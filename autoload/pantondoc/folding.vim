@@ -4,11 +4,7 @@
 function! pantondoc#folding#Init()
     setlocal foldmethod=expr
     setlocal foldexpr=pantondoc#folding#FoldExpr()
-    if &ft == "markdown" || &ft == "pandoc"
-	"setlocal foldtext=pantondoc#folding#MarkdownFoldText()
-    elseif &ft == "textile"
-	"setlocal foldtext=pantondoc#folding#TextileFoldText()
-    endif
+    setlocal foldtext=pantondoc#folding#FoldText()
 endfunction
 
 " Main foldexpr function, includes support for common stuff. {{{1 
@@ -42,6 +38,25 @@ function! pantondoc#folding#FoldExpr()
 	return pantondoc#folding#TextileLevel()
     endif
 
+endfunction
+
+" Main foldtext function. Like ...FoldExpr() {{{1
+function! pantondoc#folding#FoldText()
+    let line_count = v:foldend - v:foldstart + 1
+    let line_count_text = " / " . line_count . " lines / "
+    if getline(v:foldstart+1) =~ "title:"
+	return v:folddashes . " [yaml] " . substitute(getline(v:foldstart+1), "title: ", "", "") . line_count_text
+    endif
+    if getline(v:foldstart) =~ "fold-begin"
+	return v:folddashes . " [custom] " . matchstr(getline(v:foldstart), '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
+    endif
+    return v:folddashes . " ".  getline(v:foldstart) . line_count_text
+    " TODO:
+"    if &ft == "markdown" || &ft == "pandoc"
+"	return pantondoc#folding#MarkdownFoldText()
+"    elseif &ft == "textile"
+"	return pantondoc#folding#TextileFoldText()
+"    endif
 endfunction
 
 " Markdown: {{{1
