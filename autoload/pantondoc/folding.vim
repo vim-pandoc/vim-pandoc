@@ -95,12 +95,12 @@ function! pantondoc#folding#MarkdownLevelSA()
 	    elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
 		return ">2"
 	    endif
-	" support for arbitrary folds through special comments
-	elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
-	    return "a1"
-	elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
-	    return "s1"
 	endif
+    " support for arbitrary folds through special comments
+    elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
+	return "a1"
+    elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
+	return "s1"
     endif
     return "="
 endfunction
