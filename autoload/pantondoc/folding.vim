@@ -27,7 +27,7 @@ function! pantondoc#folding#FoldExpr()
     endif
 
     " fold divs for special classes
-    if getline(v:lnum) =~ '<div'
+    if getline(v:lnum) =~ '<div class='
 	return "a1"
     elseif getline(v:lnum) =~ '</div>'
 	return "s1"
@@ -66,7 +66,7 @@ function! pantondoc#folding#FoldText()
 	return v:folddashes . " [custom] " . matchstr(f_line, '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
     endif
     if f_line =~ "<div class="
-	return v:folddashes . " [". matchstr(f_line, '\(class="\)\@<=.*"\@='). "] " . n_line[:30] . "..." . line_count_text
+	return v:folddashes . " [". matchstr(f_line, "\\(class=[\"']\\)\\@<=.*[\"']\\@="). "] " . n_line[:30] . "..." . line_count_text
     endif
     return v:folddashes . " ".  f_line . line_count_text
 
