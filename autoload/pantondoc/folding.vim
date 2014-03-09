@@ -10,6 +10,7 @@ endfunction
 " Main foldexpr function, includes support for common stuff. {{{1 
 " Delegates to filetype specific functions.
 function! pantondoc#folding#FoldExpr()
+
     " fold YAML headers
     if g:pantondoc_folding_fold_yaml == 1
 	if getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
@@ -24,6 +25,14 @@ function! pantondoc#folding#FoldExpr()
 	    endif
 	endif
     endif
+
+    " fold divs for special classes
+    if getline(v:lnum) =~ '<div'
+	return "a1"
+    elseif getline(v:lnum) =~ '</div>'
+	return "s1"
+    endif
+
     " Delegate to filetype specific functions
     if &ft == "markdown" || &ft == "pandoc"
 	" vim-pandoc-syntax sets this variable, so we can check if we can use
@@ -49,6 +58,9 @@ function! pantondoc#folding#FoldText()
     endif
     if getline(v:foldstart) =~ "fold-begin"
 	return v:folddashes . " [custom] " . matchstr(getline(v:foldstart), '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
+    endif
+    if getline(v:foldstart) =~ "<div class="
+	return v:folddashes . " [". matchstr(getline(v:foldstart), '\(class="\)\@<=.*"\@='). "] " . getline(v:foldstart+1)[:30] . "..." . line_count_text
     endif
     return v:folddashes . " ".  getline(v:foldstart) . line_count_text
     " TODO:
