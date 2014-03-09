@@ -80,18 +80,8 @@ function! pantondoc#folding#MarkdownLevelSA()
     " never fold within delimited codeblocks
     if synIDattr(synID(v:lnum + 1, 1, 1), "name") != "pandocDelimitedCodeBlock"
 	" atx and setex headers
-	if getline(v:lnum) =~ '^# .*$'
-	    return ">1"
-	elseif getline(v:lnum) =~ '^## .*$'
-	    return ">2"
-	elseif getline(v:lnum) =~ '^### .*$'
-	    return ">3"
-	elseif getline(v:lnum) =~ '^#### .*$'
-	    return ">4"
-	elseif getline(v:lnum) =~ '^##### .*$'
-	    return ">5"
-	elseif getline(v:lnum) =~ '^###### .*$'
-	    return ">6"
+	if getline(v:lnum) =~ '^#\{1,6}'
+	    return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
 	elseif synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
 	    if getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
 		return ">1"
@@ -110,18 +100,8 @@ endfunction
 
 " Basic foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelBasic()
-    if getline(v:lnum) =~ '^# .*$'
-	return ">1"
-    elseif getline(v:lnum) =~ '^## .*$'
-	return ">2"
-    elseif getline(v:lnum) =~ '^### .*$'
-	return ">3"
-    elseif getline(v:lnum) =~ '^#### .*$'
-	return ">4"
-    elseif getline(v:lnum) =~ '^##### .*$'
-	return ">5"
-    elseif getline(v:lnum) =~ '^###### .*$'
-	return ">6"
+    if getline(v:lnum) =~ '^#\{1,6}'
+	return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
 	return ">1"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
@@ -141,18 +121,8 @@ endfunction
 " Textile: {{{1
 "
 function! pantondoc#folding#TextileLevel()
-    if getline(v:lnum) =~ '^h1\..*$'
-	return ">1"
-    elseif getline(v:lnum) =~ '^h2\..*$'
-	return ">2"
-    elseif getline(v:lnum) =~ '^h3\..*$'
-	return ">3"
-    elseif getline(v:lnum) =~ '^h4\..*$'
-	return ">4"
-    elseif getline(v:lnum) =~ '^h5\..*$'
-	return ">5"
-    elseif getline(v:lnum) =~ '^h6\..*$'
-	return ">6"
+    if getline(v:lnum) =~ '^h[1-6]\.'
+	return ">" . matchstr(getline(v:lnum), 'h\@<=[1-6]\.\=')
     elseif getline(v:lnum) =~ '^.. .*fold-begin'
 	return "a1"
     elseif getline(v:lnum) =~ '^.. .*fold end'
