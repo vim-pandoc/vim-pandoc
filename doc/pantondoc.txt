@@ -109,7 +109,7 @@ use pandoc's -F option.
 
 - MENU                                                  *pantondoc-menu-module*
 
-Creates a menu for pandoc handled files. If the `command` module is enables,
+Creates a menu for pandoc handled files. If the `command` module is enabled,
 you can build your documents from it.
 
 - KEYBOARD                                            *pantondoc-keyboard-module*
