@@ -59,8 +59,8 @@ function! pantondoc#folding#FoldText()
     let line_count = v:foldend - v:foldstart + 1
     let line_count_text = " / " . line_count . " lines / "
 
-    if n_line =~ "title:"
-	return v:folddashes . " [yaml] " . substitute(n_line, "title: ", "", "") . line_count_text
+    if n_line =~ 'title\s*:'
+	return v:folddashes . " [yaml] " . matchstr(n_line, '\(title\s*:\s*\)\@<=\S.*') . line_count_text
     endif
     if f_line =~ "fold-begin"
 	return v:folddashes . " [custom] " . matchstr(f_line, '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
