@@ -68,14 +68,11 @@ function! pantondoc#folding#FoldText()
     if f_line =~ "<div class="
 	return v:folddashes . " [". matchstr(f_line, "\\(class=[\"']\\)\\@<=.*[\"']\\@="). "] " . n_line[:30] . "..." . line_count_text
     endif
-    return v:folddashes . " ".  f_line . line_count_text
-
-    " TODO:
-"    if &ft == "markdown" || &ft == "pandoc"
-"	return pantondoc#folding#MarkdownFoldText()
-"    elseif &ft == "textile"
-"	return pantondoc#folding#TextileFoldText()
-"    endif
+    if &ft == "markdown" || &ft == "pandoc"
+	return pantondoc#folding#MarkdownFoldText() . line_count_text
+    elseif &ft == "textile"
+	return pantondoc#folding#TextileFoldText() . line_count_text
+    endif
 endfunction
 
 " Markdown: {{{1
@@ -123,6 +120,7 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
+    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@<=.*')
 endfunction
 
 " Textile: {{{1
@@ -139,5 +137,6 @@ function! pantondoc#folding#TextileLevel()
 endfunction
 
 function! pantondoc#folding#TextileFoldText()
+    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@<=.*')
 endfunction
 
