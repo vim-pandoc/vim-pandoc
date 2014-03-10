@@ -31,11 +31,12 @@ writing experience using vim.
 - CONFIGURATION
     - SETTINGS |pantondoc-settings|
 }}}
+
 === INSTALLATION === {{{                              *pantondoc-installation*
 
 - Requisites 
 
-vim-pantondoc uses the python API releases in vim 7.4. To check if the
+vim-pantondoc uses the python API released in vim 7.4. To check if the
 dependencies are satisfied, check if
 
     :echo has("python") && v:version >= 704
@@ -60,7 +61,8 @@ use https://github.com/vim-pandoc/vim-pandoc-syntax for this.
 
 === MODULES === {{{                                         *pantondoc-modules*
 
-vim-pantondoc is split in several modules.
+vim-pantondoc is split in several modules. They can be enabled and disabled
+independently.
 
 - FORMATTING                                      *pantondoc-formatting-module*
 
@@ -103,9 +105,10 @@ the created file in its associated program.
 
 The :Pandoc command has argument completion for supported output formats.
 
-NOTE: the old executors system allowed for the execution of command pipelines,
-which are no longer supported. If you want to pass the file through a filter,
-use pandoc's -F option.
+NOTE: Previously, vim-pantondoc used the executors system present in
+vim-pandoc, which allowed for the execution of command pipelines. This is no
+longer supported. If you want to pass the file through a filter, use pandoc's
+-F option.
 
 - MENU                                                  *pantondoc-menu-module*
 
@@ -130,6 +133,7 @@ Provides with support for bibliographic info completion and retrieval.
 Provides omni completion. If the 'bibliographies' module is active, it will
 complete bibliographic references.
 }}}
+
 === CONFIGURATION === {{{1
 
 SETTINGS                                                   *pantondoc-settings*
@@ -173,7 +177,7 @@ SETTINGS                                                   *pantondoc-settings*
 - *g:pantondoc_use_message_buffers*
   default = 1
 
-  Whether to display pandoc output in a message buffer after execution.
+  Whether to display pandoc's output in a message buffer after execution.
 
 - *g:pantondoc_command_latex_engine*
   default = "xelatex"
