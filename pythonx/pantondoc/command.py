@@ -20,7 +20,7 @@ class PandocHelpParser(object):
     def get_longopts(self):
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
-                          [ i.group() for i in re.finditer("-(-\w+)+", self._help_data)]))
+                          [ i.group() for i in re.finditer("-(-\w+)+=?", self._help_data)]))
 
     def get_shortopts(self):
         no_args = map(lambda i: i.replace("-", "").strip(), \
@@ -134,12 +134,13 @@ class PandocCommand(object):
 
         extra = []
         for opt in c_opts:
+            eq = '=' if opt[1] and re.match('^--', opt[0]) else ''
             # if it begins with ~, it will expand, otherwise, it will just copy
             val = os.path.expanduser(opt[1])
             if os.path.isabs(val) and os.path.exists(val):
-                extra.append(opt[0] + ' "' + val + '"')
+                extra.append(opt[0] + (eq or ' ') + '"' + val + '"')
             else:
-                extra.append(opt[0] + opt[1])
+                extra.append(opt[0] + eq + opt[1])
 
         extra_args = " ".join(extra)
 
@@ -226,7 +227,8 @@ class PandocCommand(object):
                 else:
                     pandoc_open_command_tail = ''
 
-                pid = Popen([pandoc_open_command,  self._output_file_path + pandoc_open_command_tail])
+                with open(os.devnull, 'wb') as fnull:
+                    pid = Popen([pandoc_open_command,  self._output_file_path + pandoc_open_command_tail], stderr=fnull)
 
             # we reset this
             self._output_file_path = None
