@@ -81,19 +81,20 @@ endfunction
 "
 " Syntax assisted (SA) foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelSA()
-    " never fold within delimited codeblocks
-    if synIDattr(synID(v:lnum, 1,1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
-	" atx and setex headers
-	if getline(v:lnum) =~ '^#\{1,6}'
-	    return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
-	elseif synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
-	    if getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
-		return ">1"
-	    elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
-		return ">2"
-	    endif
-	endif
-    " support for arbitrary folds through special comments
+    if getline(v:lnum) =~ '^#\{1,6}'
+        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
+            return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
+        endif
+    elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
+        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+                    \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
+            return ">1"
+        endif
+    elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
+        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+                    \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
+            return ">2"
+        endif
     elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
 	return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
