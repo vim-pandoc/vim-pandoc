@@ -130,7 +130,7 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
-    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@3<=.*')
+    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@3<=.*')
 endfunction
 
 " Textile: {{{1
