@@ -17,9 +17,10 @@ endfunction
 " Delegates to filetype specific functions.
 function! pantondoc#folding#FoldExpr()
 
+    let vline = getline(v:lnum)
     " fold YAML headers
     if g:pantondoc_folding_fold_yaml == 1
-	if getline(v:lnum) =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
+	if vline =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
 	    if v:lnum == 1
 		return ">1"
 	    elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlkey" 
@@ -33,9 +34,9 @@ function! pantondoc#folding#FoldExpr()
     endif
 
     " fold divs for special classes
-    if getline(v:lnum) =~ '<div class='
+    if vline =~ '<div class='
 	return "a1"
-    elseif getline(v:lnum) =~ '</div>'
+    elseif vline =~ '</div>'
 	return "s1"
     endif
 
@@ -114,7 +115,7 @@ endfunction
 " Basic foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelBasic()
     if getline(v:lnum) =~ '^#\{1,6}'
-	return ">". len(matchstr(getline(v:lnum), '^\@<=#\{1,6}'))
+	return ">". len(matchstr(getline(v:lnum), '^\@1<=#\{1,6}'))
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
 	return ">1"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
@@ -129,23 +130,24 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
-    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@<=.*')
+    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@3<=.*')
 endfunction
 
 " Textile: {{{1
 "
 function! pantondoc#folding#TextileLevel()
-    if getline(v:lnum) =~ '^h[1-6]\.'
-	return ">" . matchstr(getline(v:lnum), 'h\@<=[1-6]\.\=')
-    elseif getline(v:lnum) =~ '^.. .*fold-begin'
+    let vline = getline(v:lnum)
+    if vline =~ '^h[1-6]\.'
+	return ">" . matchstr(getline(v:lnum), 'h\@1<=[1-6]\.\=')
+    elseif vline =~ '^.. .*fold-begin'
 	return "a1"
-    elseif getline(v:lnum) =~ '^.. .*fold end'
+    elseif vline =~ '^.. .*fold end'
 	return "s1"
     endif
     return "="
 endfunction
 
 function! pantondoc#folding#TextileFoldText()
-    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@<=.*')
+    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@4<=.*')
 endfunction
 
