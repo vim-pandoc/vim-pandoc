@@ -148,6 +148,6 @@ function! pantondoc#folding#TextileLevel()
 endfunction
 
 function! pantondoc#folding#TextileFoldText()
-    return v:folddashes . " ¶ " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@4<=.*')
+    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@4<=.*')
 endfunction
 
