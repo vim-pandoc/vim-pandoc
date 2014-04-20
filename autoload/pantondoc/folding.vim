@@ -3,6 +3,12 @@
 " Init: {{{1
 function! pantondoc#folding#Init()
     setlocal foldmethod=expr
+    " might help with slowness while typing due to syntax checks
+    augroup EnableFastFolds
+	au!
+	autocmd InsertEnter <buffer> setlocal foldmethod=manual
+	autocmd InsertLeave <buffer> setlocal foldmethod=expr
+    augroup end   
     setlocal foldexpr=pantondoc#folding#FoldExpr()
     setlocal foldtext=pantondoc#folding#FoldText()
 endfunction
