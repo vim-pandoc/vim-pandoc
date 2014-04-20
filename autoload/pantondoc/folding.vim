@@ -2,6 +2,9 @@
 "
 " Init: {{{1
 function! pantondoc#folding#Init()
+    if !exists("b:vim_pantondoc_use_basic_folding")
+        let b:vim_pantondoc_use_basic_folding = 0
+    endif
     setlocal foldmethod=expr
     " might help with slowness while typing due to syntax checks
     augroup EnableFastFolds
@@ -44,7 +47,7 @@ function! pantondoc#folding#FoldExpr()
     if &ft == "markdown" || &ft == "pandoc"
 	" vim-pandoc-syntax sets this variable, so we can check if we can use
 	" syntax assistance in our foldexpr function
-	if exists("g:vim_pandoc_syntax_exists")
+	if exists("g:vim_pandoc_syntax_exists") && b:vim_pantondoc_use_basic_folding != 1)
 	    return pantondoc#folding#MarkdownLevelSA()
 	" otherwise, we use a simple, but less featureful foldexpr
 	else
