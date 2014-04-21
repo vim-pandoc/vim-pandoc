@@ -47,7 +47,7 @@ function! pantondoc#folding#FoldExpr()
     if &ft == "markdown" || &ft == "pandoc"
 	" vim-pandoc-syntax sets this variable, so we can check if we can use
 	" syntax assistance in our foldexpr function
-	if exists("g:vim_pandoc_syntax_exists") && b:vim_pantondoc_use_basic_folding != 1)
+	if exists("g:vim_pandoc_syntax_exists") && b:vim_pantondoc_use_basic_folding != 1
 	    return pantondoc#folding#MarkdownLevelSA()
 	" otherwise, we use a simple, but less featureful foldexpr
 	else
@@ -118,7 +118,7 @@ endfunction
 " Basic foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelBasic()
     if getline(v:lnum) =~ '^#\{1,6}'
-	return ">". len(matchstr(getline(v:lnum), '^\@1<=#\{1,6}'))
+	return ">". len(matchstr(getline(v:lnum), '^#\{1,6}'))
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
 	return ">1"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
@@ -133,7 +133,7 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
-    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@3<=.*')
+    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@7<=.*')
 endfunction
 
 " Textile: {{{1
