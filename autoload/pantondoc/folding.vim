@@ -23,8 +23,8 @@ function! pantondoc#folding#FoldExpr()
     let vline = getline(v:lnum)
     " fold YAML headers
     if g:pantondoc_folding_fold_yaml == 1
-	if vline =~ '^---$' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
-	    if v:lnum == 1
+	if vline =~ '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
+	    if vline =~ '^---$' && v:lnum == 1
 		return ">1"
 	    elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlkey" 
 		return "<1"
