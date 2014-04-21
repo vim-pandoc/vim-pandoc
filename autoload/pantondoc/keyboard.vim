@@ -1,94 +1,126 @@
 " vim: set fdm=marker:
 
+" Init: {{{1
 function! pantondoc#keyboard#Init()
-    noremap <buffer> <silent> <localleader>i :set opfunc=pantondoc#keyboard#EMPH<CR>g@
-    vnoremap <buffer> <silent> <localleader>i :<C-U>call pantondoc#keyboard#EMPH(visualmode())<CR>
-    noremap <buffer> <silent> <localleader>b :set opfunc=pantondoc#keyboard#BOLD<CR>g@
-    vnoremap <buffer> <silent> <localleader>b :<C-U>call pantondoc#keyboard#BOLD(visualmode())<CR>
+    " Styling:
+    " Toggle emphasis, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>i :set opfunc=pantondoc#keyboard#ToggleEmphasis<cr>g@
+    vnoremap <buffer> <silent> <localleader>i :<C-U>call pantondoc#keyboard#ToggleEmphasis(visualmode())<CR>
+    " Toggle strong, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>b :set opfunc=pantondoc#keyboard#ToggleStrong<cr>g@
+    vnoremap <buffer> <silent> <localleader>b :<C-U>call pantondoc#keyboard#ToggleStrong(visualmode())<CR>
+
+    " Navigation:
+    " Go to link or footnote definition for label under the cursor.
     noremap <buffer> <silent> <localleader>rg :call pantondoc#keyboard#GOTO_Ref()<CR>
+    " Go back to last point in the text we jumped to a reference from.
     noremap <buffer> <silent> <localleader>rb :call pantondoc#keyboard#BACKFROM_Ref()<CR>
-    "" Add new reference link (or footnote link) after current paragraph. 
+    
+    " Inserts:
+    " Add new reference link (or footnote link) after current paragraph. 
     noremap <buffer> <silent> <localleader>nr :call pantondoc#keyboard#Insert_Ref()<cr>a
 endfunction
-
-" Italicize: {{{1
-function! pantondoc#keyboard#Emph(type)
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
-    if a:type ==# "v"
-	execute "normal! `<".a:type."`>x"
-    elseif a:type ==# "char"
-        execute "normal! `[v`]x"
-    else
-	return
-    endif
-    let @@ = '*'.@@.'*'
-    execute "normal P"
-    let @@ = reg_save
-    let &selection = sel_save
-endfunction
-
-function! pantondoc#keyboard#EMPH(type)
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
-    if a:type ==# "v"
-	execute "normal! `<".a:type."`>x"
-    elseif a:type ==# "char"
-        execute "normal! `[ebv`]BEx"
-    else
-	return
-    endif
-    let @@ = '*'.@@.'*'
-    execute "normal P"
-    let @@ = reg_save
-    let &selection = sel_save
-endfunction
 "}}}1
-" Bold: {{{1
-function! pantondoc#keyboard#Bold(type)
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
-    if a:type ==# "v"
-	execute "normal! `<".a:type."`>x"
-    elseif a:type ==# "char"
-        execute "normal! `[v`]x"
-    else
-	return
-    endif
-    let @@ = '**'.@@.'**'
-    execute "normal P"
-    let @@ = reg_save
-    let &selection = sel_save
-endfunction
-
-function! pantondoc#keyboard#BOLD(type)
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
-    if a:type ==# "v"
-	execute "normal! `<b".a:type."`>ex"
-    elseif a:type ==# "char"
-        execute "normal! `[ebv`]BEx"
-    else
-	return
-    endif
-    let @@ = '**'.@@.'**'
-    execute "normal P"
-    let @@ = reg_save
-    let &selection = sel_save
+" Auxiliary: {{{1
+function s:EscapeEnds(ends)
+    return escape(a:ends, '*')
 endfunction
 " }}}1
-
+" Styling: {{{1
+" Base: {{{2
+" Toggle Operators, WYSIWYG-style {{{3
+function! pantondoc#keyboard#ToggleOperator(type, ends)
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let reg_save = @@
+    if a:type ==# "v"
+	execute "normal! `<".a:type."`>x"
+    elseif a:type ==# "char"
+	let cline = getline(".")
+	let ccol = getpos(".")[2]
+	let nchar = cline[ccol]
+	let pchar = cline[ccol-2]
+	if cline[ccol] == ""
+	    " at end
+	    execute "normal! `[Bv`]BEx"
+	elseif match(pchar, '[[:blank:]]') > -1
+	    if match(nchar, '[[:blank:]]') > -1
+		" single char
+		execute "normal! `[v`]egex"
+	    else
+		" after space
+		execute "normal! `[v`]BEx"
+	    endif
+	elseif match(nchar, '[[:blank:]]') > -1
+	    " before space
+	    execute "normal! `[Bv`]BEx"
+	else
+	    " inside a word
+	    execute "normal! `[EBv`]BEx"
+	endif
+    else
+	return
+    endif
+    let match_data = matchlist(@@, '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
+    if len(match_data) == 0
+	let @@ = a:ends.@@.a:ends
+	execute "normal P"
+    else 
+	let @@ = match_data[2]
+	execute "normal P"
+    endif
+    let @@ = reg_save
+    let &selection = sel_save
+endfunction "}}}3
+" Apply style {{{3
+function! pantondoc#keyboard#Apply(type, ends)
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let reg_save = @@
+    if a:type ==# "v"
+	execute "normal! `<".a:type."`>x"
+    elseif a:type ==# "char"
+        execute "normal! `[v`]x"
+    else
+	return
+    endif
+    let @@ = a:ends.@@.a:ends
+    execute "normal P"
+    let @@ = reg_save
+    let &selection = sel_save
+endfunction
+"}}}3
+"}}}2
+" Emphasis: {{{2
+" Apply emphasis, straight {{{3
+function! pantondoc#keyboard#Emph(type)
+    return pantondoc#keyboard#Apply(a:type, "*")
+endfunction
+" }}}3
+" WYSIWYG-style toggle {{{3
+"
+function! pantondoc#keyboard#ToggleEmphasis(type)
+    return pantondoc#keyboard#ToggleOperator(a:type, "*")
+endfunction
+" }}}3
+"}}}2
+" Strong: {{{2
+function! pantondoc#keyboard#Strong(type)
+    return pantondoc#keyboard#Apply(a:type, "**")
+endfunction
+function! pantondoc#keyboard#ToggleStrong(type)
+    return pantondoc#keyboard#ToggleOperator(a:type, "**")
+endfunction
+"}}}2
+"}}}1
 " Inserts: {{{1
 function! pantondoc#keyboard#Insert_Ref()
     execute "normal! ya\[o\<cr>\<esc>p$a: "
 endfunction
 " }}}1
-
 " Navigation: {{{1
+
+" References: {{{2
 
 function! pantondoc#keyboard#GOTO_Ref()
     let reg_save = @@
@@ -103,4 +135,9 @@ endfunction
 function! pantondoc#keyboard#BACKFROM_Ref()
     execute "normal!  g'".g:pantondoc_mark
 endfunction
+" }}}2
+"
+" Headers: {{{2
+" TODO
+" "}}}2
 " }}}1
