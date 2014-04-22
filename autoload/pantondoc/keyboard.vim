@@ -9,6 +9,18 @@ function! pantondoc#keyboard#Init()
     " Toggle strong, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>b :set opfunc=pantondoc#keyboard#ToggleStrong<cr>g@
     vnoremap <buffer> <silent> <localleader>b :<C-U>call pantondoc#keyboard#ToggleStrong(visualmode())<CR>
+    " Toggle verbatim, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>` :set opfunc=pantondoc#keyboard#ToggleVerbatim<cr>g@
+    vnoremap <buffer> <silent> <localleader>` :<C-U>call pantondoc#keyboard#ToggleVerbatim(visualmode())<CR>
+    " Toggle strikeout, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>~~ :set opfunc=pantondoc#keyboard#ToggleStrikeout<cr>g@
+    vnoremap <buffer> <silent> <localleader>~~ :<C-U>call pantondoc#keyboard#ToggleStrikeout(visualmode())<CR>
+    " Toggle superscript, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>^ :set opfunc=pantondoc#keyboard#ToggleSuperscript<cr>g@
+    vnoremap <buffer> <silent> <localleader>^ :<C-U>call pantondoc#keyboard#ToggleSuperscript(visualmode())<CR>
+    " Toggle subscript, WYSIWYG word processor style
+    noremap <buffer> <silent> <localleader>_ :set opfunc=pantondoc#keyboard#ToggleSubscript<cr>g@
+    vnoremap <buffer> <silent> <localleader>_ :<C-U>call pantondoc#keyboard#ToggleSubscript(visualmode())<CR>
 
     " Navigation:
     " Go to link or footnote definition for label under the cursor.
@@ -112,6 +124,38 @@ function! pantondoc#keyboard#ToggleStrong(type)
     return pantondoc#keyboard#ToggleOperator(a:type, "**")
 endfunction
 "}}}2
+" Verbatim: {{{2
+function! pantondoc#keyboard#Verbatim(type)
+    return pantondoc#keyboard#Apply(a:type, "`")
+endfunction
+function! pantondoc#keyboard#ToggleVerbatim(type)
+    return pantondoc#keyboard#Apply(a:type, "`")
+endfunction
+" }}}2
+" Strikeout: {{{2
+function! pantondoc#keyboard#Strikeout(type)
+    return pantondoc#keyboard#Apply(a:type, "~~")
+endfunction
+function! pantondoc#keyboard#ToggleStrikeout(type)
+    return pantondoc#keyboard#Apply(a:type, "~~")
+endfunction
+" }}}2
+" Superscript: {{{2
+function! pantondoc#keyboard#Superscript(type)
+    return pantondoc#keyboard#Apply(a:type, "^")
+endfunction
+function! pantondoc#keyboard#ToggleSuperscript(type)
+    return pantondoc#keyboard#Apply(a:type, "^")
+endfunction
+" }}}2
+" Subscript: {{{2
+function! pantondoc#keyboard#Subscript(type)
+    return pantondoc#keyboard#Apply(a:type, "~")
+endfunction
+function! pantondoc#keyboard#ToggleSubscript(type)
+    return pantondoc#keyboard#Apply(a:type, "~")
+endfunction
+" }}}2
 "}}}1
 " Inserts: {{{1
 function! pantondoc#keyboard#Insert_Ref()
