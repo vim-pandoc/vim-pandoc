@@ -168,7 +168,7 @@ SETTINGS                                                   *pantondoc-settings*
   Auxiliary module blacklist.
 
 - *g:pantondoc_formatting_settings*
-  default = "h"
+  default = "s"
 
 	h: use hard wraps
 	a: autoformat
