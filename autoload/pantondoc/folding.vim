@@ -133,7 +133,7 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
-    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@7<=.*')
+    return "- ". substitute(v:folddashes, "-", "#", "g"). " " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@7<=.*')
 endfunction
 
 " Textile: {{{1
@@ -151,6 +151,6 @@ function! pantondoc#folding#TextileLevel()
 endfunction
 
 function! pantondoc#folding#TextileFoldText()
-    return v:folddashes . " # " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@4<=.*')
+    return "- ". substitute(v:folddashes, "-", "#", "g"). " " . matchstr(getline(v:foldstart), '\(h[1-6]\. \)\@4<=.*')
 endfunction
 
