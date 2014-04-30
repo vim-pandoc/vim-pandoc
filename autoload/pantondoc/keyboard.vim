@@ -35,7 +35,7 @@ endfunction
 "}}}1
 " Auxiliary: {{{1
 function s:EscapeEnds(ends)
-    return escape(a:ends, '*')
+    return escape(a:ends, '*^~')
 endfunction
 " }}}1
 " Styling: {{{1
@@ -129,7 +129,7 @@ function! pantondoc#keyboard#Verbatim(type)
     return pantondoc#keyboard#Apply(a:type, "`")
 endfunction
 function! pantondoc#keyboard#ToggleVerbatim(type)
-    return pantondoc#keyboard#Apply(a:type, "`")
+    return pantondoc#keyboard#ToggleOperator(a:type, "`")
 endfunction
 " }}}2
 " Strikeout: {{{2
@@ -137,7 +137,7 @@ function! pantondoc#keyboard#Strikeout(type)
     return pantondoc#keyboard#Apply(a:type, "~~")
 endfunction
 function! pantondoc#keyboard#ToggleStrikeout(type)
-    return pantondoc#keyboard#Apply(a:type, "~~")
+    return pantondoc#keyboard#ToggleOperator(a:type, "~~")
 endfunction
 " }}}2
 " Superscript: {{{2
@@ -145,7 +145,7 @@ function! pantondoc#keyboard#Superscript(type)
     return pantondoc#keyboard#Apply(a:type, "^")
 endfunction
 function! pantondoc#keyboard#ToggleSuperscript(type)
-    return pantondoc#keyboard#Apply(a:type, "^")
+    return pantondoc#keyboard#ToggleOperator(a:type, "^")
 endfunction
 " }}}2
 " Subscript: {{{2
@@ -153,7 +153,7 @@ function! pantondoc#keyboard#Subscript(type)
     return pantondoc#keyboard#Apply(a:type, "~")
 endfunction
 function! pantondoc#keyboard#ToggleSubscript(type)
-    return pantondoc#keyboard#Apply(a:type, "~")
+    return pantondoc#keyboard#ToggleOperator(a:type, "~")
 endfunction
 " }}}2
 "}}}1
