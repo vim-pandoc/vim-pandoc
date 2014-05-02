@@ -133,7 +133,18 @@ endfunction
 
 " Markdown foldtext {{{2
 function! pantondoc#folding#MarkdownFoldText()
-    return "- ". substitute(v:folddashes, "-", "#", "g"). " " . matchstr(getline(v:foldstart), '\(#\{1,6} \)\@7<=.*')
+    let c_line = getline(v:foldstart)
+    let atx_title = match(c_line, '#') > -1
+    if atx_title
+        return "- ". c_line 
+    else
+	if match(getline(v:foldstart+1), '=') != -1
+	    let level_mark = '#'
+	else
+	    let level_mark = '##'
+	endif
+	return "- ". level_mark. ' '.c_line
+    endif
 endfunction
 
 " Textile: {{{1
