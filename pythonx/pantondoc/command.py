@@ -165,11 +165,11 @@ class PandocCommand(object):
 
     def execute(self, should_open):
         with open("pandoc.out", 'w') as tmp:
-            if vim.bindeval("has('clientserver')"):
-                async_runner = os.path.join(os.path.dirname(__file__), "async.py")
+            if vim.bindeval("has('clientserver')") and vim.bindeval("executable('python')"):
+                async_runner = '"' + os.path.join(os.path.dirname(__file__), "async.py") + '"'
                 servername_arg = "--servername=" + vim.bindeval("v:servername")
                 open_arg  = "--open" if should_open else "--noopen"
-                async_command = " ".join([async_runner, servername_arg, open_arg, self._run_command])
+                async_command = " ".join(["python", async_runner, servername_arg, open_arg, self._run_command])
                 try:
                     pid = Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
                 except:
