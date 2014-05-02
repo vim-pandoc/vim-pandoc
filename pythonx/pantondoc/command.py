@@ -40,8 +40,13 @@ class PandocHelpParser(object):
 
     @staticmethod
     def _get_formats():
+        # pandoc's output changes depending on platform
+        if sys.platform == "win32":
+            splitter = '\r\n'
+        else:
+            splitter = '\n'
         data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        return " ".join(re.findall('(\w+\**[,\n])+', data)).split("\n")[:2]
+        return " ".join(re.findall('(\w+\**[,'+splitter+'])+', data)).split(splitter[0])[:2]
 
     @staticmethod
     def _get_input_formats():
