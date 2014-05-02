@@ -16,7 +16,9 @@ if __name__ == "__main__":
         com.wait()
         returncode = str(com.returncode)
 
-    # once it's done, we cal back the server that called us to notify
+    # once it's done, we call back the server that called us
+    # to notify pandoc's execution
     command = " ".join(["vim --servername", servername,  \
           "--remote-expr \"pantondoc#command#PandocAsyncCallback(" + should_open + ", " + returncode + ")\""])
     Popen(shlex.split(command))
+
