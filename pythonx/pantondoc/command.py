@@ -211,6 +211,11 @@ class PandocCommand(object):
                 vim.command("hi! link PandocCommand Statement")
                 vim.command("hi! link PandocInstructions Comment")
 
+            # under windows, pandoc.out is not closed by async.py in time sometimes,
+            # so we wait a bit
+            if sys.platform.startswith("win"):
+                from time import sleep
+                sleep(1)
             if os.path.exists("pandoc.out"):
                 os.remove("pandoc.out")
             vim.command("echohl Statement")
