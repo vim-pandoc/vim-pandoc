@@ -224,21 +224,15 @@ class PandocCommand(object):
 
             # open file if needed
             if os.path.exists(self._output_file_path) and should_open:
-                if sys.platform == "darwin":
-                    pandoc_open_command = "open" #OSX
-                elif sys.platform.startswith("linux"):
-                    pandoc_open_command = "xdg-open" # freedesktop/linux
+                if sys.platform == "darwin" or sys.platform.startswith("linux"):
+                    if sys.platform == "darwin":
+                        open_command = "open" #OSX
+                    elif sys.platform.startswith("linux"):
+                        open_command = "xdg-open" # freedesktop/linux
+                    with open(os.devnull, 'wb') as fnull:
+                        pid = Popen([open_command,  self._output_file_path], stderr=fnull)
                 elif sys.platform.startswith("win"):
-                    pandoc_open_command = 'cmd /c \"start' # Windows
-                # On windows, we pass commands as an argument to `start`,
-                # which is a cmd.exe builtin, so we have to quote it
-                if sys.platform.startswith("win"):
-                    pandoc_open_command_tail = '"'
-                else:
-                    pandoc_open_command_tail = ''
-
-                with open(os.devnull, 'wb') as fnull:
-                    pid = Popen([pandoc_open_command,  self._output_file_path + pandoc_open_command_tail], stderr=fnull)
+                    Popen('cmd /c "start ' + self._output_file_path + '"')
 
             # we reset this
             self._output_file_path = None
