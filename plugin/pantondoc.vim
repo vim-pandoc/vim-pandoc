@@ -42,7 +42,8 @@ if !exists("g:pantondoc_enabled_modules")
 				\"formatting",
 				\"menu",
 				\"metadata",
-				\"keyboard" ]
+				\"keyboard" ,
+				\"toc"	]
 endif
 
 " Auxiliary module blacklist. {{{3
