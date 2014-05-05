@@ -47,7 +47,7 @@ outputs "1".
 
   Just add
 
-    Bundle 'vim-pandoc/vim-pantondoc'
+    Plugin 'vim-pandoc/vim-pantondoc'
 
   to your ~/.vimrc file and run :BundleInstall
 
@@ -74,7 +74,7 @@ variable.
 
 - FOLDING                                            *pantondoc-folding-module*
 
-Provides basic folding support for markdown and textile files.
+Provides folding support for markdown and textile files.
 
 - COMMAND                                            *pantondoc-command-module*
 
@@ -132,6 +132,10 @@ Provides with support for bibliographic info completion and retrieval.
 
 Provides omni completion. If the 'bibliographies' module is active, it will
 complete bibliographic references.
+
+- TOC                                                   *pantondoc-toc-module*
+
+Provides a table of contents markdown files, using vim's quickfix system.
 }}}
 
 === CONFIGURATION === {{{1

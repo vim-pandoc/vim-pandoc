@@ -1,4 +1,4 @@
-
+~~~
 	                                            ▎
 	        _   __,   _  _  _▎_  __   _  _    __▎   __   __ 
 	      ▎/ \_/  ▎  / ▎/ ▎  ▎  /  \_/ ▎/ ▎  /  ▎  /  \_/
@@ -6,7 +6,7 @@
 	     /▎ 
 	     \▎ 
 	                                                         ❡ 
-
+~~~
 
 vim-pantondoc
 =============
@@ -14,13 +14,14 @@ vim-pantondoc
 vim-pantondoc provides pandoc support for vim (sans syntax highlighting, see
 below). Originally, it was a rewrite of
 [vim-pandoc](http://github.com/vim-pandoc/vim-pandoc), featuring a more modular
-design. This allows for better configurability and advanced pandoc integration.
-Its aim is to provide an optimal document writing experience using vim.
+design. As of commit c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is
+considered to be in feature parity with vim-pandoc, and its use is sugested.
 
-As of commit c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is
-considered to be in feature parity with vim-pandoc.
+vim-pantondoc's design allows for better configurability and advanced pandoc
+integration. Its aim is to provide an optimal document writing experience using
+vim.
 
-**IMPORTANT**: 
+## IMPORTANT
 
 * Requires vim 7.4 (makes use of the new python facilities).
 * Doesn't provide syntax support. Use
@@ -30,13 +31,23 @@ alongside this for that.
 
 ## Features (Implemented or Planed)
 
-* Modular architecure. (I)
-* pandoc-markdown syntax can be set to be used only for certain file
-  extensions, instead of being the default for all pandoc-supported file
-  formats. As a side effect you can use pantondoc with textile and
-  restructuredText files. (I)
+* Modular architecture. If you decide you don't want to use our folding rules,
+  you can disable them without it affecting other parts of pantondoc. (I)
+  Modules are simple to develop, too.
+* Sets up a comfortable environment for editing prose, either for soft or hard
+  wraps. (I)
+* Can execute pandoc asynchronously, through the `:Pandoc` command, which can
+  accept any argument pandoc takes. (I)
+* `pantondoc` is a filetype plugin, but it can also attach itself to different
+  filetypes, like textile or restructuredText. You are no logner limited to use
+  pandoc with markdown. (I)
+* Useful custom mappings for markdown writers (partially implemented). For
+  example, we provide WYSIWYG-style style toggles for emphasis, strong text,
+  subscripts, etc. (I, [suggestions are
+  welcome.](https://github.com/vim-pandoc/vim-pantondoc/issues/2))
+* Advanced folding support. (I)
+* TOC functionality, using vim's quickfix system. (I)
 * Expanded support for working with bibliographies. (I, partially) Aditional
   information on the bibliography items can be gathered from tooltips, where
   supported.
 * Annotations: add metadata to your files (comments, TODOs, etc.) (P)
-* Useful custom mappings for markdown writers (partially implemented).
