@@ -211,9 +211,20 @@ SETTINGS                                                   *pantondoc-settings*
   What mark to use (i.e, when navigating references, to keep track of original
   position).
 
+- *g:pantondoc_folding_fold_yaml*
+  default = 0
+
+  Fold YAML frontmatters.
+
+- *g:pantondoc_folding_fold_div_classes*
+  default = ["notes"]
+
+  What div classes to fold.
+
 - *b:pantondoc_use_basic_folding*
   buffer local. default = 0
 
   When set, forces vim-pantondoc to use basic folding in the current buffer.
+
 
 vim: set ft=help fdm=marker :

@@ -37,7 +37,8 @@ function! pantondoc#folding#FoldExpr()
     endif
 
     " fold divs for special classes
-    if vline =~ '<div class='
+    let div_classes_regex = "\\(".join(g:pantondoc_folding_fold_div_classes, "\\|")."\\)"
+    if vline =~ "<div class=.".div_classes_regex
 	return "a1"
     elseif vline =~ '</div>'
 	return "s1"

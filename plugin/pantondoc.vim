@@ -133,17 +133,18 @@ if !exists("g:pantondoc_bibs")
 endif
 " }}}
 " }}}2
-
 " Keyboard: {{{2
 "
 if !exists("g:pantondoc_mark")
     let g:pantondoc_mark = "r"
 endif
 " }}}2
-"
 " Folding: {{{2
 if !exists("g:pantondoc_folding_fold_yaml")
     let g:pantondoc_folding_fold_yaml = 0
+endif
+if !exists("g:pantondoc_folding_fold_div_classes")
+    let g:pantondoc_folding_fold_div_classes = ["notes"]
 endif
 " }}}2
 " }}}1
