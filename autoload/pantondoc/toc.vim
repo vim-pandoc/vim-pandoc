@@ -11,7 +11,7 @@ function! pantondoc#toc#Show()
     silent vimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
     vertical copen
     let &winwidth=(&columns/3)
-    execute "setlocal statusline=pantondoc#TOC:".bufname
+    execute "setlocal statusline=pantondoc#TOC:".escape(bufname, ' ')
     
     " change the contents of the quickfix buffer
     set modifiable
@@ -48,6 +48,8 @@ function! pantondoc#toc#Show()
     hi link pandocTocHeader Title
     hi link pandocTocTitle Directory
     hi link pandocTocBullet Delimiter
+
+    setlocal linebreak
 
     map <buffer> q <esc>:cclose<CR>
     " move to the top
