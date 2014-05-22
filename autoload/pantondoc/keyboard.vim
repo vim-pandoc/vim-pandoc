@@ -34,7 +34,7 @@ function! pantondoc#keyboard#Init()
 endfunction
 "}}}1
 " Auxiliary: {{{1
-function s:EscapeEnds(ends)
+function! s:EscapeEnds(ends)
     return escape(a:ends, '*^~')
 endfunction
 " }}}1
@@ -159,6 +159,7 @@ endfunction
 "}}}1
 " Inserts: {{{1
 function! pantondoc#keyboard#Insert_Ref()
+    execute "normal m".g:pantondoc_mark
     execute "normal! ya\[o\<cr>\<esc>p$a: "
 endfunction
 " }}}1
@@ -168,8 +169,8 @@ endfunction
 
 function! pantondoc#keyboard#GOTO_Ref()
     let reg_save = @@
-    execute "mark ".g:pantondoc_mark
-    execute "normal! ?[\<cr>vf]y"
+    execute "normal m".g:pantondoc_mark
+    execute "silent normal! ?[\<cr>vf]y"
     let @@ = substitute(@@, '\[', '\\\[', 'g')
     let @@ = substitute(@@, '\]', '\\\]', 'g')
     execute "normal! /".@@.":\<cr>"
@@ -177,7 +178,19 @@ function! pantondoc#keyboard#GOTO_Ref()
 endfunction
 
 function! pantondoc#keyboard#BACKFROM_Ref()
-    execute "normal!  g'".g:pantondoc_mark
+    try
+        execute 'normal  `'.g:pantondoc_mark
+	" clean up
+	execute 'delmark '.g:pantondoc_mark
+    catch /E20/ "no mark set, we must search backwards.
+	let reg_save = @@
+	"move right, because otherwise it would fail if the cursor is at the
+	"beggining of the line
+        execute "silent normal! ^\<right>?[\<cr>vf]y"
+	let @@ = substitute(@@, '\]', '\\\]', 'g')
+	execute "silent normal! ?".@@."\<cr>"
+	let @@ = reg_save
+    endtry
 endfunction
 " }}}2
 "
