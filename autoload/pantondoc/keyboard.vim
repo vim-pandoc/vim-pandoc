@@ -22,15 +22,19 @@ function! pantondoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>_ :set opfunc=pantondoc#keyboard#ToggleSubscript<cr>g@
     vnoremap <buffer> <silent> <localleader>_ :<C-U>call pantondoc#keyboard#ToggleSubscript(visualmode())<CR>
 
-    " Navigation:
+    " Headers:
+    noremap <buffer> <silent> <localleader>hn :call pantondoc#keyboard#NextHeader()<cr>
+    noremap <buffer> <silent> <localleader>hb :call pantondoc#keyboard#PrevHeader()<cr>
+    noremap <buffer> <silent> <localleader>hh :call pantondoc#keyboard#CurrentHeader()<cr>
+    noremap <buffer> <silent> <localleader>hp :call pantondoc#keyboard#CurrentHeaderParent()<cr>
+
+    " References:
+    " Add new reference link (or footnote link) after current paragraph. 
+    noremap <buffer> <silent> <localleader>nr :call pantondoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
     noremap <buffer> <silent> <localleader>rg :call pantondoc#keyboard#GOTO_Ref()<CR>
     " Go back to last point in the text we jumped to a reference from.
     noremap <buffer> <silent> <localleader>rb :call pantondoc#keyboard#BACKFROM_Ref()<CR>
-    
-    " Inserts:
-    " Add new reference link (or footnote link) after current paragraph. 
-    noremap <buffer> <silent> <localleader>nr :call pantondoc#keyboard#Insert_Ref()<cr>a
 endfunction
 "}}}1
 " Auxiliary: {{{1
@@ -157,15 +161,14 @@ function! pantondoc#keyboard#ToggleSubscript(type)
 endfunction
 " }}}2
 "}}}1
-" Inserts: {{{1
+" References: {{{1
+" handling: {{{2
 function! pantondoc#keyboard#Insert_Ref()
     execute "normal m".g:pantondoc_mark
     execute "normal! ya\[o\<cr>\<esc>0P$a: "
 endfunction
-" }}}1
-" Navigation: {{{1
-
-" References: {{{2
+" }}}2
+" navigation: {{{2
 
 function! pantondoc#keyboard#GOTO_Ref()
     let reg_save = @@
@@ -186,15 +189,72 @@ function! pantondoc#keyboard#BACKFROM_Ref()
 	let reg_save = @@
 	"move right, because otherwise it would fail if the cursor is at the
 	"beggining of the line
-        execute "silent normal! ^\<right>?[\<cr>vf]y"
+        execute "silent normal! 0l?[\<cr>vf]y"
 	let @@ = substitute(@@, '\]', '\\\]', 'g')
 	execute "silent normal! ?".@@."\<cr>"
 	let @@ = reg_save
     endtry
 endfunction
+
+function! pantondoc#keyboard#NextRefDefinition()
+endfunction
+
+function! pantondoc#keyboard#PrevRefDefinition()
+endfunction
 " }}}2
-"
-" Headers: {{{2
+" }}}1
+" Headers: {{{1
+
+" handling: {{{2
+function! pantondoc#keyboard#ApplyHeader()
 " TODO
+endfunction
+" }}}2
+
+" navigation: {{{2
+function! pantondoc#keyboard#NextHeader() "{{{3
+    let wrapscan_save = &wrapscan
+    let &wrapscan = 0  
+    exe "silent normal $/\\(^.*\\n[-=]\\|^#\\)\<cr>"
+    let &wrapscan = wrapscan_save
+endfunction
+
+function! pantondoc#keyboard#PrevHeader() "{{{3
+    let wrapscan_save = &wrapscan
+    let &wrapscan = 0  
+    exe "silent normal 0?\\(^.*\\n[-=]\\|^#\\)\<cr>"
+    let &wrapscan = wrapscan_save
+endfunction
+
+function! pantondoc#keyboard#CurrentHeader() "{{{3
+    " same as PrevHeader(), except don't move if we are already at a header 
+    if match(getline("."), "^#") < 0 && match(getline(line(".")+1), "^[-=]") < 0
+	call pantondoc#keyboard#PrevHeader()
+    endif
+endfunction
+
+function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
+    call pantondoc#keyboard#CurrentHeader()
+    let l = getline(".")
+
+    if match(l, "^#") > -1
+        let parent_level = len(matchstr(l, '#*')) - 1
+    elseif match(getline(line(".")+1), '^-') > -1
+	let parent_level = 1
+    else
+	let parent_level = 0
+    endif
+
+    " don't go further than level 1 headers
+    if parent_level > 0
+	if parent_level == 1
+	    let setext_regex = "^.*\\n="
+	else 
+	    let setext_regex = "^.*\\n[-=]"
+	endif
+	    
+	exe "silent normal 0?\\(".setext_regex."\\|^#\\{1,".parent_level."} \\)\<cr>"
+    endif
+endfunction
 " "}}}2
 " }}}1
