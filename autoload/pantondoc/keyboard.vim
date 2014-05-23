@@ -24,6 +24,7 @@ function! pantondoc#keyboard#Init()
 
     " Headers:
     noremap <buffer> <silent> <localleader># :<C-U>call pantondoc#keyboard#ApplyHeader(v:count1)<cr>
+    noremap <buffer> <silent> <localleader>hd :call pantondoc#keyboard#RemoveHeader()<cr>
     noremap <buffer> <silent> <localleader>hn :call pantondoc#keyboard#NextHeader()<cr>
     noremap <buffer> <silent> <localleader>hb :call pantondoc#keyboard#PrevHeader()<cr>
     noremap <buffer> <silent> <localleader>hh :call pantondoc#keyboard#CurrentHeader()<cr>
@@ -212,13 +213,47 @@ endfunction
 " Headers: {{{1
 
 " handling: {{{2
-function! pantondoc#keyboard#ApplyHeader(level)
-    " TODO: handle different header styles (setext vs atx, mixed, #s at both ends)
+function! pantondoc#keyboard#ApplyHeader(level) "{{{3
+    call pantondoc#keyboard#RemoveHeader()
+    if a:level == 0
+	return
+    endif
+
+    let line_text = getline(".")
+    if a:level < 3 && (g:pantondoc_keyboard_header_style =~ "s") == 1
+       let text = line_text
+    else
+       if (g:pantondoc_keyboard_header_style =~ "2") == 1
+	   let tail = ' ' . repeat("#", a:level)
+       else
+	   let tail = ''
+       endif
+       let text = repeat("#", a:level) . ' ' . line_text . tail
+    endif
+    call setline(line("."), text)
+    
+    if (g:pantondoc_keyboard_header_style =~ "s") == 1
+	if a:level == 1
+	    call append(line("."), repeat("=", len(text)))
+	elseif a:level == 2
+	    call append(line("."), repeat("-", len(text)))
+	endif
+    endif
+endfunction
+
+function! pantondoc#keyboard#RemoveHeader() "{{{3
+    let lnum = line(".")
     let line_text = getline(".")
     if match(line_text, "^#") > -1
-	let line_text = substitute(line_text, "^#", '', '')
+	let line_text = substitute(line_text, "^#* *", '', '')
+	if match(line_text, " #*$") > -1
+	    let line_text = substitute(line_text, " #*$", '', '')
+	endif
+    elseif match(getline(line(".")+1), "^[-=]") > -1
+	exe line(".")+1.'delete "_'
     endif
-    call setline(line("."), repeat("#", a:level). line_text)
+    exe lnum
+    call setline(line("."), line_text)
 endfunction
 " }}}2
 " navigation: {{{2

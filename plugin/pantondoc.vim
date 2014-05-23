@@ -138,6 +138,10 @@ endif
 if !exists("g:pantondoc_mark")
     let g:pantondoc_mark = "r"
 endif
+
+if !exists("g:pantondoc_keyboard_header_style")
+    let g:pantondoc_keyboard_header_style = "a"
+endif
 " }}}2
 " Folding: {{{2
 if !exists("g:pantondoc_folding_fold_yaml")

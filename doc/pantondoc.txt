@@ -211,6 +211,13 @@ SETTINGS                                                   *pantondoc-settings*
   What mark to use (i.e, when navigating references, to keep track of original
   position).
 
+- *g:pantondoc_keyboard_header_style*
+  default = "a"
+
+  What style to use when applying headers. Default is to use atx headers
+  everywhere. "s" enables setext headers for level 1 and 2 headers, "2"
+  appends atx marks at both ends of the header.
+
 - *g:pantondoc_folding_fold_yaml*
   default = 0
 
