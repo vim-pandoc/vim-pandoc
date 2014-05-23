@@ -7,12 +7,8 @@ endfunction
 function! pantondoc#toc#Show()
     let bufname=expand("%")
 
-    " prepare the quickfix buffer
-    try 
-        silent vimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
-    catch /E480/
-	return
-    endtry
+    " prepare the location-list buffer
+    call pantondoc#toc#Update()
 
     if g:pantondoc_toc_position == "right"
 	let toc_pos = "vertical"
@@ -25,16 +21,31 @@ function! pantondoc#toc#Show()
     else
 	let toc_pos == "vertical"
     endif
-    exe toc_pos . " copen"
+    exe toc_pos . " lopen"
+   
+    call pantondoc#toc#ReDisplay(bufname)
+    " move to the top
+    normal! gg
+endfunction
+
+function! pantondoc#toc#Update()
+    try 
+        silent lvimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
+    catch /E480/
+	return
+    endtry
+endfunction
+
+function! pantondoc#toc#ReDisplay(bufname)
     let &winwidth=(&columns/3)
-    execute "setlocal statusline=pantondoc#TOC:".escape(bufname, ' ')
-    
-    " change the contents of the quickfix buffer
+    execute "setlocal statusline=pantondoc#TOC:".escape(a:bufname, ' ')
+
+    " change the contents of the location-list buffer
     set modifiable
-    %s/\v^([^|]*\|){2,2} #//
+    silent %s/\v^([^|]*\|){2,2} #//
     for l in range(1, line("$"))
-	" this is the quickfix data for the current item
-	let d = getqflist()[l-1]
+	" this is the location-list data for the current item
+	let d = getloclist(0)[l-1]
 	" titleblock
 	if match(d.text, "^%") > -1
 	    let l:level = 0
@@ -67,7 +78,5 @@ function! pantondoc#toc#Show()
 
     setlocal linebreak
 
-    map <buffer> q <esc>:cclose<CR>
-    " move to the top
-    normal! gg
+    map <buffer> q <esc>:lclose<CR>
 endfunction
