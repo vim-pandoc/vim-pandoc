@@ -27,6 +27,8 @@ function! pantondoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>hb :call pantondoc#keyboard#PrevHeader()<cr>
     noremap <buffer> <silent> <localleader>hh :call pantondoc#keyboard#CurrentHeader()<cr>
     noremap <buffer> <silent> <localleader>hp :call pantondoc#keyboard#CurrentHeaderParent()<cr>
+    noremap <buffer> <silent> <localleader>hsn :call pantondoc#keyboard#NextSiblingHeader()<cr>
+    noremap <buffer> <silent> <localleader>hsb :call pantondoc#keyboard#PrevSiblingHeader()<cr>
 
     " References:
     " Add new reference link (or footnote link) after current paragraph. 
@@ -259,6 +261,86 @@ function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
     endif
     let &wrapscan = wrapscan_save
 endfunction
+
+function! pantondoc#keyboard#NextSiblingHeader() "{{{3
+    call pantondoc#keyboard#CurrentHeader()
+    let l = getline(".")
+    let origin_lnum = line(".")
+
+    if match(l, "^#") > -1
+        let header_level = len(matchstr(l, '#*'))
+    elseif match(getline(line(".")+1), '^-') > -1
+	let header_level = 2
+    else
+	let header_level = 1
+    endif
+
+    " where (who) our parent is
+    call pantondoc#keyboard#CurrentHeaderParent()
+    let parent_lnum = line(".")
+    exe origin_lnum
+
+    try
+	if header_level == 1
+	    exe "silent normal $/\\(^.*\\n=\\|^#\\s\\)\<cr>"
+	elseif header_level == 2
+	    exe "silent normal $/\\(^.*\\n-\\|^##\\s\\)\<cr>"
+	else
+	    exe "silent normal $/^#\\{".header_level."\}\<cr>"
+	endif
+    catch
+	return
+    endtry
+    let arrival_lnum = line(".")
+
+    " we might have overshot, check if the parent is still correct 
+    call pantondoc#keyboard#CurrentHeaderParent()
+    let arrival_parent_lnum = line(".")
+    if arrival_parent_lnum != parent_lnum
+	exe origin_lnum
+    else
+	exe arrival_lnum
+    endif
+endfunction
+
+function! pantondoc#keyboard#PrevSiblingHeader() "{{{3
+    call pantondoc#keyboard#CurrentHeader()
+    let l = getline(".")
+    let origin_lnum = line(".")
+
+    if match(l, "^#") > -1
+        let header_level = len(matchstr(l, '#*'))
+    elseif match(getline(line(".")+1), '^-') > -1
+	let header_level = 2
+    else
+	let header_level = 1
+    endif
+
+    " where (who) our parent is
+    call pantondoc#keyboard#CurrentHeaderParent()
+    let parent_lnum = line(".")
+    exe origin_lnum
+
+    try
+	if header_level == 1
+	    exe "silent normal 0?\\(^.*\\n=\\|^#\\s\\)\<cr>"
+	elseif header_level == 2
+	    exe "silent normal 0?\\(^.*\\n-\\|^##\\s\\)\<cr>"
+	else
+	    exe "silent normal 0?^#\\{".header_level."\}\<cr>"
+	endif
+    catch
+	return
+    endtry
+    let arrival_lnum = line(".")
+
+    " we might have overshot, check if the parent is still correct 
+    call pantondoc#keyboard#CurrentHeaderParent()
+    let arrival_parent_lnum = line(".")
+    if arrival_parent_lnum != parent_lnum
+	exe origin_lnum
+    else
+	exe arrival_lnum
     endif
 endfunction
 " "}}}2
