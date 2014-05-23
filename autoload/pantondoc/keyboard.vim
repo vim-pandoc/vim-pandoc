@@ -234,6 +234,8 @@ function! pantondoc#keyboard#CurrentHeader() "{{{3
 endfunction
 
 function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
+    let wrapscan_save = &wrapscan
+    let &wrapscan = 0
     call pantondoc#keyboard#CurrentHeader()
     let l = getline(".")
 
@@ -253,7 +255,10 @@ function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
 	    let setext_regex = "^.*\\n[-=]"
 	endif
 	    
-	exe "silent normal 0?\\(".setext_regex."\\|^#\\{1,".parent_level."} \\)\<cr>"
+	exe "silent normal 0?\\(".setext_regex."\\|^#\\{1,".parent_level."}\\s\\)\<cr>"
+    endif
+    let &wrapscan = wrapscan_save
+endfunction
     endif
 endfunction
 " "}}}2
