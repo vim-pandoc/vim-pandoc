@@ -23,6 +23,7 @@ function! pantondoc#keyboard#Init()
     vnoremap <buffer> <silent> <localleader>_ :<C-U>call pantondoc#keyboard#ToggleSubscript(visualmode())<CR>
 
     " Headers:
+    noremap <buffer> <silent> <localleader># :<C-U>call pantondoc#keyboard#ApplyHeader(v:count1)<cr>
     noremap <buffer> <silent> <localleader>hn :call pantondoc#keyboard#NextHeader()<cr>
     noremap <buffer> <silent> <localleader>hb :call pantondoc#keyboard#PrevHeader()<cr>
     noremap <buffer> <silent> <localleader>hh :call pantondoc#keyboard#CurrentHeader()<cr>
@@ -211,11 +212,15 @@ endfunction
 " Headers: {{{1
 
 " handling: {{{2
-function! pantondoc#keyboard#ApplyHeader()
-" TODO
+function! pantondoc#keyboard#ApplyHeader(level)
+    " TODO: handle different header styles (setext vs atx, mixed, #s at both ends)
+    let line_text = getline(".")
+    if match(line_text, "^#") > -1
+	let line_text = substitute(line_text, "^#", '', '')
+    endif
+    call setline(line("."), repeat("#", a:level). line_text)
 endfunction
 " }}}2
-
 " navigation: {{{2
 function! pantondoc#keyboard#NextHeader() "{{{3
     let wrapscan_save = &wrapscan
