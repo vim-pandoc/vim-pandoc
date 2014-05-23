@@ -8,8 +8,24 @@ function! pantondoc#toc#Show()
     let bufname=expand("%")
 
     " prepare the quickfix buffer
-    silent vimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
-    vertical copen
+    try 
+        silent vimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
+    catch /E480/
+	return
+    endtry
+
+    if g:pantondoc_toc_position == "right"
+	let toc_pos = "vertical"
+    elseif g:pantondoc_toc_position == "left"
+	let toc_pos = "topleft vertical"
+    elseif g:pantondoc_toc_position == "top"
+	let toc_pos = "topleft"
+    elseif g:pantondoc_toc_position == "bottom"
+	let toc_pos = "botright"
+    else
+	let toc_pos == "vertical"
+    endif
+    exe toc_pos . " copen"
     let &winwidth=(&columns/3)
     execute "setlocal statusline=pantondoc#TOC:".escape(bufname, ' ')
     

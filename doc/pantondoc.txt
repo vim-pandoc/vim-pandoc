@@ -226,5 +226,10 @@ SETTINGS                                                   *pantondoc-settings*
 
   When set, forces vim-pantondoc to use basic folding in the current buffer.
 
+- *g:pantondoc_toc_position*
+  default = "right"
+
+  Where to show the TOC window. Can be "top", "left", "right", "bottom".
+
 
 vim: set ft=help fdm=marker :

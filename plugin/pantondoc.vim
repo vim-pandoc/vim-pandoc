@@ -147,6 +147,11 @@ if !exists("g:pantondoc_folding_fold_div_classes")
     let g:pantondoc_folding_fold_div_classes = ["notes"]
 endif
 " }}}2
+" TOC: {{{2
+if !exists("g:pantondoc_toc_position")
+    let g:pantondoc_toc_position = "right" 
+endif
+" }}}2
 " }}}1
 
 " Autocommands: {{{1
