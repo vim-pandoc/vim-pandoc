@@ -160,7 +160,7 @@ endfunction
 " Inserts: {{{1
 function! pantondoc#keyboard#Insert_Ref()
     execute "normal m".g:pantondoc_mark
-    execute "normal! ya\[o\<cr>\<esc>p$a: "
+    execute "normal! ya\[o\<cr>\<esc>0P$a: "
 endfunction
 " }}}1
 " Navigation: {{{1
@@ -173,7 +173,7 @@ function! pantondoc#keyboard#GOTO_Ref()
     execute "silent normal! ?[\<cr>vf]y"
     let @@ = substitute(@@, '\[', '\\\[', 'g')
     let @@ = substitute(@@, '\]', '\\\]', 'g')
-    execute "normal! /".@@.":\<cr>"
+    execute "silent normal! /".@@.":\<cr>"
     let @@ = reg_save
 endfunction
 
