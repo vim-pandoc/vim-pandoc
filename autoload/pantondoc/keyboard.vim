@@ -29,6 +29,9 @@ function! pantondoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>hp :call pantondoc#keyboard#CurrentHeaderParent()<cr>
     noremap <buffer> <silent> <localleader>hsn :call pantondoc#keyboard#NextSiblingHeader()<cr>
     noremap <buffer> <silent> <localleader>hsb :call pantondoc#keyboard#PrevSiblingHeader()<cr>
+    noremap <buffer> <silent> <localleader>hcf :call pantondoc#keyboard#FirstChild()<cr>
+    noremap <buffer> <silent> <localleader>hcl :call pantondoc#keyboard#LastChild()<cr>
+    noremap <buffer> <silent> <localleader>hcn :<C-U>call pantondoc#keyboard#GotoNthChild(v:count1)<cr>
 
     " References:
     " Add new reference link (or footnote link) after current paragraph. 
@@ -263,9 +266,9 @@ function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
 endfunction
 
 function! pantondoc#keyboard#NextSiblingHeader() "{{{3
+    let origin_lnum = line(".")
     call pantondoc#keyboard#CurrentHeader()
     let l = getline(".")
-    let origin_lnum = line(".")
 
     if match(l, "^#") > -1
         let header_level = len(matchstr(l, '#*'))
@@ -304,9 +307,9 @@ function! pantondoc#keyboard#NextSiblingHeader() "{{{3
 endfunction
 
 function! pantondoc#keyboard#PrevSiblingHeader() "{{{3
+    let origin_lnum = line(".")
     call pantondoc#keyboard#CurrentHeader()
     let l = getline(".")
-    let origin_lnum = line(".")
 
     if match(l, "^#") > -1
         let header_level = len(matchstr(l, '#*'))
@@ -341,6 +344,59 @@ function! pantondoc#keyboard#PrevSiblingHeader() "{{{3
 	exe origin_lnum
     else
 	exe arrival_lnum
+    endif
+endfunction
+
+function! pantondoc#keyboard#FirstChild() "{{{3
+    let origin_lnum = line(".")
+    call pantondoc#keyboard#CurrentHeader()
+    let l = getline(".")
+
+    if match(l, "^#") > -1
+        let children_level = len(matchstr(l, '#*')) + 1
+    elseif match(getline(line(".")+1), '^-') > -1
+	let children_level = 3
+    else
+	let children_level = 2
+    endif
+
+    call pantondoc#keyboard#NextHeader()
+    let next_lnum = line(".")
+    exe origin_lnum
+
+    try
+	if children_level == 2
+	    exe "silent normal $/\\(^.*\\n-\\|^##\\s\\)\<cr>"
+	else
+	    exe "silent normal $/^#\\{".children_level."\}\<cr>"
+	endif
+    catch
+	return
+    endtry
+
+    let arrival_lnum = line(".")
+    if arrival_lnum != next_lnum
+	exe origin_lnum
+    endif
+endfunction
+
+function! pantondoc#keyboard#LastChild() "{{{3
+    call pantondoc#keyboard#FirstChild()
+    let origin_lnum = -1
+    let new_lnum = 0
+    while new_lnum != origin_lnum
+	let origin_lnum = line(".")
+	call pantondoc#keyboard#NextSiblingHeader()
+	let new_lnum = line(".")
+    endwhile
+endfunction
+
+function! pantondoc#keyboard#GotoNthChild(count) "{{{3
+    call pantondoc#keyboard#FirstChild()
+    if a:count > 1
+	for child in range(a:count-1) 
+	    call pantondoc#keyboard#NextSiblingHeader()
+	endfor
     endif
 endfunction
 " "}}}2
