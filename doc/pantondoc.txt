@@ -226,7 +226,12 @@ SETTINGS                                                   *pantondoc-settings*
 - *g:pantondoc_folding_fold_div_classes*
   default = ["notes"]
 
-  What div classes to fold.
+  What div classes to fold. NOTE: you need to end the folds using the folden
+  attribute in the closing tag, like so: 
+      
+      <div class="notes">
+      test
+      </div foldend>
 
 - *b:pantondoc_use_basic_folding*
   buffer local. default = 0
