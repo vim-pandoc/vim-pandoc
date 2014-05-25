@@ -40,7 +40,10 @@ function! pantondoc#folding#FoldExpr()
     let div_classes_regex = "\\(".join(g:pantondoc_folding_fold_div_classes, "\\|")."\\)"
     if vline =~ "<div class=.".div_classes_regex
 	return "a1"
-    elseif vline =~ '</div>'
+    " the `endfold` attribute must be set, otherwise we can remove folds
+    " incorrectly (see issue #32)
+    " pandoc ignores this attribute, so this is safe.
+    elseif vline =~ '</div endfold>'
 	return "s1"
     endif
 
