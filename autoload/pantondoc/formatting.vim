@@ -22,6 +22,10 @@ function! pantondoc#formatting#Init()
 	" Don't add two spaces at the end of punctuation when joining lines
 	setlocal nojoinspaces
 
+	" Always use linebreak.
+	setlocal linebreak
+	setlocal breakat-=*
+
 	" Textile uses .. for comments
 	if &ft == "textile"
 		setlocal commentstring=..%s
@@ -35,8 +39,6 @@ endfunction
 function! pantondoc#formatting#UseHardWraps()
 	" reset settings that might have changed by UseSoftWraps
 	setlocal formatoptions&
-	setlocal linebreak&
-	setlocal breakat&
 	setlocal display&
 	silent! unmap j
 	silent! unmap k
@@ -70,8 +72,6 @@ function! pantondoc#formatting#UseSoftWraps()
 
 	" soft wrapping
 	setlocal formatoptions=1
-	setlocal linebreak
-	setlocal breakat-=*
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" Remappings that make j and k behave properly with
 	" soft wrapping.
