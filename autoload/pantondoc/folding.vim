@@ -99,7 +99,11 @@ function! pantondoc#folding#MarkdownLevelSA()
     let vline1 = getline(v:lnum + 1)
     if vline =~ '^#\{1,6}'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
-            return ">". len(matchstr(vline, '^#\{1,6}'))
+	    if g:pantondoc_folding_mode == 'relative'
+		return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+	    else
+                return ">". len(matchstr(vline, '^#\{1,6}'))
+	    endif
         endif
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^=\+$'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
@@ -109,7 +113,11 @@ function! pantondoc#folding#MarkdownLevelSA()
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^-\+$'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
-            return ">2"
+            if g:pantondoc_folding_mode == 'relative'
+		return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+	    else
+		return ">2"
+	    endif
         endif
     elseif vline =~ '^<!--.*fold-begin -->'
 	return "a1"
@@ -117,14 +125,6 @@ function! pantondoc#folding#MarkdownLevelSA()
 	return "s1"
     endif
     return "="
-endfunction
-
-function! pantondoc#folding#MarkdownLevelRelative() "{{{2
-    if getline(v:lnum) =~ '^#\{1,6}'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
-	    return ">".len(markdown#headers#CurrentHeaderAncestors(v:lnum))
-	endif
-    endif
 endfunction
 
 " Basic foldexpr {{{2

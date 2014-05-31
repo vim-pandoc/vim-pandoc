@@ -144,6 +144,9 @@ if !exists("g:pantondoc_keyboard_header_style")
 endif
 " }}}2
 " Folding: {{{2
+if !exists("g:pantondoc_folding_mode")
+    let g:pantondoc_folding_mode = 'syntax'
+endif
 if !exists("g:pantondoc_folding_fold_yaml")
     let g:pantondoc_folding_fold_yaml = 0
 endif

@@ -218,6 +218,25 @@ SETTINGS                                                   *pantondoc-settings*
   everywhere. "s" enables setext headers for level 1 and 2 headers, "2"
   appends atx marks at both ends of the header.
 
+- *g:pantondoc_folding_mode*
+  default = 'syntax'
+
+  How to decide what level the headers are. Default value follows syntax
+  rules, 'relative' uses information about the header parents. For example, in
+  this document
+
+      ## header
+
+      blah blah
+
+      #### header
+
+      blah blah blah
+ 
+  the level of "## header" is 2 using the default method, but 1 using
+  relative, and the level of "#### header" is 4 using the default method, but
+  2 using relative.
+
 - *g:pantondoc_folding_fold_yaml*
   default = 0
 
