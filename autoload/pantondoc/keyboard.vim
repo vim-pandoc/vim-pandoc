@@ -48,6 +48,12 @@ endfunction
 function! s:EscapeEnds(ends)
     return escape(a:ends, '*^~')
 endfunction
+
+function! s:MovetoLine(line)
+    if a:line > 0
+	call cursor(a:line, 1)
+    endif
+endfunction
 " }}}1
 " Styling: {{{1
 " Base: {{{2
@@ -258,186 +264,39 @@ endfunction
 " }}}2
 " navigation: {{{2
 function! pantondoc#keyboard#NextHeader() "{{{3
-    let wrapscan_save = &wrapscan
-    let &wrapscan = 0  
-    exe "silent normal $/\\(^.*\\n[-=]\\|^#\\)\<cr>"
-    let &wrapscan = wrapscan_save
+    call s:MovetoLine(markdown#headers#NextHeader())
 endfunction
 
 function! pantondoc#keyboard#PrevHeader() "{{{3
-    let wrapscan_save = &wrapscan
-    let &wrapscan = 0  
-    exe "silent normal 0?\\(^.*\\n[-=]\\|^#\\)\<cr>"
-    let &wrapscan = wrapscan_save
+    call s:MovetoLine(markdown#headers#PrevHeader())
 endfunction
 
 function! pantondoc#keyboard#CurrentHeader() "{{{3
-    " same as PrevHeader(), except don't move if we are already at a header 
-    if match(getline("."), "^#") < 0 && match(getline(line(".")+1), "^[-=]") < 0
-	call pantondoc#keyboard#PrevHeader()
-    endif
+    call s:MovetoLine(markdown#headers#CurrentHeader())
 endfunction
 
 function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
-    let wrapscan_save = &wrapscan
-    let &wrapscan = 0
-    call pantondoc#keyboard#CurrentHeader()
-    let l = getline(".")
-
-    if match(l, "^#") > -1
-        let parent_level = len(matchstr(l, '#*')) - 1
-    elseif match(getline(line(".")+1), '^-') > -1
-	let parent_level = 1
-    else
-	let parent_level = 0
-    endif
-
-    " don't go further than level 1 headers
-    if parent_level > 0
-	if parent_level == 1
-	    let setext_regex = "^.*\\n="
-	else 
-	    let setext_regex = "^.*\\n[-=]"
-	endif
-	    
-	exe "silent normal 0?\\(".setext_regex."\\|^#\\{1,".parent_level."}\\s\\)\<cr>"
-    endif
-    let &wrapscan = wrapscan_save
+    call s:MovetoLine(markdown#headers#CurrentHeaderParent())
 endfunction
 
 function! pantondoc#keyboard#NextSiblingHeader() "{{{3
-    let origin_lnum = line(".")
-    call pantondoc#keyboard#CurrentHeader()
-    let l = getline(".")
-
-    if match(l, "^#") > -1
-        let header_level = len(matchstr(l, '#*'))
-    elseif match(getline(line(".")+1), '^-') > -1
-	let header_level = 2
-    else
-	let header_level = 1
-    endif
-
-    " where (who) our parent is
-    call pantondoc#keyboard#CurrentHeaderParent()
-    let parent_lnum = line(".")
-    exe origin_lnum
-
-    try
-	if header_level == 1
-	    exe "silent normal $/\\(^.*\\n=\\|^#\\s\\)\<cr>"
-	elseif header_level == 2
-	    exe "silent normal $/\\(^.*\\n-\\|^##\\s\\)\<cr>"
-	else
-	    exe "silent normal $/^#\\{".header_level."\}\<cr>"
-	endif
-    catch
-	return
-    endtry
-    let arrival_lnum = line(".")
-
-    " we might have overshot, check if the parent is still correct 
-    call pantondoc#keyboard#CurrentHeaderParent()
-    let arrival_parent_lnum = line(".")
-    if arrival_parent_lnum != parent_lnum
-	exe origin_lnum
-    else
-	exe arrival_lnum
-    endif
+    call s:MovetoLine(markdown#headers#NextSiblingHeader())
 endfunction
 
 function! pantondoc#keyboard#PrevSiblingHeader() "{{{3
-    let origin_lnum = line(".")
-    call pantondoc#keyboard#CurrentHeader()
-    let l = getline(".")
-
-    if match(l, "^#") > -1
-        let header_level = len(matchstr(l, '#*'))
-    elseif match(getline(line(".")+1), '^-') > -1
-	let header_level = 2
-    else
-	let header_level = 1
-    endif
-
-    " where (who) our parent is
-    call pantondoc#keyboard#CurrentHeaderParent()
-    let parent_lnum = line(".")
-    exe origin_lnum
-
-    try
-	if header_level == 1
-	    exe "silent normal 0?\\(^.*\\n=\\|^#\\s\\)\<cr>"
-	elseif header_level == 2
-	    exe "silent normal 0?\\(^.*\\n-\\|^##\\s\\)\<cr>"
-	else
-	    exe "silent normal 0?^#\\{".header_level."\}\<cr>"
-	endif
-    catch
-	return
-    endtry
-    let arrival_lnum = line(".")
-
-    " we might have overshot, check if the parent is still correct 
-    call pantondoc#keyboard#CurrentHeaderParent()
-    let arrival_parent_lnum = line(".")
-    if arrival_parent_lnum != parent_lnum
-	exe origin_lnum
-    else
-	exe arrival_lnum
-    endif
+    call s:MovetoLine(markdown#headers#PrevSiblingHeader())
 endfunction
 
 function! pantondoc#keyboard#FirstChild() "{{{3
-    let origin_lnum = line(".")
-    call pantondoc#keyboard#CurrentHeader()
-    let l = getline(".")
-
-    if match(l, "^#") > -1
-        let children_level = len(matchstr(l, '#*')) + 1
-    elseif match(getline(line(".")+1), '^-') > -1
-	let children_level = 3
-    else
-	let children_level = 2
-    endif
-
-    call pantondoc#keyboard#NextHeader()
-    let next_lnum = line(".")
-    exe origin_lnum
-
-    try
-	if children_level == 2
-	    exe "silent normal $/\\(^.*\\n-\\|^##\\s\\)\<cr>"
-	else
-	    exe "silent normal $/^#\\{".children_level."\}\<cr>"
-	endif
-    catch
-	return
-    endtry
-
-    let arrival_lnum = line(".")
-    if arrival_lnum != next_lnum
-	exe origin_lnum
-    endif
+    call s:MovetoLine(markdown#headers#FirstChild())
 endfunction
 
 function! pantondoc#keyboard#LastChild() "{{{3
-    call pantondoc#keyboard#FirstChild()
-    let origin_lnum = -1
-    let new_lnum = 0
-    while new_lnum != origin_lnum
-	let origin_lnum = line(".")
-	call pantondoc#keyboard#NextSiblingHeader()
-	let new_lnum = line(".")
-    endwhile
+    call s:MovetoLine(markdown#headers#LastChild())
 endfunction
 
 function! pantondoc#keyboard#GotoNthChild(count) "{{{3
-    call pantondoc#keyboard#FirstChild()
-    if a:count > 1
-	for child in range(a:count-1) 
-	    call pantondoc#keyboard#NextSiblingHeader()
-	endfor
-    endif
+    call s:MovetoLine(markdown#headers#NthChild(a:count))
 endfunction
 " "}}}2
 " }}}1
