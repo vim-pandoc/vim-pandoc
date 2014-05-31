@@ -119,6 +119,14 @@ function! pantondoc#folding#MarkdownLevelSA()
     return "="
 endfunction
 
+function! pantondoc#folding#MarkdownLevelRelative() "{{{2
+    if getline(v:lnum) =~ '^#\{1,6}'
+        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
+	    return ">".len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+	endif
+    endif
+endfunction
+
 " Basic foldexpr {{{2
 function! pantondoc#folding#MarkdownLevelBasic()
     if getline(v:lnum) =~ '^#\{1,6}'

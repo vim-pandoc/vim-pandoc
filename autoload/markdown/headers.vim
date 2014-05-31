@@ -1,8 +1,15 @@
 " vim: set fdm=marker :
 
-function! markdown#headers#NextHeader() "{{{1
+" functions for header navigation.
+
+function! markdown#headers#NextHeader(...) "{{{1
     let origin_pos = getpos(".")
-    call cursor(origin_pos[1], 2)
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
+    else
+	let search_from = getpos(".")
+    endif
+    call cursor(search_from[1], 2)
     let h_lnum = search('\(^.*\n[-=]\|^#\)','nW')
     if h_lnum == 0 
 	if match(getline("."), "^#") >= 0 || match(getline(line(".")+1), "^[-=]") >= 0
@@ -13,9 +20,14 @@ function! markdown#headers#NextHeader() "{{{1
     return h_lnum
 endfunction
 
-function! markdown#headers#PrevHeader() "{{{1
+function! markdown#headers#PrevHeader(...) "{{{1
     let origin_pos = getpos(".")
-    call cursor(origin_pos[1], 1)
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+    call cursor(search_from[1], 1)
     let h_lnum = search('\(^.*\n[-=]\|^#\)', 'bnW')
     if h_lnum == 0 
 	if match(getline("."), "^#") >= 0 || match(getline(line(".")+1), "^[-=]") >= 0
@@ -26,19 +38,30 @@ function! markdown#headers#PrevHeader() "{{{1
     return h_lnum
 endfunction
 
-function! markdown#headers#CurrentHeader() "{{{1
-    " same as PrevHeader(), except don't search if we are already at a header 
-    if match(getline("."), "^#") < 0 && match(getline(line(".")+1), "^[-=]") < 0
-	return markdown#headers#PrevHeader()
+function! markdown#headers#CurrentHeader(...) "{{{1
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
     else
-	return line(".")
+	let search_from = getpos(".")
+    endif
+    " same as PrevHeader(), except don't search if we are already at a header 
+    if match(getline(search_from[1]), "^#") < 0 && match(getline(search_from[1]+1), "^[-=]") < 0
+	return markdown#headers#PrevHeader(search_from[1])
+    else
+	return search_from[1]
     endif
 endfunction
 
-function! markdown#headers#CurrentHeaderParent() "{{{1
-    let pos = getpos(".")
+function! markdown#headers#CurrentHeaderParent(...) "{{{1
+    let origin_pos = getpos(".")
 
-    let ch_lnum = markdown#headers#CurrentHeader()
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+
+    let ch_lnum = markdown#headers#CurrentHeader(search_from[1])
 
     call cursor(ch_lnum, 1)
     let l = getline(".")
@@ -63,17 +86,22 @@ function! markdown#headers#CurrentHeaderParent() "{{{1
     else
 	let arrival_lnum = 0
     endif
-    call cursor(pos[1], pos[2])
+    call cursor(origin_pos[1], origin_pos[2])
     return arrival_lnum
 endfunction
 
-function! markdown#headers#CurrentHeaderAncestral() "{{{1
-    let pos = getpos(".")
-    let p_lnum = markdown#headers#CurrentHeaderParent()
-    " we don't have a parent, so we are an ancestral
+function! markdown#headers#CurrentHeaderAncestral(...) "{{{1
+    let origin_pos = getpos(".")
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+    let p_lnum = markdown#headers#CurrentHeaderParent(search_from[1])
+    " we don't have a parent, so we are an ancestral 
+    " or we are not under a header
     if p_lnum == 0
-	call cursor(pos[1], pos[2])
-	return markdown#headers#CurrentHeader()
+	return markdown#headers#CurrentHeader(search_from[1])
     endif
 
     while p_lnum != 0
@@ -82,19 +110,30 @@ function! markdown#headers#CurrentHeaderAncestral() "{{{1
 	if a_lnum != 0
 	   let p_lnum = a_lnum
        else
-	   call cursor(pos[1], pos[2])
+	   call cursor(origin_pos[1], origin_pos[2])
 	   return p_lnum
        endif
     endwhile
-    call cursor(pos[1], pos[2])
+    call cursor(origin_pos[1], origin_pos[2])
 endfunction
 
-function! markdown#headers#CurrentHeaderAncestors() "{{{1
-    let pos = getpos(".")
+function! markdown#headers#CurrentHeaderAncestors(...) "{{{1
+    let origin_pos = getpos(".")
+    if a:0 > 0
+	let search_from = [0, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
     
     let h_genealogy = []
-    call add(h_genealogy, markdown#headers#CurrentHeader())
-    let p_lnum = markdown#headers#CurrentHeaderParent()
+
+    let head = markdown#headers#CurrentHeader(search_from[1])
+    if head == 0
+	return []
+    else
+	call add(h_genealogy, head)
+    endif
+    let p_lnum = markdown#headers#CurrentHeaderParent(search_from[1])
     " we don't have a parent, so we are an ancestral
     if p_lnum == 0
 	return h_genealogy
@@ -110,18 +149,29 @@ function! markdown#headers#CurrentHeaderAncestors() "{{{1
 	   break
        endif
     endwhile
-    call cursor(pos[1], pos[2])
+    call cursor(origin_pos[1], origin_pos[2])
     return h_genealogy
 endfunction
 
-function! markdown#headers#SiblingHeader(direction) "{{{1
+function! markdown#headers#SiblingHeader(direction, ...) "{{{1
     let origin_pos = getpos(".")
-    
+    if a:0 > 0
+	let search_from = [1, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+   
+    call cursor(search_from[1], search_from[2])
+
     let parent_lnum = markdown#headers#CurrentHeaderParent()
 
     let ch_lnum = markdown#headers#CurrentHeader()
-    let l = getline(ch_lnum)
 
+    if a:direction == 'b'
+	call cursor(ch_lnum, 1)
+    endif
+
+   let l = getline(ch_lnum)
     if match(l, "^#") > -1
         let header_level = len(matchstr(l, '#*'))
     elseif match(l, '^-') > -1
@@ -129,11 +179,7 @@ function! markdown#headers#SiblingHeader(direction) "{{{1
     else
 	let header_level = 1
     endif
-
-    if a:direction == 'b'
-	call cursor(ch_lnum, 1)
-    endif
-
+    
     if header_level == 1
 	let arrival_lnum = search('\(^.*\n=\|^#\s\)', a:direction.'nW')
     elseif header_level == 2
@@ -143,8 +189,7 @@ function! markdown#headers#SiblingHeader(direction) "{{{1
     endif
 
     " we might have overshot, check if the parent is still correct 
-    call cursor(arrival_lnum, 1)
-    let arrival_parent_lnum = markdown#headers#CurrentHeaderParent()
+    let arrival_parent_lnum = markdown#headers#CurrentHeaderParent(arrival_lnum)
     if arrival_parent_lnum != parent_lnum
 	let arrival_lnum = 0
     endif
@@ -153,16 +198,33 @@ function! markdown#headers#SiblingHeader(direction) "{{{1
     return arrival_lnum
 endfunction
 
-function! markdown#headers#NextSiblingHeader() "{{{1
-    return markdown#headers#SiblingHeader('')
+function! markdown#headers#NextSiblingHeader(...) "{{{1
+    if a:0 > 0
+	let search_from = a:1
+    else
+	let search_from = line(".")
+    endif
+    return markdown#headers#SiblingHeader('', search_from)
 endfunction
 
-function! markdown#headers#PrevSiblingHeader() "{{{1
-    return markdown#headers#SiblingHeader('b')
+
+function! markdown#headers#PrevSiblingHeader(...) "{{{1
+    if a:0 > 0
+	let search_from = a:1
+    else
+	let search_from = line(".")
+    endif
+    return markdown#headers#SiblingHeader('b', search_from)
 endfunction
 
-function! markdown#headers#FirstChild() "{{{1
-    let ch_lnum = markdown#headers#CurrentHeader()
+function! markdown#headers#FirstChild(...) "{{{1
+    if a:0 > 0
+	let search_from = [1, a:1, 1, 0]
+    else
+	let search_from = getpos(".")
+    endif
+
+    let ch_lnum = markdown#headers#CurrentHeader(search_from[1])
     let l = getline(ch_lnum)
 
     if match(l, "^#") > -1
@@ -173,6 +235,7 @@ function! markdown#headers#FirstChild() "{{{1
 	let children_level = 2
     endif
 
+    call cursor(search_from[1], search_from[2])
     let next_lnum = markdown#headers#NextHeader()
 
     if children_level == 2
@@ -187,8 +250,15 @@ function! markdown#headers#FirstChild() "{{{1
     return arrival_lnum
 endfunction
 
-function! markdown#headers#LastChild() "{{{1
+function! markdown#headers#LastChild(...) "{{{1
     let origin_pos = getpos(".")
+    if a:0 > 0
+	let search_from = [1, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+
+    call cursor(search_from[1], search_from[2])
     let fc_lnum = markdown#headers#FirstChild()
     if fc_lnum != 0
 	call cursor(fc_lnum, 1)
@@ -216,9 +286,15 @@ function! markdown#headers#LastChild() "{{{1
     return n_lnum
 endfunction
 
-function! markdown#headers#NthChild(count) "{{{1
+function! markdown#headers#NthChild(count, ...) "{{{1
     let origin_pos = getpos(".")
-    let fc_lnum = markdown#headers#FirstChild()
+    if a:0 > 0
+	let search_from = [1, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+
+    let fc_lnum = markdown#headers#FirstChild(search_from[1])
     call cursor(fc_lnum, 1)
     if a:count > 1
 	for child in range(a:count-1)
