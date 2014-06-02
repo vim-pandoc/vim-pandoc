@@ -17,9 +17,10 @@ variant](http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown)
 
 Originally, `vim-pantondoc` was a rewrite of
 [vim-pandoc](http://github.com/vim-pandoc/vim-pandoc). As of commit
-c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is considered to be in
-feature parity with vim-pandoc, and its use is suggested. **The project's plan
-is to replace vim-pandoc with vim-pantondoc soon.**
+[c60e14e](https://github.com/vim-pandoc/vim-pantondoc/commit/c60e14e101f9192ab3b27e8dc24e176dbeaa2b10),
+vim-pantondoc is considered to be in feature parity with vim-pandoc, and its
+use is suggested. **The project's plan is to replace vim-pandoc with
+vim-pantondoc soon.**
 
 `vim-pantondoc`'s goals are 1) to provide advanced integration with pandoc, 2) a
 comfortable document writing environment, and 3) great configurability.
