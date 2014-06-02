@@ -8,46 +8,90 @@
 	                                                         ❡ 
 ~~~
 
-vim-pantondoc
-=============
+# vim-pantondoc
 
-vim-pantondoc provides pandoc support for vim (sans syntax highlighting, see
-below). Originally, it was a rewrite of
-[vim-pandoc](http://github.com/vim-pandoc/vim-pandoc), featuring a more modular
-design. As of commit c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is
-considered to be in feature parity with vim-pandoc, and its use is sugested.
+`vim-pantondoc` provides facilities to integrate Vim with the [pandoc][] document
+converter and work with documents written in [its markdown
+variant](http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown)
+(although textile documents are also supported). 
 
-vim-pantondoc's design allows for better configurability and advanced pandoc
-integration. Its aim is to provide an optimal document writing experience using
-vim.
+Originally, `vim-pantondoc` was a rewrite of
+[vim-pandoc](http://github.com/vim-pandoc/vim-pandoc). As of commit
+c60e14e101f9192ab3b27e8dc24e176dbeaa2b10, vim-pantondoc is considered to be in
+feature parity with vim-pandoc, and its use is suggested. **The project's plan
+is to replace vim-pandoc with vim-pantondoc soon.**
+
+`vim-pantondoc`'s goals are 1) to provide advanced integration with pandoc, 2) a
+comfortable document writing environment, and 3) great configurability.
+
+[pandoc]: http://johnmacfarlane.net/pandoc/
 
 ## IMPORTANT
 
-* Requires vim 7.4 (makes use of the new python facilities).
-* Doesn't provide syntax support. Use
-[vim-pandoc/vim-pandoc-syntax](https://github.com/vim-pandoc/vim-pandoc-syntax)
-alongside this for that.
+* **`vim-pantondoc` doesn't provide syntax support**. The user needs to install
+  [vim-pandoc/vim-pandoc-syntax][] alongside it (see below). The reason for
+  this is we have found cleaner to keep the bug tracking of the syntax file and
+  the rest of the system separate.
 
+[vim-pandoc/vim-pandoc-syntax]: https://github.com/vim-pandoc/vim-pandoc-syntax
 
-## Features (Implemented or Planed)
+## Outstanding features 
 
-* Modular architecture. If you decide you don't want to use our folding rules,
-  you can disable them without it affecting other parts of pantondoc. (I)
-  Modules are simple to develop, too.
-* Sets up a comfortable environment for editing prose, either for soft or hard
-  wraps. (I)
-* Can execute pandoc asynchronously, through the `:Pandoc` command, which can
-  accept any argument pandoc takes. (I)
-* `pantondoc` is a filetype plugin, but it can also attach itself to different
-  filetypes, like textile or restructuredText. You are no logner limited to use
-  pandoc with markdown. (I)
-* Useful custom mappings for markdown writers (partially implemented). For
+* [x] Modular architecture, so the user is in control of what the plugin does.
+  For example, if you decide you don't want to use our folding rules, you can
+  disable them without it affecting other parts of pantondoc. Modules are
+  simple to develop, too.
+* [x] Sets up a comfortable environment for editing prose, either for soft or
+  hard wraps.
+* [x] Can execute pandoc asynchronously, through the `:Pandoc` command, which
+  can accept any argument pandoc takes.
+* [x] `pantondoc` is a filetype plugin, but it can also attach itself to
+  different filetypes, like textile or restructuredText. The user is not
+  limited to use pandoc with markdown.
+* [x] Useful custom mappings for markdown writers (partially implemented). For
   example, we provide WYSIWYG-style style toggles for emphasis, strong text,
-  subscripts, etc. (I, [suggestions are
-  welcome.](https://github.com/vim-pandoc/vim-pantondoc/issues/2))
-* Advanced folding support. (I)
-* TOC functionality, using vim's quickfix system. (I)
-* Expanded support for working with bibliographies. (I, partially) Aditional
-  information on the bibliography items can be gathered from tooltips, where
-  supported.
-* Annotations: add metadata to your files (comments, TODOs, etc.) (P)
+  subscripts, etc. [Suggestions are
+  welcome.](https://github.com/vim-pandoc/vim-pantondoc/issues/2)
+* [x] Advanced folding support (syntax assisted, relative ordering...).
+* [x] TOC functionality, using vim's quickfix system.
+* [x] Bibliographies support, like autocompletion of cite keys. We plan to
+  display additional information on the bibliography items on request.
+* [ ] Annotations: add metadata to your files (comments, TODOs, etc.)
+
+## Requirements
+
+* Vim 7.4 (we make use of the new python API).
+
+## Installation
+
+The plugin follows the usual bundle structure, so it's easy to install it using
+[pathogen](https://github.com/tpope/vim-pathogen),
+[Vundle](https://github.com/gmarik/vundle) or NeoBundle.
+
+The most recent version is available [at
+github](https://github.com/vim-pandoc/vim-pantondoc). For those who need it, a
+tarball is available from
+[here](https://github.com/vim-pandoc/vim-pantondoc/archive/master.zip).
+
+For Vundle users, it should be enough to add
+
+    Plugin 'vim-pandoc/vim-pantondoc'
+
+to `.vimrc`, and then run `:PluginInstall`.
+
+It is *very strongly* recommended that all users of `vim-pantondoc` install
+`vim-pandoc-syntax` too:
+
+    Plugin 'vim-pandoc/vim-pandoc-syntax' 
+
+## Contributing
+
+[fmoralesc](http://github.com/fmoralesc) is the project maintainer, and he tries
+to solve all issues as soon as possible. Help is very much appreciated, in the
+form of bug reports, fixes, code and suggestions. 
+
+If you have a problem, it is better to open a issue in the [issue tracker at
+github][]. Please state the problem clearly, and if possible, provide a
+document sample to reproduce it.
+
+[issue tracker at github]: https://github.com/vim-pandoc/vim-pantondoc/issues
