@@ -30,7 +30,7 @@ endfunction
 
 function! pantondoc#toc#Update()
     try 
-        silent lvimgrep /\(.*\(\n[=-]\+\)\@=\|^#\+ \|\%^%\)/ %
+        silent lvimgrep /\(^\S.*\(\n[=-]\+\)\@=\|^#\+\|\%^%\)/ %
     catch /E480/
 	return
     endtry
