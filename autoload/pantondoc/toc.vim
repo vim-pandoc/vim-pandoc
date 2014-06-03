@@ -10,13 +10,13 @@ function! pantondoc#toc#Show()
     " prepare the location-list buffer
     call pantondoc#toc#Update()
 
-    if g:pantondoc_toc_position == "right"
+    if g:pandoc#toc#position == "right"
 	let toc_pos = "vertical"
-    elseif g:pantondoc_toc_position == "left"
+    elseif g:pandoc#toc#position == "left"
 	let toc_pos = "topleft vertical"
-    elseif g:pantondoc_toc_position == "top"
+    elseif g:pandoc#toc#position == "top"
 	let toc_pos = "topleft"
-    elseif g:pantondoc_toc_position == "bottom"
+    elseif g:pandoc#toc#position == "bottom"
 	let toc_pos = "botright"
     else
 	let toc_pos == "vertical"

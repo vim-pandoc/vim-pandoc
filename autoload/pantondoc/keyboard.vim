@@ -177,7 +177,7 @@ endfunction
 " References: {{{1
 " handling: {{{2
 function! pantondoc#keyboard#Insert_Ref()
-    execute "normal m".g:pantondoc_mark
+    execute "normal m".g:pandoc#keyboard#mark
     execute "normal! ya\[o\<cr>\<esc>0P$a: "
 endfunction
 " }}}2
@@ -185,7 +185,7 @@ endfunction
 
 function! pantondoc#keyboard#GOTO_Ref()
     let reg_save = @@
-    execute "normal m".g:pantondoc_mark
+    execute "normal m".g:pandoc#keyboard#mark
     execute "silent normal! ?[\<cr>vf]y"
     let @@ = substitute(@@, '\[', '\\\[', 'g')
     let @@ = substitute(@@, '\]', '\\\]', 'g')
@@ -195,9 +195,9 @@ endfunction
 
 function! pantondoc#keyboard#BACKFROM_Ref()
     try
-        execute 'normal  `'.g:pantondoc_mark
+        execute 'normal  `'.g:pandoc#keyboard#mark
 	" clean up
-	execute 'delmark '.g:pantondoc_mark
+	execute 'delmark '.g:pandoc#keyboard#mark
     catch /E20/ "no mark set, we must search backwards.
 	let reg_save = @@
 	"move right, because otherwise it would fail if the cursor is at the
@@ -226,10 +226,10 @@ function! pantondoc#keyboard#ApplyHeader(level) "{{{3
     endif
 
     let line_text = getline(".")
-    if a:level < 3 && (g:pantondoc_keyboard_header_style =~ "s") == 1
+    if a:level < 3 && (g:pandoc#keyboard#header_style =~ "s") == 1
        let text = line_text
     else
-       if (g:pantondoc_keyboard_header_style =~ "2") == 1
+       if (g:pandoc#keyboard#header_style =~ "2") == 1
 	   let tail = ' ' . repeat("#", a:level)
        else
 	   let tail = ''
@@ -238,7 +238,7 @@ function! pantondoc#keyboard#ApplyHeader(level) "{{{3
     endif
     call setline(line("."), text)
     
-    if (g:pantondoc_keyboard_header_style =~ "s") == 1
+    if (g:pandoc#keyboard#header_style =~ "s") == 1
 	if a:level == 1
 	    call append(line("."), repeat("=", len(text)))
 	elseif a:level == 2

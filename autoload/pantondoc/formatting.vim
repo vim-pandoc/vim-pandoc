@@ -1,18 +1,19 @@
 function! pantondoc#formatting#Init()
 	" set up soft or hard wrapping modes
-	if stridx(g:pantondoc_formatting_settings, "h") >= 0 && stridx(g:pantondoc_formatting_settings, "s") < 0
+	if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
 		call pantondoc#formatting#UseHardWraps()
-	elseif stridx(g:pantondoc_formatting_settings, "s") >= 0 && stridx(g:pantondoc_formatting_settings, "h") < 0
+	elseif stridx(g:pandoc#formatting#mode, "s") >= 0 && stridx(g:pandoc#formatting#mode, "h") < 0
 		call pantondoc#formatting#UseSoftWraps()
 	else
-		echoerr "The value of g:pantondoc_formatting_settings is inconsistent"
+		echoerr "pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default."
+		call pantondoc#formatting#UseSoftWraps()
 	endif
 
 	" # Use pandoc to tidy up text
 	"
 	" NOTE: If you use this on your entire file, it will wipe out title blocks.
 	"
-	if g:pantondoc_use_pandoc_equalprg > 0	
+	if g:pandoc#formatting#pandoc_equalprg > 0	
 	    let &l:equalprg="pandoc -t markdown --reference-links"
 	    if &textwidth > 0
 		let &l:equalprg.=" --columns " . &textwidth
@@ -55,7 +56,7 @@ function! pantondoc#formatting#UseHardWraps()
 	" TODO: add support for roman numerals
 	setlocal formatlistpat=^\\s*\\([*+-]\\\|\\((*\\d\\+[.)]\\+\\)\\\|\\((*\\l[.)]\\+\\)\\)\\s\\+
 	
-	if stridx(g:pantondoc_formatting_settings, "a") >= 0
+	if stridx(g:pandoc#formatting#mode, "a") >= 0
 		" a: auto-format
 		" w: lines with trailing spaces mark continuing
 		" paragraphs, and lines ending on non-spaces end paragraphs.

@@ -2,8 +2,8 @@
 "
 " Init: {{{1
 function! pantondoc#folding#Init()
-    if !exists("b:vim_pantondoc_use_basic_folding")
-        let b:vim_pantondoc_use_basic_folding = 0
+    if !exists("b:pandoc_folding_basic")
+        let b:pandoc_folding_basic = 0
     endif
     setlocal foldmethod=expr
     " might help with slowness while typing due to syntax checks
@@ -22,7 +22,7 @@ function! pantondoc#folding#FoldExpr()
 
     let vline = getline(v:lnum)
     " fold YAML headers
-    if g:pantondoc_folding_fold_yaml == 1
+    if g:pandoc#folding#fold_yaml == 1
 	if vline =~ '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
 	    if vline =~ '^---$' && v:lnum == 1
 		return ">1"
@@ -37,7 +37,7 @@ function! pantondoc#folding#FoldExpr()
     endif
 
     " fold divs for special classes
-    let div_classes_regex = "\\(".join(g:pantondoc_folding_fold_div_classes, "\\|")."\\)"
+    let div_classes_regex = "\\(".join(g:pandoc#folding#fold_div_classes, "\\|")."\\)"
     if vline =~ "<div class=.".div_classes_regex
 	return "a1"
     " the `endfold` attribute must be set, otherwise we can remove folds
@@ -51,7 +51,7 @@ function! pantondoc#folding#FoldExpr()
     if &ft == "markdown" || &ft == "pandoc"
 	" vim-pandoc-syntax sets this variable, so we can check if we can use
 	" syntax assistance in our foldexpr function
-	if exists("g:vim_pandoc_syntax_exists") && b:vim_pantondoc_use_basic_folding != 1
+	if exists("g:vim_pandoc_syntax_exists") && b:pandoc_folding_basic != 1
 	    return pantondoc#folding#MarkdownLevelSA()
 	" otherwise, we use a simple, but less featureful foldexpr
 	else
@@ -99,7 +99,7 @@ function! pantondoc#folding#MarkdownLevelSA()
     let vline1 = getline(v:lnum + 1)
     if vline =~ '^#\{1,6}'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'
-	    if g:pantondoc_folding_mode == 'relative'
+	    if g:pandoc#folding#mode == 'relative'
 		return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
 	    else
                 return ">". len(matchstr(vline, '^#\{1,6}'))
@@ -113,7 +113,7 @@ function! pantondoc#folding#MarkdownLevelSA()
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^-\+$'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
-            if g:pantondoc_folding_mode == 'relative'
+            if g:pandoc#folding#mode == 'relative'
 		return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
 	    else
 		return ">2"

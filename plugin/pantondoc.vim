@@ -1,15 +1,15 @@
 " vim: set fdm=marker fdc=3: {{{1
 
 " File: pantondoc.vim
-" Description: experimental pandoc support for vim
+" Description: pandoc support for vim
 " Author: Felipe Morales
 " }}}1
 
 " Load? {{{1
-if exists("g:loaded_pantondoc") && g:loaded_pantondoc || &cp
+if exists("g:pandoc#loaded") && g:pandoc#loaded || &cp
 	finish
 endif
-let g:loaded_pantondoc = 1
+let g:pandoc#loaded = 1
 " }}}1
 
 " Globals: {{{1
@@ -32,9 +32,10 @@ let pantondoc_extensions_table = {
 
 " General: {{{2
 "
-" Enabled modules {{{3
-if !exists("g:pantondoc_enabled_modules")
-	let g:pantondoc_enabled_modules = [
+" Modules: {{{3
+" Enabled modules {{{4
+if !exists("g:pandoc#modules#enabled")
+	let g:pandoc#modules#enabled = [
 				\"bibliographies",
 				\"completion",
 				\"command",
@@ -46,36 +47,37 @@ if !exists("g:pantondoc_enabled_modules")
 				\"toc"	]
 endif
 
-" Auxiliary module blacklist. {{{3
-if !exists("g:pantondoc_disabled_modules")
-    let g:pantondoc_disabled_modules = []
+" Auxiliary module blacklist. {{{4
+if !exists("g:pandoc#modules#disabled")
+    let g:pandoc#modules#disabled = []
 endif
 if v:version < 704
     for incompatible_module in ["bibliographies", "command"]
 	" user might have disabled them himself, check that
-	if index(g:pantondoc_disabled_modules, incompatible_module) == -1
-	    let g:pantondoc_disabled_modules = add(g:pantondoc_disabled_modules, incompatible_module)
+	if index(g:pandoc#modules#disabled, incompatible_module) == -1
+	    let g:pandoc#modules#disabled = add(g:pandoc#modules#disabled, incompatible_module)
 	    let s:module_disabled = 1
 	endif
     endfor
-    " only message the user if we have extended g:pantondoc_disabled_modules
+    " only message the user if we have extended g:pandoc#modules#disabled
     " automatically
     if s:module_disabled == 1 
 	echomsg "pantondoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
     endif
 endif
 "}}}
-"Markups to handle {{{3
-if !exists("g:pantondoc_handled_filetypes")
-	let g:pantondoc_handled_filetypes = [
+" Filetypes: {{{3
+"Markups to handle {{{4
+if !exists("g:pandoc#filetypes#handled")
+	let g:pandoc#filetypes#handled = [
 				\"markdown",
 				\"rst",
 				\"textile"]
 endif
 "}}}
-" Use pandoc extensions to markdown for all markdown files {{{3
-if !exists("g:pantondoc_use_pandoc_markdown")
-	let g:pantondoc_use_pandoc_markdown = 1
+" Use pandoc extensions to markdown for all markdown files {{{4
+if !exists("g:pandoc#filetypes#pandoc_markdown")
+	let g:pandoc#filetypes#pandoc_markdown = 1
 endif
 "}}}
 " Formatting: {{{2
@@ -84,28 +86,26 @@ endif
 " s: use soft wraps
 " h: use hard wraps
 " a: auto format (only used if h is set)
-if !exists("g:pantondoc_formatting_settings")
-	let g:pantondoc_formatting_settings = "s"
+if !exists("g:pandoc#formatting#mode")
+	let g:pandoc#formatting#mode = "s"
 endif
 "}}}
-
-" Equalprg: {{{2
-
+" = {{{3
 " Use pandoc as equalprg?
-if !exists("g:pantondoc_use_pandoc_equalprg")
-    let g:pantondoc_use_pandoc_equalprg = 1
+if !exists("g:pandoc#formatting#pandoc_equalprg")
+    let g:pandoc#formatting#pandoc_equalprg = 1
 endif
 " }}}
 " Command: {{{2
 
-" Use message buffers
-if !exists("g:pantondoc_use_message_buffers")
-    let g:pantondoc_use_message_buffers = 1
+" Use message buffers {{{3
+if !exists("g:pandoc#command#use_message_buffers")
+    let g:pandoc#command#use_message_buffers = 1
 endif
 
 " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3
-if !exists("g:pantondoc_command_latex_engine")
-	let g:pantondoc_command_latex_engine = "xelatex"
+if !exists("g:pandoc#command#latex_engine")
+	let g:pandoc#command#latex_engine = "xelatex"
 endif
 "}}}
 "}}}
@@ -116,61 +116,72 @@ endif
 " c: any bib in the working dir
 " l: pandoc local dir
 " t: texmf
-" g: append values in g:pantondoc_bibfiles
+" g: append values in g:pandoc#biblio#bibs
 "
-if !exists("g:pantondoc_biblio_sources")
-	let g:pantondoc_biblio_sources = "bcg"
+if !exists("g:pandoc#biblio#sources")
+	let g:pandoc#biblio#sources = "bcg"
 endif
 "}}}
 " Use bibtool for queries? {{{3
-if !exists("g:pantondoc_biblio_use_bibtool")
-	let g:pantondoc_biblio_use_bibtool = 0
+if !exists("g:pandoc#biblio#use_bibtool")
+	let g:pandoc#biblio#use_bibtool = 0
 endif
 "}}}
-" Files to add to b:pantondoc_bibs if "g" is in g:pantondoc_biblio_sources {{{3
-if !exists("g:pantondoc_bibs")
-	let g:pantondoc_bibs = []
+" Files to add to b:pandoc_biblio_bibs if "g" is in g:pandoc#biblio#sources {{{3
+if !exists("g:pandoc#biblio#bibs")
+	let g:pandoc#biblio#bibs = []
 endif
 " }}}
 " }}}2
 " Keyboard: {{{2
 "
-if !exists("g:pantondoc_mark")
-    let g:pantondoc_mark = "r"
+" We use a mark for some functions, the user can change it so it doesn't {{{3
+" interfere with his settings
+if !exists("g:pandoc#keyboard#mark")
+    let g:pandoc#keyboard#mark = "r"
 endif
 
-if !exists("g:pantondoc_keyboard_header_style")
-    let g:pantondoc_keyboard_header_style = "a"
+" What style to use when applying header styles {{{3
+" a: atx headers
+" s: setex headers for 1st and 2nd levels
+" 2: add hashes at both ends
+if !exists("g:pandoc#keyboard#header_style")
+    let g:pandoc#keyboard#header_style = "a"
 endif
 " }}}2
 " Folding: {{{2
-if !exists("g:pantondoc_folding_mode")
-    let g:pantondoc_folding_mode = 'syntax'
+" How to decide fold levels {{{3
+" 'syntax': Use syntax
+" 'relative': Count how many parents the header has
+if !exists("g:pandoc#folding#mode")
+    let g:pandoc#folding#mode = 'syntax'
 endif
-if !exists("g:pantondoc_folding_fold_yaml")
-    let g:pantondoc_folding_fold_yaml = 0
+" Fold the YAML frontmatter {{{3
+if !exists("g:pandoc#folding#fold_yaml")
+    let g:pandoc#folding#fold_yaml = 0
 endif
-if !exists("g:pantondoc_folding_fold_div_classes")
-    let g:pantondoc_folding_fold_div_classes = ["notes"]
+" What <div> classes to fold {{{3
+if !exists("g:pandoc#folding#fold_div_classes")
+    let g:pandoc#folding#fold_div_classes = ["notes"]
 endif
 " }}}2
 " TOC: {{{2
-if !exists("g:pantondoc_toc_position")
-    let g:pantondoc_toc_position = "right" 
+if !exists("g:pandoc#toc#position")
+    let g:pandoc#toc#position = "right" 
 endif
 " }}}2
 " }}}1
 
 " Autocommands: {{{1
 " We must do this here instead of ftdetect because we need to be able to use
-" the value of g:pantondoc_handled_filetypes and
-" g:pantondoc_use_pandoc_markdown
+" the value of g:pandoc#filetypes#handled and
+" g:pandoc#filetypes#pandoc_markdown
 
 " augroup pandoc {{{2
 " this sets the fiiletype for pandoc files
 augroup pandoc
     au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
-    if g:pantondoc_use_pandoc_markdown == 1
+    if g:pandoc#filetypes#pandoc_markdown == 1
 	au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
     endif
 augroup END
@@ -179,7 +190,7 @@ augroup END
 " this loads the pantondoc functionality for configured extensions 
 augroup pantondoc
     let s:exts = []
-    for ext in g:pantondoc_handled_filetypes
+    for ext in g:pandoc#filetypes#handled
 	call extend(s:exts, map(pantondoc_extensions_table[ext], '"*." . v:val'))
     endfor
     execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'

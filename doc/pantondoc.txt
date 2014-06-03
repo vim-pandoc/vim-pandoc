@@ -69,7 +69,7 @@ independently.
 Handles some writing settings, like the use hard or soft line wraps. It is
 recommended to leave this module enabled.
 
-The module behavior is configured through the |g:pantondoc_formatting_settings|
+The module behavior is configured through the |g:pandoc#formatting#mode|
 variable.
 
 - FOLDING                                            *pantondoc-folding-module*
@@ -96,7 +96,7 @@ will create an incantation like:
     
     pandoc -t beamer -Vlang:spanish -o file.pdf file.pdc
 
-Depending on the value of |g:pantondoc_use_message_buffers|, once pandoc runs
+Depending on the value of |g:pandoc#command#use_message_buffers|, once pandoc runs
 a buffer will open displaying the command output. You can dismiss this buffer
 pressing <Esc>.
 
@@ -122,7 +122,7 @@ documents and more. Currently, it:
 
 * creates operators to italicize and bold text.
 * creates mapping for navigation to and from references (uses the 'r' mark by
-  default, configurable with |g:pantondoc_mark|.
+  default, configurable with |g:pandoc#keyboard#mark|.
 
 - BIBLIOGRAPHIES                              *pantondoc-bibliographies-module*
 
@@ -142,13 +142,13 @@ Provides a table of contents markdown files, using vim's quickfix system.
 
 SETTINGS                                                   *pantondoc-settings*
 
-- *g:pantondoc_handled_filetypes*
+- *g:pandoc#filetypes#handled*
   default = ["markdown", "rst", "textile"]
 
   A list of the kinds of files pantondoc will attach to. 'extra' includes
   .text and .txt files.
 
-- *g:pantondoc_use_pandoc_markdown*
+- *g:pandoc#filetypes#pandoc_markdown*
   Default = 1
 
   Should we set the pandoc filetype (and load vim-pandoc-syntax) for common
@@ -157,39 +157,44 @@ SETTINGS                                                   *pantondoc-settings*
   regular markdown. In that case, we use vim's default syntax highlighting for
   markdown.
 
-- *g:pantondoc_enabled_modules* 
+- *g:pandoc#modules#enabled* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
   "metadata", "menu", "executors", "motions"]
 
   A list of the modules to enable on the files determined by
-  |g:pantondoc_handled_filetypes|. See |vim-pantondoc-modules|.
+  |g:pandoc#filetypes#handled|. See |vim-pantondoc-modules|.
 
-- *g:pantondoc_disabled_modules*
+- *g:pandoc#modules#disabled*
 
   default = [], (["bibliographies", "command"] in vim < 7.4)
 
   Auxiliary module blacklist.
 
-- *g:pantondoc_formatting_settings*
+- *g:pandoc#formatting#mode*
   default = "s"
 
 	h: use hard wraps
 	a: autoformat
 	s: use soft wraps
 
-- *g:pantondoc_use_message_buffers*
+- *g:pandoc#formatting#pandoc_equalprog*
+  default = 1
+
+  Use pandoc as the equalprog
+
+- *g:pandoc#command#use_message_buffers*
   default = 1
 
   Whether to display pandoc's output in a message buffer after execution.
 
-- *g:pantondoc_command_latex_engine*
+- *g:pandoc#command#latex_engine*
   default = "xelatex"
 
   The LaTeX engine to use with pandoc. 'xelatex' is the default for greater
   unicode compatibility.
 
-- *g:pantondoc_biblio_sources*
+- *g:pandoc#biblio#sources*
   default = "bcg"
 
   Where to look for bibliographies:
@@ -198,27 +203,27 @@ SETTINGS                                                   *pantondoc-settings*
     c: use any bibliograhy in the working dir
     l: look in pandoc's local dir
     t: look in TeX's texmf
-    g: append items in g:pantondoc_bibs
+    g: append items in *g:pandoc#biblio#bibs*
 
-- *g:pantondoc_biblio_use_bibtool*
+- *g:pandoc#biblio#use_bibtool*
   default = 0
 
   Use bibtool for queries, if available (might help performance).
 
-- *g:pantondoc_mark*
+- *g:pandoc#keyboard#mark*
   default = "r"
 
   What mark to use (i.e, when navigating references, to keep track of original
   position).
 
-- *g:pantondoc_keyboard_header_style*
+- *g:pandoc#keyboard#header_style*
   default = "a"
 
   What style to use when applying headers. Default is to use atx headers
   everywhere. "s" enables setext headers for level 1 and 2 headers, "2"
   appends atx marks at both ends of the header.
 
-- *g:pantondoc_folding_mode*
+- *g:pandoc#folding#mode*
   default = 'syntax'
 
   How to decide what level the headers are. Default value follows syntax
@@ -237,12 +242,12 @@ SETTINGS                                                   *pantondoc-settings*
   relative, and the level of "#### header" is 4 using the default method, but
   2 using relative.
 
-- *g:pantondoc_folding_fold_yaml*
+- *g:pandoc#folding#fold_yaml*
   default = 0
 
   Fold YAML frontmatters.
 
-- *g:pantondoc_folding_fold_div_classes*
+- *g:pandoc#folding#fold_div_classes*
   default = ["notes"]
 
   What div classes to fold. NOTE: you need to end the folds using the folden
@@ -252,12 +257,12 @@ SETTINGS                                                   *pantondoc-settings*
       test
       </div foldend>
 
-- *b:pantondoc_use_basic_folding*
+- *b:pandoc_folding_basic*
   buffer local. default = 0
 
   When set, forces vim-pantondoc to use basic folding in the current buffer.
 
-- *g:pantondoc_toc_position*
+- *g:pandoc#toc#position*
   default = "right"
 
   Where to show the TOC window. Can be "top", "left", "right", "bottom".

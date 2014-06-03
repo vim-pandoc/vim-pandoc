@@ -1,3 +1,3 @@
-if !exists("b:pantondoc_loaded") 
+if !exists("b:pandoc_loaded") 
     runtime ftplugin/pantondoc.vim
 endif
