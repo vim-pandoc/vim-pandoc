@@ -2,9 +2,26 @@
 "
 " Init: {{{1
 function! pantondoc#folding#Init()
+    " set up defaults {{{2
+    " How to decide fold levels {{{3
+    " 'syntax': Use syntax
+    " 'relative': Count how many parents the header has
+    if !exists("g:pandoc#folding#mode")
+	let g:pandoc#folding#mode = 'syntax'
+    endif
+    " Fold the YAML frontmatter {{{3
+    if !exists("g:pandoc#folding#fold_yaml")
+	let g:pandoc#folding#fold_yaml = 0
+    endif
+    " What <div> classes to fold {{{3
+    if !exists("g:pandoc#folding#fold_div_classes")
+	let g:pandoc#folding#fold_div_classes = ["notes"]
+    endif
     if !exists("b:pandoc_folding_basic")
         let b:pandoc_folding_basic = 0
     endif
+
+    " set up folding {{{2
     setlocal foldmethod=expr
     " might help with slowness while typing due to syntax checks
     augroup EnableFastFolds
@@ -14,6 +31,7 @@ function! pantondoc#folding#Init()
     augroup end   
     setlocal foldexpr=pantondoc#folding#FoldExpr()
     setlocal foldtext=pantondoc#folding#FoldText()
+    "}}}
 endfunction
 
 " Main foldexpr function, includes support for common stuff. {{{1 
