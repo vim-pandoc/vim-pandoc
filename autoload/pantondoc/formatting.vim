@@ -70,7 +70,7 @@ function! pantondoc#formatting#UseHardWraps() "{{{1
 
     " hard wrapping at 79 chars (like in gq default)
     if &textwidth == 0
-	    setlocal textwidth=79
+	setlocal textwidth=79
     endif
     " t: wrap on &textwidth
     " n: keep inner indent for list items.
@@ -81,11 +81,11 @@ function! pantondoc#formatting#UseHardWraps() "{{{1
     setlocal formatlistpat=^\\s*\\([*+-]\\\|\\((*\\d\\+[.)]\\+\\)\\\|\\((*\\l[.)]\\+\\)\\)\\s\\+
     
     if stridx(g:pandoc#formatting#mode, "a") >= 0
-	    " a: auto-format
-	    " w: lines with trailing spaces mark continuing
-	    " paragraphs, and lines ending on non-spaces end paragraphs.
-	    " we add `w` as a workaround to `a` joining compact lists.
-	    setlocal formatoptions+=aw
+	" a: auto-format
+	" w: lines with trailing spaces mark continuing
+	" paragraphs, and lines ending on non-spaces end paragraphs.
+	" we add `w` as a workaround to `a` joining compact lists.
+	setlocal formatoptions+=aw
     endif
 endfunction
 

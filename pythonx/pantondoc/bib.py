@@ -47,6 +47,7 @@ def find_bibfiles():
 
     return bibfiles
 
+
 # SUGGESTIONS
 
 bibtex_title_search = re.compile("^\s*[Tt]itle\s*=\s*{(?P<title>\S.*?)}.{,1}\n", re.MULTILINE | re.DOTALL)
@@ -91,6 +92,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
             entries.append(entry_dict)
 
     return entries
+
 
 ris_title_search = re.compile("^(TI|T1|CT|BT|T2|T3)\s*-\s*(?P<title>.*)\n", re.MULTILINE)
 
