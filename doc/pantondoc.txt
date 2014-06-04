@@ -43,7 +43,7 @@ CONTENTS
 - MODULES |pantondoc-modules|
     - FORMATTING |pantondoc-formatting-module|
     - FOLDING |pantondoc-folding-module|
-    - COMMAND |pantondoc-commane-module|
+    - COMMAND |pantondoc-command-module|
     - MENU |pantondoc-menu-module|
     - MOTIONS |pantondoc-keyboard-module|
     - BIBLIOGRAPHIES |pantondoc-bibliographies-module|
@@ -218,8 +218,8 @@ The syntax of the :Pandoc command is as follows:
 
     :Pandoc[!] OUTPUT-FORMAT ARGS
 
-Where OUTPUT-FORMAT is the value you would normaly pass to the -t option in
-pandoc, and ARGS are auxliary arguments you want to pass pandoc. For example,
+Where OUTPUT-FORMAT is the value you would normally pass to the -t option in
+pandoc, and ARGS are auxiliary arguments you want to pass pandoc. For example,
 
     :Pandoc beamer -Vlang:spanish
 
@@ -304,7 +304,7 @@ by the value of the |g:pandoc#biblio#sources| variable. Depending on it, the
 module will gather bibliographies on the following orderi (between brackets,
 the corresponding flag to give g:pandoc#biblio#sources):
 
-1) [b] Search for any bibliograhy that shares the name of the current file in the 
+1) [b] Search for any bibliography that shares the name of the current file in the 
    current directory.
    So, if the document is named `paper.mkd`, it will look for `paper.bib`,
    `paper.ris`, and so on.
@@ -449,7 +449,7 @@ A description of the available configuration variables follows:
   Where to look for bibliographies:
 
     b: use files with the same name as the current file, in the working dir
-    c: use any bibliograhy in the working dir
+    c: use any bibliography in the working dir
     l: look in pandoc's local dir
     t: look in TeX's texmf
     g: append items in |g:pandoc#biblio#bibs|
@@ -512,8 +512,8 @@ A description of the available configuration variables follows:
 - *g:pandoc#folding#fold_div_classes*
   default = ["notes"]
 
-  What div classes to fold. NOTE: you need to end the folds using the folden
-  attribute in the closing tag, like so: 
+  What div classes to fold. NOTE: you need to end the folds using the
+  `foldend` attribute in the closing tag, like so: 
       
       <div class="notes">
       test
