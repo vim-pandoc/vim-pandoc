@@ -2,6 +2,18 @@
 
 " functions for header navigation.
 
+function! markdown#headers#CheckValidHeader(lnum) "{{{1
+    if exists("g:vim_pandoc_syntax_exists")
+	if synIDattr(synID(a:lnum, 1, 1), "name") =~? '\(pandocDelimitedCodeBlock\|comment\|yamlkey\)'
+	    return 0
+	endif
+    endif
+    if match(getline(a:lnum), "^#") >= 0 || match(getline(a:lnum+1), "^[-=]") >= 0
+	return 1
+    endif
+    return 0
+endfunction
+
 function! markdown#headers#NextHeader(...) "{{{1
     let origin_pos = getpos(".")
     if a:0 > 0
@@ -11,6 +23,9 @@ function! markdown#headers#NextHeader(...) "{{{1
     endif
     call cursor(search_from[1], 2)
     let h_lnum = search('\(^.*\n[-=]\|^#\)','nW')
+    if markdown#headers#CheckValidHeader(h_lnum) != 1
+	let h_lnum = markdown#headers#NextHeader(h_lnum)
+    endif
     if h_lnum == 0 
 	if match(getline("."), "^#") >= 0 || match(getline(line(".")+1), "^[-=]") >= 0
 	    let h_lnum = line(".")
@@ -29,6 +44,14 @@ function! markdown#headers#PrevHeader(...) "{{{1
     endif
     call cursor(search_from[1], 1)
     let h_lnum = search('\(^.*\n[-=]\|^#\)', 'bnW')
+    if markdown#headers#CheckValidHeader(h_lnum) != 1
+	let h_lnum = markdown#headers#PrevHeader(h_lnum)
+	" we might go back into the YAML frontmatter, we must recheck if we
+	" are fine
+	if markdown#headers#CheckValidHeader(h_lnum) != 1
+	    let h_lnum = 0
+	endif
+    endif
     if h_lnum == 0 
 	if match(getline("."), "^#") >= 0 || match(getline(line(".")+1), "^[-=]") >= 0
 	    let h_lnum = line(".")
@@ -83,6 +106,12 @@ function! markdown#headers#CurrentHeaderParent(...) "{{{1
 	endif
 	
 	let arrival_lnum = search('\('.setext_regex.'\|^#\{1,'.parent_level.'}\s\)', "bnW")
+	if markdown#headers#CheckValidHeader(arrival_lnum) != 1
+	    let arrival_lnum = search('\('.setext_regex.'\|^#\{1,'.parent_level.'}\s\)', "bnW")
+	    if markdown#headers#CheckValidHeader(arrival_lnum) != 1
+		let arrival_lnum = 0
+	    endif
+	endif
     else
 	let arrival_lnum = 0
     endif
