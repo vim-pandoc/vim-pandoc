@@ -2,7 +2,22 @@
 
 " Init: {{{1
 function! pantondoc#keyboard#Init()
-    " Styling:
+    " set up defaults {{{2
+    " We use a mark for some functions, the user can change it so it doesn't {{{3
+    " interfere with his settings
+    if !exists("g:pandoc#keyboard#mark")
+	let g:pandoc#keyboard#mark = "r"
+    endif
+
+    " What style to use when applying header styles {{{3
+    " a: atx headers
+    " s: setex headers for 1st and 2nd levels
+    " 2: add hashes at both ends
+    if !exists("g:pandoc#keyboard#header_style")
+	let g:pandoc#keyboard#header_style = "a"
+    endif
+
+    " Styling: {{{2
     " Toggle emphasis, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>i :set opfunc=pantondoc#keyboard#ToggleEmphasis<cr>g@
     vnoremap <buffer> <silent> <localleader>i :<C-U>call pantondoc#keyboard#ToggleEmphasis(visualmode())<CR>
@@ -22,7 +37,7 @@ function! pantondoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>_ :set opfunc=pantondoc#keyboard#ToggleSubscript<cr>g@
     vnoremap <buffer> <silent> <localleader>_ :<C-U>call pantondoc#keyboard#ToggleSubscript(visualmode())<CR>
 
-    " Headers:
+    " Headers: {{{2
     noremap <buffer> <silent> <localleader># :<C-U>call pantondoc#keyboard#ApplyHeader(v:count1)<cr>
     noremap <buffer> <silent> <localleader>hd :call pantondoc#keyboard#RemoveHeader()<cr>
     noremap <buffer> <silent> <localleader>hn :call pantondoc#keyboard#NextHeader()<cr>
@@ -35,13 +50,14 @@ function! pantondoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>hcl :call pantondoc#keyboard#LastChild()<cr>
     noremap <buffer> <silent> <localleader>hcn :<C-U>call pantondoc#keyboard#GotoNthChild(v:count1)<cr>
 
-    " References:
+    " References: {{{2
     " Add new reference link (or footnote link) after current paragraph. 
     noremap <buffer> <silent> <localleader>nr :call pantondoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
     noremap <buffer> <silent> <localleader>rg :call pantondoc#keyboard#GOTO_Ref()<CR>
     " Go back to last point in the text we jumped to a reference from.
     noremap <buffer> <silent> <localleader>rb :call pantondoc#keyboard#BACKFROM_Ref()<CR>
+    " }}}
 endfunction
 "}}}1
 " Auxiliary: {{{1
@@ -177,7 +193,7 @@ endfunction
 " References: {{{1
 " handling: {{{2
 function! pantondoc#keyboard#Insert_Ref()
-    execute "normal m".g:pantondoc_mark
+    execute "normal m".g:pandoc#keyboard#mark
     execute "normal! ya\[o\<cr>\<esc>0P$a: "
 endfunction
 " }}}2
@@ -185,7 +201,7 @@ endfunction
 
 function! pantondoc#keyboard#GOTO_Ref()
     let reg_save = @@
-    execute "normal m".g:pantondoc_mark
+    execute "normal m".g:pandoc#keyboard#mark
     execute "silent normal! ?[\<cr>vf]y"
     let @@ = substitute(@@, '\[', '\\\[', 'g')
     let @@ = substitute(@@, '\]', '\\\]', 'g')
@@ -195,9 +211,9 @@ endfunction
 
 function! pantondoc#keyboard#BACKFROM_Ref()
     try
-        execute 'normal  `'.g:pantondoc_mark
+        execute 'normal  `'.g:pandoc#keyboard#mark
 	" clean up
-	execute 'delmark '.g:pantondoc_mark
+	execute 'delmark '.g:pandoc#keyboard#mark
     catch /E20/ "no mark set, we must search backwards.
 	let reg_save = @@
 	"move right, because otherwise it would fail if the cursor is at the
@@ -226,10 +242,10 @@ function! pantondoc#keyboard#ApplyHeader(level) "{{{3
     endif
 
     let line_text = getline(".")
-    if a:level < 3 && (g:pantondoc_keyboard_header_style =~ "s") == 1
+    if a:level < 3 && (g:pandoc#keyboard#header_style =~ "s") == 1
        let text = line_text
     else
-       if (g:pantondoc_keyboard_header_style =~ "2") == 1
+       if (g:pandoc#keyboard#header_style =~ "2") == 1
 	   let tail = ' ' . repeat("#", a:level)
        else
 	   let tail = ''
@@ -238,7 +254,7 @@ function! pantondoc#keyboard#ApplyHeader(level) "{{{3
     endif
     call setline(line("."), text)
     
-    if (g:pantondoc_keyboard_header_style =~ "s") == 1
+    if (g:pandoc#keyboard#header_style =~ "s") == 1
 	if a:level == 1
 	    call append(line("."), repeat("=", len(text)))
 	elseif a:level == 2

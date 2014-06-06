@@ -88,7 +88,7 @@ class PandocHelpParser(object):
         table = {}
         for i in PandocHelpParser._get_input_formats():
             if re.match("markdown", i):
-                if vim.vars["pantondoc_use_pandoc_markdown"] != 0:
+                if vim.vars["pandoc#filetypes#pandoc_markdown"] != 0:
                     table[i] = "pandoc"
                 else:
                     if i == "markdown_strict":
@@ -116,7 +116,7 @@ class PandocCommand(object):
     def __call__(self, args, should_open):
         # build arguments to pass pandoc
 
-        buffer_bibliographies = vim.eval('b:pantondoc_bibs')
+        buffer_bibliographies = vim.eval('b:pandoc_biblio_bibs')
         if len(buffer_bibliographies) < 1:
             buffer_bibliographies = bib.find_bibfiles()
         bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
@@ -125,7 +125,7 @@ class PandocCommand(object):
 
         strict_arg = "-r markdown_strict" if \
                 vim.current.buffer.options["ft"] == "markdown" and \
-                not bool(vim.vars["pantondoc_use_pandoc_markdown"]) \
+                not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
                 else ""
 
         c_opts, c_args = getopt.gnu_getopt(args.split(), self.opts.shortopts, self.opts.longopts)
@@ -135,7 +135,7 @@ class PandocCommand(object):
         self._output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
         output_arg = '-o "' + self._output_file_path + '"'
 
-        engine_arg = "--latex-engine=" + vim.vars["pantondoc_command_latex_engine"] if output_format in ["pdf", "beamer"] else ""
+        engine_arg = "--latex-engine=" + vim.vars["pandoc#command#latex_engine"] if output_format in ["pdf", "beamer"] else ""
 
         extra = []
         for opt in c_opts:
@@ -165,9 +165,9 @@ class PandocCommand(object):
 
     def execute(self, should_open):
         with open("pandoc.out", 'w') as tmp:
-            if vim.bindeval("has('clientserver')") and vim.bindeval("executable('python')"):
+            if vim.eval("has('clientserver')") == '1' and vim.eval("executable('python')") == '1':
                 async_runner = '"' + os.path.join(os.path.dirname(__file__), "async.py") + '"'
-                servername_arg = "--servername=" + vim.bindeval("v:servername")
+                servername_arg = "--servername=" + vim.eval("v:servername")
                 open_arg  = "--open" if should_open else "--noopen"
                 async_command = " ".join(["python", async_runner, servername_arg, open_arg, self._run_command])
                 try:
@@ -186,7 +186,7 @@ class PandocCommand(object):
 
     def on_done(self, should_open, returncode):
         if self._run_command and self._output_file_path:
-            if vim.bindeval("g:pantondoc_use_message_buffers") and returncode != '0':
+            if vim.eval("g:pandoc#command#use_message_buffers") == '1' and returncode != '0':
                 vim.command("let split = &splitbelow")
                 vim.command("set splitbelow")
 
@@ -197,7 +197,7 @@ class PandocCommand(object):
                 vim.current.buffer[0] = "# Press <Esc> to close this"
                 vim.current.buffer.append("▶ " + self._run_command)
                 vim.command("normal! G")
-                if vim.bindeval('filereadable("pandoc.out")'):
+                if vim.eval('filereadable("pandoc.out")') == '1':
                     vim.command("silent r pandoc.out")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal nobuflisted")

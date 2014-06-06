@@ -3,7 +3,7 @@ function! pantondoc#menu#Init()
 endfunction
 
 function! pantondoc#menu#CreateMenu()
-    if index(g:pantondoc_enabled_modules, "command") >= 0
+    if index(g:pandoc#modules#enabled, "command") >= 0
 	amenu .600 Pantondoc.Pandoc.&Pdf :Pandoc pdf<CR>
 	amenu .601 Pantondoc.Pandoc.Pdf\ \(Open\) :Pandoc! pdf<CR>
 	amenu .602 Pantondoc.Pandoc.&Beamer :Pandoc beamer<CR>

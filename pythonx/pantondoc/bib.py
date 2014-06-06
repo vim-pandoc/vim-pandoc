@@ -9,7 +9,7 @@ import subprocess as sp
 bib_extensions = ["json", "ris", "mods", "biblatex", "bib"]
 
 def find_bibfiles():
-    sources = vim.vars["pantondoc_biblio_sources"]
+    sources = vim.vars["pandoc#biblio#sources"]
     bibfiles = []
     if "b" in sources and vim.current.buffer.name not in (None, ""):
         file_name, ext = os.path.splitext(vim.current.buffer.name)
@@ -37,15 +37,16 @@ def find_bibfiles():
         if os.path.exists(texmf):
             bibfiles.extend([os.path.abspath(f) for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions])
 
-    # we append the items in g:pandoc_bibfiles, if set
+    # we append the items in g:pandoc#biblio#bibs, if set
     if "g" in sources:
-        bibfiles.extend(vim.vars["pantondoc_bibs"])
+        bibfiles.extend(vim.vars["pandoc#biblio#bibs"])
 
     # we check if the items in bibfiles are readable and not directories
     if bibfiles != []:
         bibfiles = list(set(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles)))
 
     return bibfiles
+
 
 # SUGGESTIONS
 
@@ -91,6 +92,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
             entries.append(entry_dict)
 
     return entries
+
 
 ris_title_search = re.compile("^(TI|T1|CT|BT|T2|T3)\s*-\s*(?P<title>.*)\n", re.MULTILINE)
 
@@ -163,7 +165,7 @@ def get_json_suggestions(text, query):
     return entries
 
 def get_suggestions():
-    bibs = vim.eval("b:pantondoc_bibs")
+    bibs = vim.eval("b:pandoc_biblio_bibs")
     if len(bibs) < 1:
        bibs = find_bibfiles()
     query = vim.eval("a:partkey")
@@ -183,7 +185,7 @@ def get_suggestions():
         elif bib_type == "json":
             ids = get_json_suggestions(text, query)
         else:
-            if bool(vim.vars["pantondoc_biblio_use_bibtool"]) and bool(vim.eval("executable('bibtool')")):
+            if vim.vars["pandoc#biblio#use_bibtool"] == 1 and vim.eval("executable('bibtool')") == '1':
                 ids = get_bibtex_suggestions(bib, query, True, bib)
             else:
                 ids = get_bibtex_suggestions(text, query)

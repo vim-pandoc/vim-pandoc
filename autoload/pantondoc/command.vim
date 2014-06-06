@@ -1,13 +1,29 @@
-" creates the Pandoc command, requires python support
+" vim: set fdm=marker :
+
+" Init(): sets up defaults, creates the Pandoc command, requires python support {{{1
 function! pantondoc#command#Init()
+    " set up defaults {{{2
+    " use message buffers? {{{3
+    if !exists("g:pandoc#command#use_message_buffers")
+	let g:pandoc#command#use_message_buffers = 1
+    endif
+
+    " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3
+    if !exists("g:pandoc#command#latex_engine")
+	let g:pandoc#command#latex_engine = "xelatex"
+    endif
+
+    " create :Pandoc {{{2
     if has("python")
 	" let's make sure it gets loaded
 	py import vim
         command! -buffer -bang -nargs=? -complete=customlist,pantondoc#command#PandocComplete Pandoc call pantondoc#command#Pandoc("<args>", "<bang>")
-    endif
+    endif "}}}2
 endfunction
 
-" the Pandoc command itself, requires python support
+" Pandoc(args, bang): the Pandoc command itself, requires python support {{{1
+" args: arguments to pass pandoc
+" bang: should we open the created file afterwards?
 function! pantondoc#command#Pandoc(args, bang)
     if has("python")
 	py from pantondoc.command import pandoc
@@ -15,7 +31,7 @@ function! pantondoc#command#Pandoc(args, bang)
     endif
 endfunction
 
-" the Pandoc command argument completion func, requires python support
+" PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{1
 function! pantondoc#command#PandocComplete(a, c, pos)
     if has("python")
 	py from pantondoc.command import PandocHelpParser
@@ -23,6 +39,9 @@ function! pantondoc#command#PandocComplete(a, c, pos)
     endif
 endfunction
 
+" PandocAsyncCallback(should_open, returncode): Callback to execute after pandoc finished {{{1
+" should_open: should we open the cretaed file?
+" returncode: the returncode value pandoc gave
 function! pantondoc#command#PandocAsyncCallback(should_open, returncode)
     if has("python")
 	py from pantondoc.command import pandoc
