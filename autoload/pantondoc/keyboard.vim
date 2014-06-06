@@ -3,8 +3,13 @@
 " Init: {{{1
 function! pantondoc#keyboard#Init()
     " set up defaults {{{2
-    " We use a mark for some functions, the user can change it so it doesn't {{{3
-    " interfere with his settings
+    " Use display motions when using soft wrapping {{{3
+    if !exists("g:pandoc#keyboard#display_motions")
+	let g:pandoc#keyboard#display_motions = 1
+    endif
+ 
+    " We use a mark for some functions, the user can change it {{{3
+    " so it doesn't interfere with his settings
     if !exists("g:pandoc#keyboard#mark")
 	let g:pandoc#keyboard#mark = "r"
     endif
@@ -17,6 +22,18 @@ function! pantondoc#keyboard#Init()
 	let g:pandoc#keyboard#header_style = "a"
     endif
 
+    " Display_Motion: {{{2
+    if g:pandoc#keyboard#display_motions == 1
+	" these are not useful when using the hard wraps mode.
+	if exists("g:pandoc#formatting#mode") && stridx(g:pandoc#formatting#mode, "s") > -1
+	    " Remappings that make j and k behave properly with soft wrapping.
+	    nnoremap <buffer> j gj
+	    nnoremap <buffer> k gk
+	    vnoremap <buffer> j gj
+	    vnoremap <buffer> k gk
+	endif
+    endif
+    
     " Styling: {{{2
     " Toggle emphasis, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>i :set opfunc=pantondoc#keyboard#ToggleEmphasis<cr>g@

@@ -97,15 +97,7 @@ function! pantondoc#formatting#UseSoftWraps() "{{{1
 
     " soft wrapping
     setlocal formatoptions=1
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Remappings that make j and k behave properly with
-    " soft wrapping.
-    nnoremap <buffer> j gj
-    nnoremap <buffer> k gk
-    vnoremap <buffer> j gj
-    vnoremap <buffer> k gk
 
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Show partial wrapped lines
     setlocal display=lastline
 endfunction
