@@ -128,7 +128,8 @@ class PandocCommand(object):
                 not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
                 else ""
 
-        c_opts, c_args = getopt.gnu_getopt(args.split(), self.opts.shortopts, self.opts.longopts)
+        c_opts, c_args = getopt.gnu_getopt(shlex.split(args), self.opts.shortopts, self.opts.longopts)
+        c_opts = [(i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])) ) for i in c_opts]
 
         output_format = c_args[0] if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
