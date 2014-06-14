@@ -14,7 +14,7 @@ let g:pandoc#loaded = 1
 " Globals: {{{1
 
 " we use this to configure to what filetypes we attach to
-let pandoc_extensions_table = {
+let g:pandoc_extensions_table = {
 			\"extra": ["text", "txt"],
 			\"html": ["html", "htm"],
 			\"json" : ["json"],
@@ -96,7 +96,7 @@ augroup END
 augroup pantondoc
     let s:exts = []
     for ext in g:pandoc#filetypes#handled
-	call extend(s:exts, map(pandoc_extensions_table[ext], '"*." . v:val'))
+	call extend(s:exts, map(g:pandoc_extensions_table[ext], '"*." . v:val'))
     endfor
     execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
 augroup END
