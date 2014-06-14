@@ -47,6 +47,7 @@ if !exists("g:pandoc#modules#disabled")
     let g:pandoc#modules#disabled = []
 endif
 if v:version < 704
+    let s:module_disabled = 0
     for incompatible_module in ["bibliographies", "command"]
 	" user might have disabled them himself, check that
 	if index(g:pandoc#modules#disabled, incompatible_module) == -1
