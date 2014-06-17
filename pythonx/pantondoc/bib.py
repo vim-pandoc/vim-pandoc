@@ -6,7 +6,14 @@ import operator
 from glob import glob
 import subprocess as sp
 
-import unicodedata
+def make_title_ascii(title):
+    import unicodedata
+    if type(title) != ascii :
+        title = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore')
+    else :
+        title = str(title)
+    return title
+
 
 bib_extensions = ["json", "ris", "mods", "biblatex", "bib"]
 
@@ -161,11 +168,7 @@ def get_json_suggestions(text, query):
             if re.search(query,  label):
                 entry_dict["word"] = label
                 title = entry["title"]
-                if type(title) == unicode :
-                    title = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore')
-                else :
-                    title = str(title)
-                entry_dict["menu"] = title
+                entry_dict["menu"] = make_title_ascii(title)
                 entries.append(entry_dict)
 
     return entries
