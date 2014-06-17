@@ -6,6 +6,8 @@ import operator
 from glob import glob
 import subprocess as sp
 
+import unicodedata
+
 bib_extensions = ["json", "ris", "mods", "biblatex", "bib"]
 
 def find_bibfiles():
@@ -159,7 +161,11 @@ def get_json_suggestions(text, query):
             if re.search(query,  label):
                 entry_dict["word"] = label
                 title = entry["title"]
-                entry_dict["menu"] = str(title)
+                if type(title) == unicode :
+                    title = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore')
+                else :
+                    title = str(title)
+                entry_dict["menu"] = title
                 entries.append(entry_dict)
 
     return entries
