@@ -96,7 +96,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
                     title = i3.group("booktitle")
             title = re.sub("[{}]", "", re.sub("\s+", " ", title))
 
-            entry_dict["menu"] = title
+            entry_dict["menu"] = make_title_ascii(title)
 
             entries.append(entry_dict)
 
@@ -123,7 +123,7 @@ def get_ris_suggestions(text, query):
             if i2:
                 title = i2.group("title")
 
-            entry_dict["menu"] = title
+            entry_dict["menu"] = make_title_ascii(title)
             entries.append(entry_dict)
 
     return entries
@@ -139,7 +139,7 @@ def get_mods_suggestions(text, query):
         if re.match(query, str(entry_id)):
             entry_dict["word"] = entry_id
             title = " ".join([s.strip() for s in bib_data.find("titleInfo").find("title").text.split("\n")])
-            entry_dict["menu"] = str(title)
+            entry_dict["menu"] = make_title_ascii(title)
             entries.append(entry_dict)
     elif bib_data.tag == "modsCollection":
         for mod in bib_data.findall("mods"):
@@ -148,7 +148,7 @@ def get_mods_suggestions(text, query):
             if re.match(query, str(entry_id)):
                 entry_dict["word"] = entry_id
                 title = " ".join([s.strip() for s in bib_data.find("titleInfo").find("title").text.split("\n")])
-                entry_dict["menu"] = str(title)
+                entry_dict["menu"] = make_title_ascii(title)
                 entries.append(entry_dict)
 
     return entries
@@ -167,8 +167,7 @@ def get_json_suggestions(text, query):
             label = str(entry["id"])
             if re.search(query,  label):
                 entry_dict["word"] = label
-                title = entry["title"]
-                entry_dict["menu"] = make_title_ascii(title)
+                entry_dict["menu"] = make_title_ascii(entry["title"])
                 entries.append(entry_dict)
 
     return entries
