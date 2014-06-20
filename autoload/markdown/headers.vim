@@ -1,6 +1,6 @@
 " vim: set fdm=marker :
 
-" functions for header navigation.
+" functions for header navigation and information retrieval.
 
 function! markdown#headers#CheckValidHeader(lnum) "{{{1
     if exists("g:vim_pandoc_syntax_exists")
@@ -340,3 +340,35 @@ function! markdown#headers#NthChild(count, ...) "{{{1
     return arrival_lnum
 endfunction
 
+function! markdown#headers#ID(...) "{{{1
+    let origin_pos = getpos(".")
+    if a:0 > 0
+	let search_from = [1, a:1, 1, 0]
+    else
+	let search_from = origin_pos
+    endif
+
+    let cheader_lnum = markdown#headers#CurrentHeader(search_from[1])
+    let cheader = getline(cheader_lnum)
+    let header_metadata = matchstr(cheader, "{.*}")
+    if header_metadata != ""
+	let header_id = matchstr(header_metadata, '#[[:alnum:]-]*')[1:]
+    endif
+    if !exists("header_id") || header_id == ""
+	let text = substitute(cheader, '\[\(.\{-}\)\]\[.*\]', '\=submatch(1)', '') " remove links
+	let text = substitute(text, '\s{.*}', '', '') " remove attributes
+	let text = substitute(text, '[[:punct:]]', '', 'g') " remove formatting and punctuation
+	let text = substitute(text, '.\{-}[[:alpha:]]\@=', '', '') " remove everything before the first letter
+	let text = substitute(text, '\s', '-', 'g') " replace spaces with dashes
+	let text = tolower(text) " turn lowercase
+	if !exists("header_id") || header_id == ""
+	   if match(text, "[[:alpha:]]") > -1
+		let header_id = text
+	    else
+		let header_id = "section"
+	    endif
+        endif
+    endif
+    call cursor(origin_pos[1], origin_pos[2])
+    return header_id
+endfunction
