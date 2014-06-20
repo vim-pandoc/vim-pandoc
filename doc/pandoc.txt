@@ -1,16 +1,6 @@
 *vim-pandoc*                                           Last change: 04/11/2013 
 
-
-	                                            ▎            
-	        _   __,   _  _  _▎_  __   _  _    __▎   __   __  
-	      ▎/ \_/  ▎  / ▎/ ▎  ▎  /  \_/ ▎/ ▎  /  ▎  /  \_/    
-	      ▎__/ \_/▎_/  ▎  ▎_/▎_/\__/   ▎  ▎_/\_/▎_/\__/ \___/
-	     /▎              
-	     \▎                                                 
-
-
-
-`vim-pandoc` provides facilities to integrate Vim with the |pandoc| document
+|vim-pandoc| provides facilities to integrate Vim with the |pandoc| document
 converter and work with documents written in |pandocs-markdown-variant|
 variant (although textile documents are also supported). It is the main item
 in |vim-pandoc-project|.
@@ -22,7 +12,8 @@ in |vim-pandoc-project|.
   *vim-pandoc-project*
     http://github.com/vim-pandoc
 
-`vim-pandoc`'s goals are
+vim-pandoc's goals are
+
  1) to provide advanced integration with pandoc, 
  2) to offer a comfortable document writing environment,
  3) to allow great configurability.
