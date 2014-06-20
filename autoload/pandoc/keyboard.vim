@@ -1,7 +1,7 @@
 " vim: set fdm=marker:
 
 " Init: {{{1
-function! pantondoc#keyboard#Init()
+function! pandoc#keyboard#Init()
     " set up defaults {{{2
     " Use display motions when using soft wrapping {{{3
     if !exists("g:pandoc#keyboard#display_motions")
@@ -36,44 +36,44 @@ function! pantondoc#keyboard#Init()
     
     " Styling: {{{2
     " Toggle emphasis, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>i :set opfunc=pantondoc#keyboard#ToggleEmphasis<cr>g@
-    vnoremap <buffer> <silent> <localleader>i :<C-U>call pantondoc#keyboard#ToggleEmphasis(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>i :set opfunc=pandoc#keyboard#ToggleEmphasis<cr>g@
+    vnoremap <buffer> <silent> <localleader>i :<C-U>call pandoc#keyboard#ToggleEmphasis(visualmode())<CR>
     " Toggle strong, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>b :set opfunc=pantondoc#keyboard#ToggleStrong<cr>g@
-    vnoremap <buffer> <silent> <localleader>b :<C-U>call pantondoc#keyboard#ToggleStrong(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>b :set opfunc=pandoc#keyboard#ToggleStrong<cr>g@
+    vnoremap <buffer> <silent> <localleader>b :<C-U>call pandoc#keyboard#ToggleStrong(visualmode())<CR>
     " Toggle verbatim, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>` :set opfunc=pantondoc#keyboard#ToggleVerbatim<cr>g@
-    vnoremap <buffer> <silent> <localleader>` :<C-U>call pantondoc#keyboard#ToggleVerbatim(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>` :set opfunc=pandoc#keyboard#ToggleVerbatim<cr>g@
+    vnoremap <buffer> <silent> <localleader>` :<C-U>call pandoc#keyboard#ToggleVerbatim(visualmode())<CR>
     " Toggle strikeout, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>~~ :set opfunc=pantondoc#keyboard#ToggleStrikeout<cr>g@
-    vnoremap <buffer> <silent> <localleader>~~ :<C-U>call pantondoc#keyboard#ToggleStrikeout(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>~~ :set opfunc=pandoc#keyboard#ToggleStrikeout<cr>g@
+    vnoremap <buffer> <silent> <localleader>~~ :<C-U>call pandoc#keyboard#ToggleStrikeout(visualmode())<CR>
     " Toggle superscript, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>^ :set opfunc=pantondoc#keyboard#ToggleSuperscript<cr>g@
-    vnoremap <buffer> <silent> <localleader>^ :<C-U>call pantondoc#keyboard#ToggleSuperscript(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>^ :set opfunc=pandoc#keyboard#ToggleSuperscript<cr>g@
+    vnoremap <buffer> <silent> <localleader>^ :<C-U>call pandoc#keyboard#ToggleSuperscript(visualmode())<CR>
     " Toggle subscript, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>_ :set opfunc=pantondoc#keyboard#ToggleSubscript<cr>g@
-    vnoremap <buffer> <silent> <localleader>_ :<C-U>call pantondoc#keyboard#ToggleSubscript(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>_ :set opfunc=pandoc#keyboard#ToggleSubscript<cr>g@
+    vnoremap <buffer> <silent> <localleader>_ :<C-U>call pandoc#keyboard#ToggleSubscript(visualmode())<CR>
 
     " Headers: {{{2
-    noremap <buffer> <silent> <localleader># :<C-U>call pantondoc#keyboard#ApplyHeader(v:count1)<cr>
-    noremap <buffer> <silent> <localleader>hd :call pantondoc#keyboard#RemoveHeader()<cr>
-    noremap <buffer> <silent> <localleader>hn :call pantondoc#keyboard#NextHeader()<cr>
-    noremap <buffer> <silent> <localleader>hb :call pantondoc#keyboard#PrevHeader()<cr>
-    noremap <buffer> <silent> <localleader>hh :call pantondoc#keyboard#CurrentHeader()<cr>
-    noremap <buffer> <silent> <localleader>hp :call pantondoc#keyboard#CurrentHeaderParent()<cr>
-    noremap <buffer> <silent> <localleader>hsn :call pantondoc#keyboard#NextSiblingHeader()<cr>
-    noremap <buffer> <silent> <localleader>hsb :call pantondoc#keyboard#PrevSiblingHeader()<cr>
-    noremap <buffer> <silent> <localleader>hcf :call pantondoc#keyboard#FirstChild()<cr>
-    noremap <buffer> <silent> <localleader>hcl :call pantondoc#keyboard#LastChild()<cr>
-    noremap <buffer> <silent> <localleader>hcn :<C-U>call pantondoc#keyboard#GotoNthChild(v:count1)<cr>
+    noremap <buffer> <silent> <localleader># :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
+    noremap <buffer> <silent> <localleader>hd :call pandoc#keyboard#RemoveHeader()<cr>
+    noremap <buffer> <silent> <localleader>hn :call pandoc#keyboard#NextHeader()<cr>
+    noremap <buffer> <silent> <localleader>hb :call pandoc#keyboard#PrevHeader()<cr>
+    noremap <buffer> <silent> <localleader>hh :call pandoc#keyboard#CurrentHeader()<cr>
+    noremap <buffer> <silent> <localleader>hp :call pandoc#keyboard#CurrentHeaderParent()<cr>
+    noremap <buffer> <silent> <localleader>hsn :call pandoc#keyboard#NextSiblingHeader()<cr>
+    noremap <buffer> <silent> <localleader>hsb :call pandoc#keyboard#PrevSiblingHeader()<cr>
+    noremap <buffer> <silent> <localleader>hcf :call pandoc#keyboard#FirstChild()<cr>
+    noremap <buffer> <silent> <localleader>hcl :call pandoc#keyboard#LastChild()<cr>
+    noremap <buffer> <silent> <localleader>hcn :<C-U>call pandoc#keyboard#GotoNthChild(v:count1)<cr>
 
     " References: {{{2
     " Add new reference link (or footnote link) after current paragraph. 
-    noremap <buffer> <silent> <localleader>nr :call pantondoc#keyboard#Insert_Ref()<cr>a
+    noremap <buffer> <silent> <localleader>nr :call pandoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
-    noremap <buffer> <silent> <localleader>rg :call pantondoc#keyboard#GOTO_Ref()<CR>
+    noremap <buffer> <silent> <localleader>rg :call pandoc#keyboard#GOTO_Ref()<CR>
     " Go back to last point in the text we jumped to a reference from.
-    noremap <buffer> <silent> <localleader>rb :call pantondoc#keyboard#BACKFROM_Ref()<CR>
+    noremap <buffer> <silent> <localleader>rb :call pandoc#keyboard#BACKFROM_Ref()<CR>
     " }}}
 endfunction
 "}}}1
@@ -91,7 +91,7 @@ endfunction
 " Styling: {{{1
 " Base: {{{2
 " Toggle Operators, WYSIWYG-style {{{3
-function! pantondoc#keyboard#ToggleOperator(type, ends)
+function! pandoc#keyboard#ToggleOperator(type, ends)
     let sel_save = &selection
     let &selection = "inclusive"
     let reg_save = @@
@@ -135,7 +135,7 @@ function! pantondoc#keyboard#ToggleOperator(type, ends)
     let &selection = sel_save
 endfunction "}}}3
 " Apply style {{{3
-function! pantondoc#keyboard#Apply(type, ends)
+function! pandoc#keyboard#Apply(type, ends)
     let sel_save = &selection
     let &selection = "inclusive"
     let reg_save = @@
@@ -155,68 +155,68 @@ endfunction
 "}}}2
 " Emphasis: {{{2
 " Apply emphasis, straight {{{3
-function! pantondoc#keyboard#Emph(type)
-    return pantondoc#keyboard#Apply(a:type, "*")
+function! pandoc#keyboard#Emph(type)
+    return pandoc#keyboard#Apply(a:type, "*")
 endfunction
 " }}}3
 " WYSIWYG-style toggle {{{3
 "
-function! pantondoc#keyboard#ToggleEmphasis(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "*")
+function! pandoc#keyboard#ToggleEmphasis(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "*")
 endfunction
 " }}}3
 "}}}2
 " Strong: {{{2
-function! pantondoc#keyboard#Strong(type)
-    return pantondoc#keyboard#Apply(a:type, "**")
+function! pandoc#keyboard#Strong(type)
+    return pandoc#keyboard#Apply(a:type, "**")
 endfunction
-function! pantondoc#keyboard#ToggleStrong(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "**")
+function! pandoc#keyboard#ToggleStrong(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "**")
 endfunction
 "}}}2
 " Verbatim: {{{2
-function! pantondoc#keyboard#Verbatim(type)
-    return pantondoc#keyboard#Apply(a:type, "`")
+function! pandoc#keyboard#Verbatim(type)
+    return pandoc#keyboard#Apply(a:type, "`")
 endfunction
-function! pantondoc#keyboard#ToggleVerbatim(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "`")
+function! pandoc#keyboard#ToggleVerbatim(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "`")
 endfunction
 " }}}2
 " Strikeout: {{{2
-function! pantondoc#keyboard#Strikeout(type)
-    return pantondoc#keyboard#Apply(a:type, "~~")
+function! pandoc#keyboard#Strikeout(type)
+    return pandoc#keyboard#Apply(a:type, "~~")
 endfunction
-function! pantondoc#keyboard#ToggleStrikeout(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "~~")
+function! pandoc#keyboard#ToggleStrikeout(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "~~")
 endfunction
 " }}}2
 " Superscript: {{{2
-function! pantondoc#keyboard#Superscript(type)
-    return pantondoc#keyboard#Apply(a:type, "^")
+function! pandoc#keyboard#Superscript(type)
+    return pandoc#keyboard#Apply(a:type, "^")
 endfunction
-function! pantondoc#keyboard#ToggleSuperscript(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "^")
+function! pandoc#keyboard#ToggleSuperscript(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "^")
 endfunction
 " }}}2
 " Subscript: {{{2
-function! pantondoc#keyboard#Subscript(type)
-    return pantondoc#keyboard#Apply(a:type, "~")
+function! pandoc#keyboard#Subscript(type)
+    return pandoc#keyboard#Apply(a:type, "~")
 endfunction
-function! pantondoc#keyboard#ToggleSubscript(type)
-    return pantondoc#keyboard#ToggleOperator(a:type, "~")
+function! pandoc#keyboard#ToggleSubscript(type)
+    return pandoc#keyboard#ToggleOperator(a:type, "~")
 endfunction
 " }}}2
 "}}}1
 " References: {{{1
 " handling: {{{2
-function! pantondoc#keyboard#Insert_Ref()
+function! pandoc#keyboard#Insert_Ref()
     execute "normal m".g:pandoc#keyboard#mark
     execute "normal! ya\[o\<cr>\<esc>0P$a: "
 endfunction
 " }}}2
 " navigation: {{{2
 
-function! pantondoc#keyboard#GOTO_Ref()
+function! pandoc#keyboard#GOTO_Ref()
     let reg_save = @@
     execute "normal m".g:pandoc#keyboard#mark
     execute "silent normal! ?[\<cr>vf]y"
@@ -226,7 +226,7 @@ function! pantondoc#keyboard#GOTO_Ref()
     let @@ = reg_save
 endfunction
 
-function! pantondoc#keyboard#BACKFROM_Ref()
+function! pandoc#keyboard#BACKFROM_Ref()
     try
         execute 'normal  `'.g:pandoc#keyboard#mark
 	" clean up
@@ -242,18 +242,18 @@ function! pantondoc#keyboard#BACKFROM_Ref()
     endtry
 endfunction
 
-function! pantondoc#keyboard#NextRefDefinition()
+function! pandoc#keyboard#NextRefDefinition()
 endfunction
 
-function! pantondoc#keyboard#PrevRefDefinition()
+function! pandoc#keyboard#PrevRefDefinition()
 endfunction
 " }}}2
 " }}}1
 " Headers: {{{1
 
 " handling: {{{2
-function! pantondoc#keyboard#ApplyHeader(level) "{{{3
-    call pantondoc#keyboard#RemoveHeader()
+function! pandoc#keyboard#ApplyHeader(level) "{{{3
+    call pandoc#keyboard#RemoveHeader()
     if a:level == 0
 	return
     endif
@@ -280,7 +280,7 @@ function! pantondoc#keyboard#ApplyHeader(level) "{{{3
     endif
 endfunction
 
-function! pantondoc#keyboard#RemoveHeader() "{{{3
+function! pandoc#keyboard#RemoveHeader() "{{{3
     let lnum = line(".")
     let line_text = getline(".")
     if match(line_text, "^#") > -1
@@ -296,39 +296,39 @@ function! pantondoc#keyboard#RemoveHeader() "{{{3
 endfunction
 " }}}2
 " navigation: {{{2
-function! pantondoc#keyboard#NextHeader() "{{{3
+function! pandoc#keyboard#NextHeader() "{{{3
     call s:MovetoLine(markdown#headers#NextHeader())
 endfunction
 
-function! pantondoc#keyboard#PrevHeader() "{{{3
+function! pandoc#keyboard#PrevHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevHeader())
 endfunction
 
-function! pantondoc#keyboard#CurrentHeader() "{{{3
+function! pandoc#keyboard#CurrentHeader() "{{{3
     call s:MovetoLine(markdown#headers#CurrentHeader())
 endfunction
 
-function! pantondoc#keyboard#CurrentHeaderParent() "{{{3
+function! pandoc#keyboard#CurrentHeaderParent() "{{{3
     call s:MovetoLine(markdown#headers#CurrentHeaderParent())
 endfunction
 
-function! pantondoc#keyboard#NextSiblingHeader() "{{{3
+function! pandoc#keyboard#NextSiblingHeader() "{{{3
     call s:MovetoLine(markdown#headers#NextSiblingHeader())
 endfunction
 
-function! pantondoc#keyboard#PrevSiblingHeader() "{{{3
+function! pandoc#keyboard#PrevSiblingHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevSiblingHeader())
 endfunction
 
-function! pantondoc#keyboard#FirstChild() "{{{3
+function! pandoc#keyboard#FirstChild() "{{{3
     call s:MovetoLine(markdown#headers#FirstChild())
 endfunction
 
-function! pantondoc#keyboard#LastChild() "{{{3
+function! pandoc#keyboard#LastChild() "{{{3
     call s:MovetoLine(markdown#headers#LastChild())
 endfunction
 
-function! pantondoc#keyboard#GotoNthChild(count) "{{{3
+function! pandoc#keyboard#GotoNthChild(count) "{{{3
     call s:MovetoLine(markdown#headers#NthChild(a:count))
 endfunction
 " "}}}2

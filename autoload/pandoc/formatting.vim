@@ -1,6 +1,6 @@
 " vim: set fdm=marker : 
 
-function! pantondoc#formatting#Init() "{{{1
+function! pandoc#formatting#Init() "{{{1
     " set up defaults {{{2
     
     " Formatting mode {{{3
@@ -20,12 +20,12 @@ function! pantondoc#formatting#Init() "{{{1
 
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
-	call pantondoc#formatting#UseHardWraps()
+	call pandoc#formatting#UseHardWraps()
     elseif stridx(g:pandoc#formatting#mode, "s") >= 0 && stridx(g:pandoc#formatting#mode, "h") < 0
-	call pantondoc#formatting#UseSoftWraps()
+	call pandoc#formatting#UseSoftWraps()
     else
 	echoerr "pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default."
-	call pantondoc#formatting#UseSoftWraps()
+	call pandoc#formatting#UseSoftWraps()
     endif
 
     " equalprog {{{2
@@ -61,7 +61,7 @@ function! pantondoc#formatting#Init() "{{{1
     "}}}2
 endfunction
 
-function! pantondoc#formatting#UseHardWraps() "{{{1
+function! pandoc#formatting#UseHardWraps() "{{{1
     " reset settings that might have changed by UseSoftWraps
     setlocal formatoptions&
     setlocal display&
@@ -89,7 +89,7 @@ function! pantondoc#formatting#UseHardWraps() "{{{1
     endif
 endfunction
 
-function! pantondoc#formatting#UseSoftWraps() "{{{1
+function! pandoc#formatting#UseSoftWraps() "{{{1
     " reset settings that might have been changed by UseHardWraps
     setlocal textwidth&
     setlocal formatoptions&

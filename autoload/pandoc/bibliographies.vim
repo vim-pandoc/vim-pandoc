@@ -1,7 +1,7 @@
 " vim: set fdm=marker :
 
 " Init(): sets up defaults, populates b:pandoc_biblio_bibs {{{1
-function! pantondoc#bibliographies#Init()
+function! pandoc#bibliographies#Init()
     " set up defaults {{{2
     " Places to look for bibliographies {{{3
     " b: bibs named after the current file in the working dir
@@ -24,23 +24,23 @@ function! pantondoc#bibliographies#Init()
 	    let g:pandoc#biblio#bibs = []
     endif
     " populate b:pandoc_biblio_bibs {{{2
-    let b:pandoc_biblio_bibs = pantondoc#bibliographies#Find_Bibliographies()
+    let b:pandoc_biblio_bibs = pandoc#bibliographies#Find_Bibliographies()
 endfunction
 
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
-function! pantondoc#bibliographies#Find_Bibliographies()
+function! pandoc#bibliographies#Find_Bibliographies()
     if has("python")
-	python import pantondoc.bib
-	return pyeval("pantondoc.bib.find_bibfiles()")
+	python import vim_pandoc.bib
+	return pyeval("vim_pandoc.bib.find_bibfiles()")
     endif
     return []
 endfunction
 
 " GetSuggestions(partkey): returns bibliographic suggestions. {{{1
 " called by our omnifunc, if completion is enabled
-function! pantondoc#bibliographies#GetSuggestions(partkey)
+function! pandoc#bibliographies#GetSuggestions(partkey)
     if has("python")
-	python import pantondoc.bib
-	return pyeval("pantondoc.bib.get_suggestions()")
+	python import vim_pandoc.bib
+	return pyeval("vim_pandoc.bib.get_suggestions()")
     endif
 endfunction

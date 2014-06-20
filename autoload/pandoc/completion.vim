@@ -1,11 +1,11 @@
 " set the correct omnifunc completion
-function! pantondoc#completion#Init()
+function! pandoc#completion#Init()
     if has("python")
-	setlocal omnifunc=pantondoc#completion#Complete
+	setlocal omnifunc=pandoc#completion#Complete
     endif
 endfunction
 
-function! pantondoc#completion#Complete(findstart, base)
+function! pandoc#completion#Complete(findstart, base)
     if has("python")
 	if a:findstart
 	    " return the starting position of the word
@@ -28,7 +28,7 @@ function! pantondoc#completion#Complete(findstart, base)
 	    if index(g:pandoc#modules#enabled, "bibliographies") >= 0 && 
 			\ s:completion_type == 'bib'
 		" suggest BibTeX entries
-		let suggestions = pantondoc#bibliographies#GetSuggestions(a:base)
+		let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
 	    endif
 	    return suggestions
 	endif

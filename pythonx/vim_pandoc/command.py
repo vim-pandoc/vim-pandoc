@@ -9,7 +9,7 @@ import shlex
 from subprocess import Popen, PIPE
 import tempfile
 import fileinput
-from pantondoc import bib
+from vim_pandoc import bib
 
 class PandocHelpParser(object):
     def __init__(self):
@@ -174,13 +174,13 @@ class PandocCommand(object):
                 try:
                     pid = Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
                 except:
-                    vim.command('echoe "pantondoc: could not execute pandoc asynchronously"')
+                    vim.command('echoe "vim-pandoc: could not execute pandoc asynchronously"')
             else:
                 try:
                     com = Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp)
                     com.wait()
                 except:
-                    vim.command('echoe "pantondoc: could not execute pandoc"')
+                    vim.command('echoe "vim-pandoc: could not execute pandoc"')
                     return
 
                 self.on_done(should_open, com.returncode)
@@ -220,7 +220,7 @@ class PandocCommand(object):
             if os.path.exists("pandoc.out"):
                 os.remove("pandoc.out")
             vim.command("echohl Statement")
-            vim.command("echom 'pantondoc:execute:" + self._run_command + "'")
+            vim.command("echom 'vim-pandoc:execute:" + self._run_command + "'")
             vim.command("echohl None")
 
             # open file if needed

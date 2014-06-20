@@ -1,4 +1,4 @@
-*pantondoc*                                           Last change: 04/11/2013 
+*vim-pandoc*                                           Last change: 04/11/2013 
 
 
 	                                            ▎            
@@ -10,59 +10,51 @@
 
 
 
-`vim-pantondoc` provides facilities to integrate Vim with the |pandoc|
-document converter and work with documents written in
-|pandocs-markdown-variant| variant (although textile documents are also
-supported). 
+`vim-pandoc` provides facilities to integrate Vim with the |pandoc| document
+converter and work with documents written in |pandocs-markdown-variant|
+variant (although textile documents are also supported). It is the main item
+in |vim-pandoc-project|.
 
  *pandoc* 
     http://johnmacfarlane.net/pandoc/
  *pandoc-markdown-variant* 
     http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
-
-Originally, `vim-pantondoc` was a rewrite of |vim-pandoc|. Nowadays,
-vim-pantondoc is considered to be in feature parity with vim-pandoc (actually,
-it is more featureful) and its use is suggested. |vim-pandoc-project|'s plan
-is to replace vim-pandoc with vim-pantondoc soon.**
-
   *vim-pandoc-project*
     http://github.com/vim-pandoc
-  *vim-pandoc* 
-    http://github.com/vim-pandoc/vim-pandoc
 
-`vim-pantondoc`'s goals are
+`vim-pandoc`'s goals are
  1) to provide advanced integration with pandoc, 
  2) to offer a comfortable document writing environment,
  3) to allow great configurability.
 
 CONTENTS 
 
-- REQUIREMENTS |pantondoc-requirements|
-- INSTALLATION |pantondoc-installation|
-- SYNTAX |vim-pantondoc-pandoc-syntax|
-- MODULES |pantondoc-modules|
-    - FORMATTING |pantondoc-formatting-module|
-    - FOLDING |pantondoc-folding-module|
-    - COMMAND |pantondoc-command-module|
-    - MENU |pantondoc-menu-module|
-    - MOTIONS |pantondoc-keyboard-module|
-    - BIBLIOGRAPHIES |pantondoc-bibliographies-module|
-    - COMPLETION |pantondoc-completion-module|
-    - TOC |pantondoc-toc-module|
+- REQUIREMENTS |vim-pandoc-requirements|
+- INSTALLATION |vim-pandoc-installation|
+- SYNTAX |vim-pandoc-pandoc-syntax|
+- MODULES |vim-pandoc-modules|
+    - FORMATTING |vim-pandoc-formatting-module|
+    - FOLDING |vim-pandoc-folding-module|
+    - COMMAND |vim-pandoc-command-module|
+    - MENU |vim-pandoc-menu-module|
+    - KEYBOARD |vim-pandoc-keyboard-module|
+    - BIBLIOGRAPHIES |vim-pandoc-bibliographies-module|
+    - COMPLETION |vim-pandoc-completion-module|
+    - TOC |vim-pandoc-toc-module|
 - CONFIGURATION
-    - SETTINGS |pantondoc-settings|
+    - SETTINGS |vim-pandoc-settings|
 
 
-REQUIREMENTS			                      *pantondoc-requirements*
+REQUIREMENTS			                      *vim-pandoc-requirements*
  
 * Vim 7.4
   Note: On vim versions < 7.4, some modules are automatically disabled (see
-  |g:pandoc#modules#disabled|, but vim-pantondoc is able to run in a degraded
+  |g:pandoc#modules#disabled|, but vim-vim-pandoc is able to run in a degraded
   mode.
 * python support.
   Note: If python is not available, the features that require it are
-  automatically disabled, allowing vim-pantondoc to run in a degraded mode.
-  However, vim-pantondoc uses the new python API, so in versions under 7.4,
+  automatically disabled, allowing vim-pandoc to run in a degraded mode.
+  However, vim-pandoc uses the new python API, so in versions under 7.4,
   even if python is available, some functions might not.
 
 To check if the requirements are satisfied, check if
@@ -71,7 +63,7 @@ To check if the requirements are satisfied, check if
 
 outputs "1".
 
-INSTALLATION                                          *pantondoc-installation*
+INSTALLATION                                          *vim-pandoc-installation*
 
 The plugin follows the usual bundle structure, so it's easy to install it
 using pathogen, Vundle or NeoBundle.
@@ -83,7 +75,7 @@ tarball is available from here.
 
   Just add
 
-    Plugin 'vim-pandoc/vim-pantondoc'
+    Plugin 'vim-pandoc/vim-pandoc'
 
   to your ~/.vimrc file and run :PluginInstall
 
@@ -93,13 +85,13 @@ NeoBundle users should replace `Plugin` in these instructions with
 - Using Pathogen
 
     $ cd ~/.vim/bundle
-    $ git clone git@github.com:vim-pandoc/vim-pantondoc.git
+    $ git clone git@github.com:vim-pandoc/vim-pandoc.git
 
 - The repo is pathogen compatible and you can also just drop it in runtimepath.
 
-SYNTAX                                            *vim-pantondoc-pandoc-syntax*
+SYNTAX                                            *vim-pandoc-pandoc-syntax*
 
-vim-pantondoc doesn't provide a syntax file for pandoc markdown files. Please
+vim-pandoc doesn't provide a syntax file for pandoc markdown files. Please
 use https://github.com/vim-pandoc/vim-pandoc-syntax for this:
 
    Plugin 'vim-pandoc/vim-pandoc-syntax'
@@ -112,21 +104,21 @@ The reason we split the syntax file is it is much cleaner to track issues
 separatedly. It also allows users not to use this syntax file if they want to
 (notice that vim-pandoc-syntax is also configurable).
 
-FILETYPES					          *pantondoc-filetypes*
+FILETYPES					          *vim-pandoc-filetypes*
 
-vim-pantondoc is not a regular filetype plugin. Although it does define a
-`pandoc` filetype, vim-pantondoc can also attach to other filestypes, like
-`markdown`, `rst` and `textile`. In that case, vim-pantondoc uses the
+vim-pandoc is not a regular filetype plugin. Although it does define a
+`pandoc` filetype, vim-pandoc can also attach to other filestypes, like
+`markdown`, `rst` and `textile`. In that case, vim-pandoc uses the
 appropiate filetype syntax file, but creates the Pandoc command and loads the
 extra utilities. What filetypes to attach to is determined by the value of the
 |g:pandoc#filetypes#handled| variable.
 
-Note vim-pantondoc's developers mostly use pandoc's markdown syntax, so
+Note vim-pandoc's developers mostly use pandoc's markdown syntax, so
 coverage for it is more complete than for the other filetypes.
 
-MODULES                                                     *pantondoc-modules*
+MODULES                                                     *vim-pandoc-modules*
 
-vim-pantondoc is split in several modules. They can be enabled and disabled
+vim-pandoc is split in several modules. They can be enabled and disabled
 independently at startup, by adjusting the values of the
 |g:pandoc#modules#enabled| and |g:pandoc#modules#disabled| variables. 
 
@@ -138,11 +130,11 @@ cases. To disable the module they should put
 
 in their .vimrc.
 
-                                                       *pantondoc-modules-list*
+                                                       *vim-pandoc-modules-list*
 
 Now, a description of th available modules
 
-- FORMATTING                                      *pantondoc-formatting-module*
+- FORMATTING                                      *vim-pandoc-formatting-module*
 
 Handles basic writing settings, like the use hard or soft line wraps. It is
 recommended to leave this module enabled.
@@ -154,7 +146,7 @@ autoformatting. The default is to use soft wraps.
 This module also configures whether to use pandoc for |`equalprog`| or not.
 See |g:pandoc#formatting#pandoc_equalprog|.
 
-- FOLDING                                            *pantondoc-folding-module*
+- FOLDING                                            *vim-pandoc-folding-module*
 
 Provides folding support for markdown and textile files.
 
@@ -205,13 +197,13 @@ Besides this, some extensions are provided:
   Note: This also works in textile files, with `.. fold-begin` and `..
   fold-end`.
 
-- COMMAND                                            *pantondoc-command-module*
+- COMMAND                                            *vim-pandoc-command-module*
 
 NOTE: This modules requires python support.
 
 The `command` module sets up a buffer-local *:Pandoc* command which handles
 pandoc execution. The command builds an incantation for pandoc using
-vim-pantondocs configuration and the current state of the buffer
+vim-pandocs configuration and the current state of the buffer
 (bibliographies found, etc.).
 
 The syntax of the :Pandoc command is as follows:
@@ -234,7 +226,7 @@ Depending on the value of |g:pandoc#command#use_message_buffers|, once pandoc ru
 a buffer will open displaying the command output. You can dismiss this buffer
 pressing <Esc>.
 
-If you write a bang ('!') after the command, vim-pantondoc will try to open
+If you write a bang ('!') after the command, vim-pandoc will try to open
 the created file in its associated program.
 
 NOTE: The pandoc execution is performed asynchronously if vim supports the
@@ -242,17 +234,17 @@ NOTE: The pandoc execution is performed asynchronously if vim supports the
 
 The :Pandoc command has argument completion for supported output formats.
 
-NOTE: Previously, vim-pantondoc used the executors system present in
+NOTE: Previously, vim-pandoc used the executors system present in
 vim-pandoc, which allowed for the execution of command pipelines. This is no
 longer supported. If you want to pass the file through a filter, use pandoc's
 -F option.
 
-- MENU                                                   *pantondoc-menu-module*
+- MENU                                                   *vim-pandoc-menu-module*
 
 Creates a menu for pandoc handled files. If the `command` module is enabled,
 you can build your documents from it.
 
-- KEYBOARD                                           *pantondoc-keyboard-module*
+- KEYBOARD                                           *vim-pandoc-keyboard-module*
 
 Registers custom mappings for applying text styles, navigating the documents
 and more. 
@@ -289,7 +281,7 @@ Some of these mappings use |mark-motions|. You can configure what mark to use
 by setting the value of |g:pandoc#keyboard#mark|, in case the default ("r") is
 not suitable or needs to serve a different purpose.
 
-- BIBLIOGRAPHIES                               *pantondoc-bibliographies-module*
+- BIBLIOGRAPHIES                               *vim-pandoc-bibliographies-module*
 
 NOTE: This module requires python support.
 
@@ -297,7 +289,7 @@ Provides with support for bibliographic info completion and retrieval, and
 also populates the |b:pandoc_biblio_bibs| variable, which the |:Pandoc|
 command uses to build up the pandoc incantation.
 
-vim-pantondoc can handle BibTeX, RIS, MODS and JSON bibliographies.
+vim-pandoc can handle BibTeX, RIS, MODS and JSON bibliographies.
 
 The way the module populates the b:pandoc_biblio_bibs variable is determined
 by the value of the |g:pandoc#biblio#sources| variable. Depending on it, the
@@ -335,7 +327,7 @@ This is off by default, but can be turned on (if `bibtool` is available) by
 setting the |g:pandoc#biblio#use_bibtool| variable to 1.
 
 
-- COMPLETION                                       *pantondoc-completion-module*
+- COMPLETION                                       *vim-pandoc-completion-module*
 
 Provides |omni-completion|. If the `bibliographies` module is active, it will
 complete bibliographic references from the bibliographies listed in
@@ -376,13 +368,13 @@ and then add it to vim's |`dictionary`|, like so
 
 Then, you can complete from this list by pressing CTRL-X CTRL-K.
 
-- TOC                                                     *pantondoc-toc-module*
+- TOC                                                     *vim-pandoc-toc-module*
 
 Provides the *:TOC* command, which displays a table of contents for the
 current file using vim's location list system. The position of the TOC window
 is configured by the |g:pandoc#toc#position| variable.
 
-SETTINGS                                                   *pantondoc-settings*
+SETTINGS                                                   *vim-pandoc-settings*
 
 Module configuration variables defaults are initialized when the modules
 themselves are initialized. This is so the global variable scope is not
@@ -393,9 +385,9 @@ A description of the available configuration variables follows:
 - *g:pandoc#filetypes#handled*
   default = ["markdown", "rst", "textile"]
 
-  A list of the kinds of files pantondoc will attach to. 'extra' includes
+  A list of the kinds of files vim-pandoc will attach to. 'extra' includes
   .text and .txt files. For what values are valid here, see the
-  pandoc_extensions_table variable in plugin/pantondoc.vim
+  pandoc_extensions_table variable in plugin/pandoc.vim
 
 - *g:pandoc#filetypes#pandoc_markdown*
   Default = 1
@@ -412,7 +404,7 @@ A description of the available configuration variables follows:
   "metadata", "menu", "executors", "motions"]
 
   A list of the modules to enable on the files determined by
-  |g:pandoc#filetypes#handled|. See |vim-pantondoc-modules|.
+  |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
 
 - *g:pandoc#modules#disabled*
 
@@ -461,7 +453,7 @@ A description of the available configuration variables follows:
   |g:pandoc#biblio#sources|.
 
 - *b:pandoc_biblio_bibs*
-  default = whatever bibliographies pantondoc finds in the sources described
+  default = whatever bibliographies vim-pandoc finds in the sources described
   in |g:pandoc#biblio#sources|
 
   This is the value finally used by the |:Pandoc| command and autocompletion.
@@ -522,30 +514,30 @@ A description of the available configuration variables follows:
 - *b:pandoc_folding_basic*
   buffer local. default = 0
 
-  When set, forces vim-pantondoc to use basic folding in the current buffer.
+  When set, forces vim-pandoc to use basic folding in the current buffer.
 
 - *g:pandoc#toc#position*
   default = "right"
 
   Where to show the TOC window. Can be "top", "left", "right", "bottom".
 
-CONTRIBUTE                                              *pantondoc-contribute*
+CONTRIBUTE                                              *vim-pandoc-contribute*
 
-vim-pantondoc welcomes any contribution, in the form of bug reports, patches,
+vim-pandoc welcomes any contribution, in the form of bug reports, patches,
 code, suggestions, etc. To do so, please open an issue in our issue tracker in
-github, at https://github.com/vim-pandoc/vim-pantondoc/issues, or email the
+github, at https://github.com/vim-pandoc/vim-pandoc/issues, or email the
 maintainer (see below).
 
-WHO                                                            *pantondoc-who*
+WHO                                                            *vim-pandoc-who*
 
-The current vim-pantondoc's maintainer is Felipe Morales (fmoralesc), whom you
+The current vim-pandoc's maintainer is Felipe Morales (fmoralesc), whom you
 can reach at hel.sheep@gmail.com
 
-vim-pantondoc is the fruit of the labor of a bunch of people. It includes, in
-one shape or the other, the work of dsanson, lyokha, jtanguy, tlvince,
-ehamberg, blaenk, gokcechan, shelhamer, clvv, PiPeep, mwhite, wunki, ulel,
-lyeoh, ulel, felixSchl, zmanji, lmullen, Propatsch, ivotron. We have borrowed
-from Jeremy Schultz, plasticboy and cirosantilli, too. Many thanks to all of
-them.
+vim-pandoc is the fruit of the labor of a bunch of people. It includes, in one
+shape or the other, the work of dsanson, lyokha, jtanguy, tlvince, ehamberg,
+blaenk, gokcechan, shelhamer, clvv, PiPeep, mwhite, wunki, ulel, lyeoh, ulel,
+felixSchl, zmanji, lmullen, Propatsch, ivotron, tpoisot, 00Davo. We have
+borrowed from Jeremy Schultz, plasticboy and cirosantilli, too. Many thanks to
+all of them.
 
 vim: set ft=help :

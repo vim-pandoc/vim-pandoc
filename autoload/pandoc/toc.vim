@@ -1,24 +1,24 @@
 " vim: set fdm=marker :
 
 " Init(): set up defaults, create TOC command {{{1
-function! pantondoc#toc#Init()
+function! pandoc#toc#Init()
     " set up defaults {{{2
     " where to open the location list {{{3
     if !exists("g:pandoc#toc#position")
 	let g:pandoc#toc#position = "right" 
     endif
     " create :TOC command {{{2
-    command! -buffer TOC call pantondoc#toc#Show()
+    command! -buffer TOC call pandoc#toc#Show()
     "}}}
 endfunction
 
 " Show(): show a table of contents using the quickfix window. {{{1
 " based on plasticboy/vim-markdown implementation by cirosantilli
-function! pantondoc#toc#Show()
+function! pandoc#toc#Show()
     let bufname=expand("%")
 
     " prepare the location-list buffer
-    call pantondoc#toc#Update()
+    call pandoc#toc#Update()
 
     if g:pandoc#toc#position == "right"
 	let toc_pos = "vertical"
@@ -33,13 +33,13 @@ function! pantondoc#toc#Show()
     endif
     exe toc_pos . " lopen"
    
-    call pantondoc#toc#ReDisplay(bufname)
+    call pandoc#toc#ReDisplay(bufname)
     " move to the top
     normal! gg
 endfunction
 
 " Update(): update location list {{{1
-function! pantondoc#toc#Update()
+function! pandoc#toc#Update()
     try 
         silent lvimgrep /\(^\S.*\(\n[=-]\+\)\@=\|^#\+\|\%^%\)/ %
     catch /E480/
@@ -48,9 +48,9 @@ function! pantondoc#toc#Update()
 endfunction
 
 " ReDisplay(bufname): Prepare the location list window four our uses {{{1
-function! pantondoc#toc#ReDisplay(bufname)
+function! pandoc#toc#ReDisplay(bufname)
     let &winwidth=(&columns/3)
-    execute "setlocal statusline=pantondoc#TOC:".escape(a:bufname, ' ')
+    execute "setlocal statusline=pandoc#TOC:".escape(a:bufname, ' ')
 
     " change the contents of the location-list buffer
     set modifiable

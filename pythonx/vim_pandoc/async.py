@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # once it's done, we call back the server that called us
     # to notify pandoc's execution
-    func_call = "pantondoc#command#PandocAsyncCallback("+should_open+","+returncode+")"
+    func_call = "pandoc#command#PandocAsyncCallback("+should_open+","+returncode+")"
 
     if sys.platform.startswith("win"):
         # TODO: make this hardcoded value dynamic or configurable

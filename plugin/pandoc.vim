@@ -1,6 +1,6 @@
 " vim: set fdm=marker: 
 
-" File: pantondoc.vim
+" File: pandoc.vim
 " Description: pandoc support for vim
 " Author: Felipe Morales
 
@@ -58,7 +58,7 @@ if v:version < 704
     " only message the user if we have extended g:pandoc#modules#disabled
     " automatically
     if s:module_disabled == 1 
-	echomsg "pantondoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
+	echomsg "vim-pandoc: 'bibliographies' and 'command' modules require vim >= 7.4 and have been disabled."
     endif
 endif
 "}}}
@@ -92,14 +92,14 @@ augroup pandoc
     endif
 augroup END
 "}}}
-" augroup pantondoc {{{2
-" this loads the pantondoc functionality for configured extensions 
-augroup pantondoc
+" augroup pandoc_attach {{{2
+" this loads the vim-pandoc functionality for configured extensions 
+augroup pandoc_attach
     let s:exts = []
     for ext in g:pandoc#filetypes#handled
 	call extend(s:exts, map(g:pandoc_extensions_table[ext], '"*." . v:val'))
     endfor
-    execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pantondoc.vim'
+    execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pandoc.vim'
 augroup END
 "}}}
 " }}}1
