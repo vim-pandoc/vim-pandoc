@@ -17,7 +17,6 @@ function! pandoc#formatting#Init() "{{{1
 	let g:pandoc#formatting#pandoc_equalprg = 1
     endif
     " }}}
-
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
 	call pandoc#formatting#UseHardWraps()
@@ -42,6 +41,9 @@ function! pandoc#formatting#Init() "{{{1
     endif
 
     " common settings {{{2
+    
+    " indent using a custom indentexpr
+    setlocal indentexpr=pandoc#formatting#IndentExpr()
 
     " Don't add two spaces at the end of punctuation when joining lines
     setlocal nojoinspaces
@@ -100,4 +102,22 @@ function! pandoc#formatting#UseSoftWraps() "{{{1
 
     " Show partial wrapped lines
     setlocal display=lastline
+endfunction
+
+function! pandoc#formatting#IndentExpr() "{{{1
+    let cline = getline(v:lnum)
+    let pline = getline(v:lnum - 1)
+    let cline_li = matchstr(cline, '^\s*[[:punct:]]\s*')
+    if cline_li != ""
+        return len(matchstr(cline_li, '^\s*'))
+    endif
+    let pline_li = matchstr(pline, '^\s*[[:punct:]]\s*')
+    if pline_li != ""
+        return len(pline_li)
+    endif
+    if pline == ""
+        return indent(v:lnum)
+    else
+        return indent(v:lnum - 1)
+    endif
 endfunction
