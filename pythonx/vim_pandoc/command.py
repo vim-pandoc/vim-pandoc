@@ -129,7 +129,12 @@ class PandocCommand(object):
                 else ""
 
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args), self.opts.shortopts, self.opts.longopts)
-        c_opts = [(i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])) ) for i in c_opts]
+        def wrap_args(i):
+            if i[1] != '':
+                return (i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])))
+            else:
+                return (i[0], i[1])
+        c_opts = [wrap_args(i) for i in c_opts]
 
         output_format = c_args[0] if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
