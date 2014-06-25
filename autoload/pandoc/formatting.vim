@@ -107,11 +107,11 @@ endfunction
 function! pandoc#formatting#IndentExpr() "{{{1
     let cline = getline(v:lnum)
     let pline = getline(v:lnum - 1)
-    let cline_li = matchstr(cline, '^\s*[[:punct:]]\s*')
+    let cline_li = matchstr(cline, '^\s*[*-:]\s*')
     if cline_li != ""
         return len(matchstr(cline_li, '^\s*'))
     endif
-    let pline_li = matchstr(pline, '^\s*[[:punct:]]\s*')
+    let pline_li = matchstr(pline, '^\s*[*-:]\s*')
     if pline_li != ""
         return len(pline_li)
     endif
