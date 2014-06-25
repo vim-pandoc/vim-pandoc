@@ -14,18 +14,22 @@ from vim_pandoc import bib
 class PandocHelpParser(object):
     def __init__(self):
         self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        self.longopts = self.get_longopts()
-        self.shortopts = self.get_shortopts()
+        self.longopts = PandocHelpParser.get_longopts()
+        self.shortopts = PandocHelpParser.get_shortopts()
 
-    def get_longopts(self):
+    @staticmethod
+    def get_longopts():
+        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
-                          [ i.group() for i in re.finditer("-(-\w+)+=?", self._help_data)]))
+                          [ i.group() for i in re.finditer("-(-\w+)+=?", data)]))
 
-    def get_shortopts(self):
+    @staticmethod
+    def get_shortopts():
+        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
         no_args = map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-v ", "-h "), \
-                             [i.group() for i in re.finditer("-\w\s(?!\w+)", self._help_data)]))
+                             [i.group() for i in re.finditer("-\w\s(?!\w+)", data)]))
 
         # -m doesn't comply with the format of the other short options in pandoc 1.12
         # if you need to pass an URL, use the long versions
@@ -33,7 +37,7 @@ class PandocHelpParser(object):
 
         args = map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-t ", "-w "), \
-                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", self._help_data)]))
+                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", data)]))
 
 
         return "".join(no_args) + "".join(map(lambda i: i + ":", args))

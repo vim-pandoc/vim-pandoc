@@ -17,7 +17,8 @@ function! pandoc#command#Init()
     if has("python")
 	" let's make sure it gets loaded
 	py import vim
-        command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
+        command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete 
+                    \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
     endif "}}}2
 endfunction
 
@@ -35,7 +36,15 @@ endfunction
 function! pandoc#command#PandocComplete(a, c, pos)
     if has("python")
 	py from vim_pandoc.command import PandocHelpParser
-	return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
+        let cmd_args = split(a:c, " ", 1)[1:]
+        if len(cmd_args) == 1 && (cmd_args[0] == '' || pyeval("vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))"))
+            return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
+        endif
+        if len(cmd_args) >= 2
+            let long_opts = pyeval("['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), PandocHelpParser.get_longopts())]")
+            let short_opts = pyeval("['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), PandocHelpParser.get_shortopts())]")
+            return filter(uniq(extend(sort(short_opts), sort(long_opts))), 'v:val != "-:"')
+        endif
     endif
 endfunction
 
