@@ -134,7 +134,7 @@ class PandocCommand(object):
 
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args), self.opts.shortopts, self.opts.longopts)
         def wrap_args(i):
-            if i[1] != '' and re.match('=', i[1]):
+            if re.search('=', i[1]):
                 return (i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])))
             else:
                 return (i[0], i[1])
