@@ -19,7 +19,6 @@ function! pandoc#toc#Show()
 
     " prepare the location-list buffer
     call pandoc#toc#Update()
-
     if g:pandoc#toc#position == "right"
 	let toc_pos = "vertical"
     elseif g:pandoc#toc#position == "left"
@@ -31,8 +30,15 @@ function! pandoc#toc#Show()
     else
 	let toc_pos == "vertical"
     endif
-    exe toc_pos . " lopen"
-   
+    try
+        exe toc_pos . " lopen"
+    catch /E776/ " no location list
+        echohl ErrorMsg
+        echom "pandoc:toc: no places to show"
+        echohl None
+        return
+    endtry
+
     call pandoc#toc#ReDisplay(bufname)
     " move to the top
     normal! gg
@@ -41,23 +47,29 @@ endfunction
 " Update(): update location list {{{1
 function! pandoc#toc#Update()
     try 
-        silent lvimgrep /\(^\S.*\(\n[=-]\+\)\@=\|^#\+\|\%^%\)/ %
+        silent lvimgrep /\(^\S.*\(\n[=-]\+\n\)\@=\|^#\+\|\%^%\)/ %
     catch /E480/
 	return
+    catch /E499/ " % has no name
+        return 
     endtry
 endfunction
 
 " ReDisplay(bufname): Prepare the location list window four our uses {{{1
 function! pandoc#toc#ReDisplay(bufname)
+    if len(getloclist(0)) == 0
+        lclose
+        return
+    endif
     let &winwidth=(&columns/3)
     execute "setlocal statusline=pandoc#TOC:".escape(a:bufname, ' ')
 
     " change the contents of the location-list buffer
     set modifiable
-    silent %s/\v^([^|]*\|){2,2} #//
+    silent %s/\v^([^|]*\|){2,2} #//e
     for l in range(1, line("$"))
 	" this is the location-list data for the current item
-	let d = getloclist(0)[l-1]
+        let d = getloclist(0)[l-1]
 	" titleblock
 	if match(d.text, "^%") > -1
 	    let l:level = 0
