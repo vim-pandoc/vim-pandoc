@@ -12,11 +12,17 @@ function! pandoc#formatting#Init() "{{{1
     endif
     "}}}
     " = {{{3
-    " Use pandoc as equalprg?
+    " Use pandoc as equalprg? {{{4
     if !exists("g:pandoc#formatting#pandoc_equalprg")
 	let g:pandoc#formatting#pandoc_equalprg = 1
     endif
-    " }}}
+    " }}}4
+    " Use a custom indentexpr? {{{4
+    if !exists("g:pandoc#formatting#set_indentexpr")
+        let g:pandoc#formatting#set_indentexpr = 0
+    endif
+    " }}}4
+    " }}}3
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
 	call pandoc#formatting#UseHardWraps()
@@ -43,7 +49,9 @@ function! pandoc#formatting#Init() "{{{1
     " common settings {{{2
     
     " indent using a custom indentexpr
-    setlocal indentexpr=pandoc#formatting#IndentExpr()
+    if g:pandoc#formatting#set_indentexpr == 1
+        setlocal indentexpr=pandoc#formatting#IndentExpr()
+    endif
 
     " Don't add two spaces at the end of punctuation when joining lines
     setlocal nojoinspaces
@@ -111,7 +119,7 @@ function! pandoc#formatting#IndentExpr() "{{{1
     if cline_li != ""
         return len(matchstr(cline_li, '^\s*'))
     endif
-    let pline_li = matchstr(pline, '^\s*[*-:]\s*')
+    let pline_li = matchstr(pline, '^\s*[*-:]\s\+')
     if pline_li != ""
         return len(pline_li)
     endif
