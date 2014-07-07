@@ -39,7 +39,8 @@ if !exists("g:pandoc#modules#enabled")
 				\"menu",
 				\"metadata",
 				\"keyboard" ,
-				\"toc"	]
+				\"toc",
+                                \"chdir"]
 endif
 
 " Auxiliary module blacklist. {{{3

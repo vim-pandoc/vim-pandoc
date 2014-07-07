@@ -32,6 +32,7 @@ CONTENTS
     - BIBLIOGRAPHIES |vim-pandoc-bibliographies-module|
     - COMPLETION |vim-pandoc-completion-module|
     - TOC |vim-pandoc-toc-module|
+    - CHDIR |vim-pandoc-chdir-module|
 - CONFIGURATION
     - SETTINGS |vim-pandoc-settings|
 
@@ -365,6 +366,11 @@ Provides the *:TOC* command, which displays a table of contents for the
 current file using vim's location list system. The position of the TOC window
 is configured by the |g:pandoc#toc#position| variable.
 
+- CHDIR                                          *vim-pandoc-chdir-module*
+
+Changes the current window directory to the one the file is in
+("%:h"). Enabled by default.
+
 SETTINGS                                                   *vim-pandoc-settings*
 
 Module configuration variables defaults are initialized when the modules
@@ -392,7 +398,7 @@ A description of the available configuration variables follows:
 - *g:pandoc#modules#enabled* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "metadata", "menu", "executors", "motions"]
+  "metadata", "menu", "executors", "keyboard", "toc", "chdir"]
 
   A list of the modules to enable on the files determined by
   |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
