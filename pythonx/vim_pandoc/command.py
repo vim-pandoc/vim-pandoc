@@ -175,7 +175,9 @@ class PandocCommand(object):
 
     def execute(self, should_open):
         with open("pandoc.out", 'w') as tmp:
-            if vim.eval("has('clientserver')") == '1' and vim.eval("executable('python')") == '1':
+            if vim.eval("has('clientserver')") == '1' and \
+               vim.eval("v:servername") != "" and \
+               vim.eval("executable('python')") == '1':
                 async_runner = '"' + os.path.join(os.path.dirname(__file__), "async.py") + '"'
                 servername_arg = "--servername=" + vim.eval("v:servername")
                 open_arg  = "--open" if should_open else "--noopen"
