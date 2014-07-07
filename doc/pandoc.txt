@@ -27,6 +27,7 @@ CONTENTS
     - FORMATTING |vim-pandoc-formatting-module|
     - FOLDING |vim-pandoc-folding-module|
     - COMMAND |vim-pandoc-command-module|
+      -- TEMPLATES |vim-pandoc-command-templates|
     - MENU |vim-pandoc-menu-module|
     - KEYBOARD |vim-pandoc-keyboard-module|
     - BIBLIOGRAPHIES |vim-pandoc-bibliographies-module|
@@ -194,7 +195,7 @@ Besides this, some extensions are provided:
 NOTE: This modules requires python support.
 
 The `command` module sets up a buffer-local *:Pandoc* command which handles
-pandoc execution. The command builds an incantation for pandoc using
+pandoc execution. This command builds an incantation for pandoc using
 vim-pandocs configuration and the current state of the buffer
 (bibliographies found, etc.).
 
@@ -224,12 +225,43 @@ the created file in its associated program.
 NOTE: The pandoc execution is performed asynchronously if vim supports the
 "clientserver" feature. This requires python to be available in the system.
 
-The :Pandoc command has argument completion for supported output formats.
+The :Pandoc command has argument completion for supported output formats and
+pandoc option arguments.
 
 NOTE: Previously, vim-pandoc used the executors system present in
 vim-pandoc, which allowed for the execution of command pipelines. This is no
 longer supported. If you want to pass the file through a filter, use pandoc's
 -F option.
+
+-- TEMPLATES                                       *vim-pandoc-command-templates*
+
+It might get tedious to reuse the same arguments over and over. For example,
+the user might frequently execute
+
+    :Pandoc! pdf -Vdocumentclass=memoir -Vdocumentclassoptions=article -Vmainfont='GFS Bodoni'
+
+He can save this incantation as a 'template', so later he could simply run
+
+    :Pandoc! #my_usual_article
+
+Note templates don't record if a bang was used for the Pandoc command, so once
+#my_usual_article is defined, both ':Pandoc #my_usual_article' and ':Pandoc!
+#my_usual_article' are possible.
+
+                                                                *:PandocTemplate*
+To save the latest :Pandoc incantation as a template, the user should execute
+
+    :PandocTemplate save my_usual_article
+
+It is also possible to save a custom incantation like this
+
+    :PandocTemplate save fancy_article pdf -Vdocumentclass=memoir -Vmainfont='Helvetica Neue'
+
+To review some template, use
+
+    :PandocTemplate get my_usual_article
+
+which should output the template definition.
 
 - MENU                                                   *vim-pandoc-menu-module*
 
@@ -431,6 +463,11 @@ A description of the available configuration variables follows:
 
   The LaTeX engine to use with pandoc. 'xelatex' is the default for greater
   unicode compatibility.
+
+- *g:pandoc#command#templates_file*
+  default = split(&runtimepath, ",")[0]."/vim-pandoc-templates"
+
+  Where to save and retrieve command templates.
 
 - *g:pandoc#biblio#sources*
   default = "bcg"

@@ -12,6 +12,10 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#latex_engine")
 	let g:pandoc#command#latex_engine = "xelatex"
     endif
+    " file where to save command templates {{{3
+    if !exists("g:pandoc#command#templates_file")
+        let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates" 
+    endif
 
     " create :Pandoc {{{2
     if has("python")
@@ -20,19 +24,26 @@ function! pandoc#command#Init()
         command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete 
                     \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
     endif "}}}2
+    " create :PandocTemplate {{{2
+    command! -buffer -nargs=1 -complete=custom,pandoc#command#PandocTemplateComplete
+                    \ PandocTemplate call pandoc#command#PandocTemplate("<args>")
 endfunction
 
-" Pandoc(args, bang): the Pandoc command itself, requires python support {{{1
+" :Pandoc command {{{1
+
+" Pandoc(args, bang): the Pandoc command itself, requires python support {{{2
 " args: arguments to pass pandoc
 " bang: should we open the created file afterwards?
 function! pandoc#command#Pandoc(args, bang)
     if has("python")
 	py from vim_pandoc.command import pandoc
-	py pandoc(vim.eval("a:args"), vim.eval("a:bang") != '')
+        let templatized_args = substitute(a:args, '#\(\S\+\)', 
+                    \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
+	py pandoc(vim.eval("templatized_args"), vim.eval("a:bang") != '')
     endif
 endfunction
 
-" PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{1
+" PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
 function! pandoc#command#PandocComplete(a, c, pos)
     if has("python")
 	py from vim_pandoc.command import PandocHelpParser
@@ -48,7 +59,7 @@ function! pandoc#command#PandocComplete(a, c, pos)
     endif
 endfunction
 
-" PandocAsyncCallback(should_open, returncode): Callback to execute after pandoc finished {{{1
+" PandocAsyncCallback(should_open, returncode): Callback to execute after pandoc finished {{{2
 " should_open: should we open the cretaed file?
 " returncode: the returncode value pandoc gave
 function! pandoc#command#PandocAsyncCallback(should_open, returncode)
@@ -58,3 +69,92 @@ function! pandoc#command#PandocAsyncCallback(should_open, returncode)
     endif
 endfunction
 
+" Command template functions {{{1
+
+function! pandoc#command#PandocTemplate(args) "{{{2
+    let cmd_args = split(a:args, " ", 1)
+    if cmd_args[0] == "get"
+        if len(cmd_args) >= 2
+            echo pandoc#command#GetTemplate(join(cmd_args[1:], " "))
+        else
+            echohl ErrorMsg
+            echom "pandoc:command:'PandocTemplate get' needs an argument"
+            echohl None
+        endif
+    elseif cmd_args[0] == "save"
+        if len(cmd_args) == 2 && cmd_args[1] != ""
+            call pandoc#command#SaveTemplate(cmd_args[1])
+        elseif len(cmd_args) > 2
+            call pandoc#command#SaveTemplate(cmd_args[1], join(cmd_args[2:], " "))
+        else
+            echohl ErrorMsg 
+            echom "pandoc:command:missing or invalid arguments for 'PandocTemplate save'"
+            echohl None
+        endif
+    endif
+endfunction
+
+function! pandoc#command#PandocTemplateComplete(a, c, pos) "{{{2
+    let cmd_args = split(a:c, " ", 1)[1:]
+    if len(cmd_args) == 1
+        return "save\nget"
+    elseif len(cmd_args) > 1
+        if cmd_args[0] == "get"
+            return join(pandoc#command#GetTemplateNames(), "\n")
+        endif
+    endif
+    return ""
+endfunction
+
+function! s:LastCommandAsTemplate() "{{{2
+    let hist_item_idx = histnr("cmd")
+    while 1
+        let hist_item = histget("cmd", hist_item_idx)
+        if match(hist_item, '^Pandoc!\? ') == 0
+            break 
+        endif
+        let hist_item_idx = hist_item_idx - 1
+    endwhile
+    return join(split(hist_item, " ")[1:], " ")
+endfunction
+
+function! s:LoadTemplates() "{{{2
+    let templates_list = []
+    if filereadable(g:pandoc#command#templates_file) == 1
+        call extend(templates_list, readfile(g:pandoc#command#templates_file))
+    endif
+    let templates = {}
+    if len(templates_list) > 0
+        for temp in templates_list
+            let data = split(temp, "|")
+            let templates[data[0]] = data[1]
+        endfor
+    endif
+    return templates
+endfunction
+
+function! pandoc#command#GetTemplateNames() "{{{2
+    return keys(s:LoadTemplates())
+endfunction
+
+function! pandoc#command#SaveTemplate(template_name, ...) "{{{2
+    if a:0 > 0
+        let template = a:1
+    else
+        let template = s:LastCommandAsTemplate()
+    endif
+    let templates = s:LoadTemplates()
+    let new_template = {a:template_name : template}
+    echom string(new_template)
+    call extend(templates, new_template)
+    let new_templates_list = []
+    for key in keys(templates)
+        call add(new_templates_list, key . "|" . templates[key])
+    endfor
+    call writefile(new_templates_list, g:pandoc#command#templates_file)
+endfunction
+
+function! pandoc#command#GetTemplate(template_name) "{{{2
+    let templates = s:LoadTemplates()
+    return templates[a:template_name]
+endfunction

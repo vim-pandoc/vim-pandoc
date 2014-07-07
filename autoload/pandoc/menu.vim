@@ -4,18 +4,24 @@ endfunction
 
 function! pandoc#menu#CreateMenu()
     if index(g:pandoc#modules#enabled, "command") >= 0
-	amenu .600 Pandoc.Pandoc.&Pdf :Pandoc pdf<CR>
-	amenu .601 Pandoc.Pandoc.Pdf\ \(Open\) :Pandoc! pdf<CR>
-	amenu .602 Pandoc.Pandoc.&Beamer :Pandoc beamer<CR>
-	amenu .603 Pandoc.Pandoc.Beamer\ \(Open\) :Pandoc! beamer<CR>
-	amenu .604 Pandoc.Pandoc.&ODT :Pandoc odt<CR>
-	amenu .605 Pandoc.Pandoc.ODT\ \(Open\) :Pandoc! odt<CR>
-	amenu .604 Pandoc.Pandoc.&HTML :Pandoc html -s<CR>
-	amenu .605 Pandoc.Pandoc.HTML\ \(Open\) :Pandoc! html -s<CR>
+	amenu Pandoc.Compile.&Pdf :Pandoc pdf<CR>
+	amenu Pandoc.Compile.&Beamer :Pandoc beamer<CR>
+	amenu Pandoc.Compile.&ODT :Pandoc odt<CR>
+	amenu Pandoc.Compile.&HTML :Pandoc html -s<CR>
+        amenu Pandoc.Compile.-Sep1- :
+        for temp in pandoc#command#GetTemplateNames()
+            exe "amenu Pandoc.Compile.".temp." :Pandoc #".temp."<CR>"
+        endfor
+	amenu Pandoc.Compile\ and\ View.Pdf :Pandoc! pdf<CR>
+	amenu Pandoc.Compile\ and\ View.Beamer :Pandoc! beamer<CR>
+	amenu Pandoc.Compile\ and\ View.ODT :Pandoc! odt<CR>
+	amenu Pandoc.Compile\ and\ View.HTML :Pandoc! html -s<CR>
+        amenu Pandoc.Compile\ and\ View.-Sep1- :
+        for temp in pandoc#command#GetTemplateNames()
+            exe "amenu Pandoc.Compile\\ and\\ View.".temp." :Pandoc! #".temp."<CR>"
+        endfor
 	amenu .699 Pandoc.-Sep1- :
     endif
-    " TODO: config menu, needs configuration toggle functions first
     amenu .900 Pandoc.Help :help pandoc<CR>
-    amenu .910 Pandoc.? :echo "vim-pandoc"<CR>
 endfunction
 
