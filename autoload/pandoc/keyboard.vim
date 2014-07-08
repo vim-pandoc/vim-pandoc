@@ -211,7 +211,11 @@ endfunction
 " handling: {{{2
 function! pandoc#keyboard#Insert_Ref()
     execute "normal m".g:pandoc#keyboard#mark
-    execute "normal! ya\[o\<cr>\<esc>0P$a: "
+    let reg_save = @@
+    normal ya[
+    call search('\n\(\n\|\_$\)\@=')
+    execute "normal! o\<cr>\<esc>0P$a: "
+    let @@ = reg_save
 endfunction
 " }}}2
 " navigation: {{{2
