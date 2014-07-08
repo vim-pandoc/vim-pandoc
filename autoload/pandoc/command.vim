@@ -12,6 +12,10 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#latex_engine")
 	let g:pandoc#command#latex_engine = "xelatex"
     endif
+    " custom function defining command to open the created files
+    if !exists("g:pandoc#command#custom_open")
+        let g:pandoc#command#custom_open = ""
+    endif
     " file where to save command templates {{{3
     if !exists("g:pandoc#command#templates_file")
         let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates" 

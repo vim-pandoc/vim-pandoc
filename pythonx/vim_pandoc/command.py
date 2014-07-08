@@ -236,15 +236,27 @@ class PandocCommand(object):
 
             # open file if needed
             if os.path.exists(self._output_file_path) and should_open:
-                if sys.platform == "darwin" or sys.platform.startswith("linux"):
-                    if sys.platform == "darwin":
-                        open_command = "open" #OSX
-                    elif sys.platform.startswith("linux"):
-                        open_command = "xdg-open" # freedesktop/linux
-                    with open(os.devnull, 'wb') as fnull:
-                        pid = Popen([open_command,  self._output_file_path], stderr=fnull)
-                elif sys.platform.startswith("win"):
-                    Popen('cmd /c "start ' + self._output_file_path + '"')
+                # if g:pandoc#command#custom_open is defined and is a valid funcref
+                if vim.eval("g:pandoc#command#custom_open") != "" \
+                        and vim.eval("exists('*"+vim.eval("g:pandoc#command#custom_open")+"')") == 1:
+
+                    custom_command = vim.eval(vim.eval("g:pandoc#command#custom_open") \
+                                              + "('"+self._output_file_path+"')")
+                    Popen(shlex.split(custom_command))
+
+                # otherwise use platform defaults:
+                else:
+                    if sys.platform == "darwin" or sys.platform.startswith("linux"):
+                        if sys.platform == "darwin":
+                            open_command = "open" #OSX
+                        elif sys.platform.startswith("linux"):
+                            open_command = "xdg-open" # freedesktop/linux
+
+                        with open(os.devnull, 'wb') as fnull:
+                            pid = Popen([open_command,  self._output_file_path], stderr=fnull)
+
+                    elif sys.platform.startswith("win"):
+                        Popen('cmd /c "start ' + self._output_file_path + '"')
 
             # we reset this
             self._output_file_path = None

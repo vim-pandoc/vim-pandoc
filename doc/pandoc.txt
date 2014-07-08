@@ -220,7 +220,8 @@ a buffer will open displaying the command output. You can dismiss this buffer
 pressing <Esc>.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
-the created file in its associated program.
+the created file in its associated program. This behavior can be customized
+through the |g:pandoc#command#custom_open| variable. 
 
 NOTE: The pandoc execution is performed asynchronously if vim supports the
 "clientserver" feature. This requires python to be available in the system.
@@ -463,6 +464,19 @@ A description of the available configuration variables follows:
 
   The LaTeX engine to use with pandoc. 'xelatex' is the default for greater
   unicode compatibility.
+
+- *g:pandoc#command#custom_open*
+  default = ""
+
+  A function to be used to open the created file. This function must take an
+  argument, for the path of the file created, and return a string with the
+  command that should open the file. For example:
+
+    let g:pandoc#command#custom_open = "MyPandocOpen"
+
+    function! MyPandocOpen(file)
+        return "xdg-open ". a:file
+    endfunction
 
 - *g:pandoc#command#templates_file*
   default = split(&runtimepath, ",")[0]."/vim-pandoc-templates"
