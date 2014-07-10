@@ -14,6 +14,11 @@ function! pandoc#bibliographies#Init()
 	    let g:pandoc#biblio#sources = "bcg"
     endif
     "}}}
+    " File extensions to check for {{{3
+    if !exists("g:pandoc#biblio#bib_extensions")
+        let g:pandoc#biblio#bib_extensions = ["bib", "biblatex", "ris", "mods"]
+    endif
+    " }}}
     " Use bibtool for queries? {{{3
     if !exists("g:pandoc#biblio#use_bibtool")
 	    let g:pandoc#biblio#use_bibtool = 0

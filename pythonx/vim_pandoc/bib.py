@@ -15,7 +15,7 @@ def make_title_ascii(title):
     return title
 
 
-bib_extensions = ["json", "ris", "mods", "biblatex", "bib"]
+bib_extensions = vim.vars["pandoc#biblio#bib_extensions"]
 
 def find_bibfiles():
     sources = vim.vars["pandoc#biblio#sources"]
@@ -158,7 +158,10 @@ def get_json_suggestions(text, query):
 
     entries = []
 
-    data = json.loads(text)
+    try:
+        data = json.loads(text)
+    except:
+        return entries
 
     for entry in data:
         entry_dict = {}
