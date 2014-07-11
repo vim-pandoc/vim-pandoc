@@ -494,6 +494,14 @@ A description of the available configuration variables follows:
     t: look in TeX's texmf
     g: append items in |g:pandoc#biblio#bibs|
 
+- *g:pandoc#bib#bib_extensions*
+  default = ["bib", "biblatex", "ris", "mods"]
+
+  What bibliography extensions to look for in the working dir for `b` and `c`
+  flags in |g:pandoc#biblio#sources|.
+  "json" is not included here because it might interfere with other files the
+  user can have (we assume the files in `l`, `t` and `g` are safe).
+
 - *g:pandoc#biblio#bibs*
   default = []
 
@@ -501,11 +509,9 @@ A description of the available configuration variables follows:
   |g:pandoc#biblio#sources|.
 
 - *b:pandoc_biblio_bibs*
-  default = whatever bibliographies vim-pandoc finds in the sources described
-  in |g:pandoc#biblio#sources|
+  default = []
 
-  This is the value finally used by the |:Pandoc| command and autocompletion.
-  You can modify it to if you need.
+  Extra bibliographies to use for the |:Pandoc| command, local to the buffer.
 
 - *g:pandoc#biblio#use_bibtool*
   default = 0
