@@ -16,7 +16,7 @@ def make_title_ascii(title):
 
 
 local_bib_extensions = vim.vars["pandoc#biblio#bib_extensions"]
-bib_extensions = ["bib", "bibtex", "ris", "mods", "json"]
+bib_extensions = ["bib", "bibtex", "ris", "mods", "json", "enl", "wos", "medline", "copac", "xml"]
 
 def find_bibfiles():
     sources = vim.vars["pandoc#biblio#sources"]
@@ -196,7 +196,7 @@ def get_suggestions():
             ids = get_ris_suggestions(text, query)
         elif bib_type == "json":
             ids = get_json_suggestions(text, query)
-        else:
+        elif bib_type in ("bib", "bibtex"):
             if vim.vars["pandoc#biblio#use_bibtool"] == 1 and vim.eval("executable('bibtool')") == '1':
                 ids = get_bibtex_suggestions(bib, query, True, bib)
             else:
