@@ -143,6 +143,8 @@ See |g:pandoc#formatting#pandoc_equalprog|.
 
 Provides folding support for markdown and textile files.
 
+The initial |'foldlevel'| is set with |g:pandoc#folding#level|.
+
 As expected, folds are created for headers in markdown and textile files. The
 folding level for the headers can be defined by two methods, configurable with
 |g:pandoc#folding#mode|. The default mode, "syntax", uses the header syntax to
@@ -530,6 +532,11 @@ A description of the available configuration variables follows:
   What style to use when applying headers. Default is to use atx headers
   everywhere. "s" enables setext headers for level 1 and 2 headers, "2"
   appends atx marks at both ends of the header.
+
+- *g:pandoc#folding#level*
+  default = &foldlevel
+
+  The value of |'foldlevel'| for opened files.
 
 - *g:pandoc#folding#mode*
   default = 'syntax'

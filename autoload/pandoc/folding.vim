@@ -3,6 +3,10 @@
 " Init: {{{1
 function! pandoc#folding#Init()
     " set up defaults {{{2
+    " Initial foldlevel {{{3
+    if !exists("g:pandoc#folding#level")
+        let g:pandoc#folding#level = &foldlevel
+    endif
     " How to decide fold levels {{{3
     " 'syntax': Use syntax
     " 'relative': Count how many parents the header has
@@ -22,6 +26,7 @@ function! pandoc#folding#Init()
     endif
 
     " set up folding {{{2
+    exe "setlocal foldlevel=".g:pandoc#folding#level
     setlocal foldmethod=expr
     " might help with slowness while typing due to syntax checks
     augroup EnableFastFolds
