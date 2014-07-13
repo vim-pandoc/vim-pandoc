@@ -16,7 +16,7 @@ def make_title_ascii(title):
 
 
 local_bib_extensions = vim.vars["pandoc#biblio#bib_extensions"]
-bib_extensions = ["bib", "biblatex", "ris", "mods", "json"]
+bib_extensions = ["bib", "bibtex", "ris", "mods", "json"]
 
 def find_bibfiles():
     sources = vim.vars["pandoc#biblio#sources"]

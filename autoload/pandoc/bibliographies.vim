@@ -16,7 +16,7 @@ function! pandoc#bibliographies#Init()
     "}}}
     " File extensions to check for {{{3
     if !exists("g:pandoc#biblio#bib_extensions")
-        let g:pandoc#biblio#bib_extensions = ["bib", "biblatex", "ris", "mods"]
+        let g:pandoc#biblio#bib_extensions = ["bib", "bibtex", "ris", "mods"]
     endif
     " }}}
     " Use bibtool for queries? {{{3
