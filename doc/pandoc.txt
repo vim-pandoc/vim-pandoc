@@ -89,7 +89,7 @@ use https://github.com/vim-pandoc/vim-pandoc-syntax for this:
 
    Plugin 'vim-pandoc/vim-pandoc-syntax'
 
-Note this syntax file is used for both `markdown` and `pandoc` filetypes by
+Note: this syntax file is used for both `markdown` and `pandoc` filetypes by
 default, but you can opt out of it for markdown files by setting
 |g:pandoc#filetypes#pandoc_markdown| to 0.
 
@@ -106,7 +106,7 @@ appropiate filetype syntax file, but creates the Pandoc command and loads the
 extra utilities. What filetypes to attach to is determined by the value of the
 |g:pandoc#filetypes#handled| variable.
 
-Note vim-pandoc's developers mostly use pandoc's markdown syntax, so
+Note: vim-pandoc's developers mostly use pandoc's markdown syntax, so
 coverage for it is more complete than for the other filetypes.
 
 MODULES                                                     *vim-pandoc-modules*
@@ -125,11 +125,11 @@ in their .vimrc.
 
                                                        *vim-pandoc-modules-list*
 
-Now, a description of th available modules
+Now, a description of the available modules
 
 - FORMATTING                                      *vim-pandoc-formatting-module*
 
-Handles basic writing settings, like the use hard or soft line wraps. It is
+Handles basic writing settings, like the use of hard or soft line wraps. It is
 recommended to leave this module enabled.
 
 The module behavior is configured through the |g:pandoc#formatting#mode|
@@ -194,7 +194,7 @@ Besides this, some extensions are provided:
 
 - COMMAND                                            *vim-pandoc-command-module*
 
-NOTE: This modules requires python support.
+Note: This modules requires python support.
 
 The `command` module sets up a buffer-local *:Pandoc* command which handles
 pandoc execution. This command builds an incantation for pandoc using
@@ -225,13 +225,13 @@ If you write a bang ('!') after the command, vim-pandoc will try to open
 the created file in its associated program. This behavior can be customized
 through the |g:pandoc#command#custom_open| variable. 
 
-NOTE: The pandoc execution is performed asynchronously if vim supports the
+Note: The pandoc execution is performed asynchronously if vim supports the
 "clientserver" feature. This requires python to be available in the system.
 
 The :Pandoc command has argument completion for supported output formats and
 pandoc option arguments.
 
-NOTE: Previously, vim-pandoc used the executors system present in
+Note: Previously, vim-pandoc used the executors system present in
 vim-pandoc, which allowed for the execution of command pipelines. This is no
 longer supported. If you want to pass the file through a filter, use pandoc's
 -F option.
@@ -247,7 +247,7 @@ He can save this incantation as a 'template', so later he could simply run
 
     :Pandoc! #my_usual_article
 
-Note templates don't record if a bang was used for the Pandoc command, so once
+Note: templates don't record if a bang was used for the Pandoc command, so once
 #my_usual_article is defined, both ':Pandoc #my_usual_article' and ':Pandoc!
 #my_usual_article' are possible.
 
@@ -310,7 +310,7 @@ not suitable or needs to serve a different purpose.
 
 - BIBLIOGRAPHIES                               *vim-pandoc-bibliographies-module*
 
-NOTE: This module requires python support.
+Note: This module requires python support.
 
 Provides with support for bibliographic info completion and retrieval, and
 also populates the |b:pandoc_biblio_bibs| variable, which the |:Pandoc|
