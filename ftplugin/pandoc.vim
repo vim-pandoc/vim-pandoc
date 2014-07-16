@@ -1,4 +1,4 @@
-" vim: set fdm=marker fdc=2: {{{1
+" vim: set fdm=marker et ts=4 sw=4 sts=4:
 
 " File: ftplugin/pandoc.vim
 " Description: vim-pandoc-handled buffer settings
@@ -15,7 +15,7 @@ endif
 let s:enabled_modules = []
 for module in g:pandoc#modules#enabled
     if index(g:pandoc#modules#disabled, module) == -1
-	let s:enabled_modules = add(s:enabled_modules, module)
+        let s:enabled_modules = add(s:enabled_modules, module)
     endif
 endfor
 

@@ -1,20 +1,20 @@
-" vim: set fdm=marker : 
+" vim: set fdm=marker et ts=4 sw=4 sts=4:
 
 function! pandoc#formatting#Init() "{{{1
     " set up defaults {{{2
-    
+   
     " Formatting mode {{{3
     " s: use soft wraps
     " h: use hard wraps
     " a: auto format (only used if h is set)
     if !exists("g:pandoc#formatting#mode")
-	let g:pandoc#formatting#mode = "s"
+        let g:pandoc#formatting#mode = "s"
     endif
     "}}}
     " = {{{3
     " Use pandoc as equalprg? {{{4
     if !exists("g:pandoc#formatting#pandoc_equalprg")
-	let g:pandoc#formatting#pandoc_equalprg = 1
+        let g:pandoc#formatting#pandoc_equalprg = 1
     endif
     " }}}4
     " Use a custom indentexpr? {{{4
@@ -25,12 +25,12 @@ function! pandoc#formatting#Init() "{{{1
     " }}}3
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
-	call pandoc#formatting#UseHardWraps()
+        call pandoc#formatting#UseHardWraps()
     elseif stridx(g:pandoc#formatting#mode, "s") >= 0 && stridx(g:pandoc#formatting#mode, "h") < 0
-	call pandoc#formatting#UseSoftWraps()
+        call pandoc#formatting#UseSoftWraps()
     else
-	echoerr "pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default."
-	call pandoc#formatting#UseSoftWraps()
+        echoerr "pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default."
+        call pandoc#formatting#UseSoftWraps()
     endif
 
     " equalprog {{{2
@@ -39,15 +39,15 @@ function! pandoc#formatting#Init() "{{{1
     "
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
-    if g:pandoc#formatting#pandoc_equalprg > 0	
-	let &l:equalprg="pandoc -t markdown --reference-links"
-	if &textwidth > 0
-	    let &l:equalprg.=" --columns " . &textwidth
-	endif
+    if g:pandoc#formatting#pandoc_equalprg > 0
+        let &l:equalprg="pandoc -t markdown --reference-links"
+        if &textwidth > 0
+            let &l:equalprg.=" --columns " . &textwidth
+        endif
     endif
 
     " common settings {{{2
-    
+   
     " indent using a custom indentexpr
     if g:pandoc#formatting#set_indentexpr == 1
         setlocal indentexpr=pandoc#formatting#IndentExpr()
@@ -62,11 +62,11 @@ function! pandoc#formatting#Init() "{{{1
 
     " Textile uses .. for comments
     if &ft == "textile"
-	setlocal commentstring=..%s
-	setlocal comments=f:..
+        setlocal commentstring=..%s
+        setlocal comments=f:..
     else " Other markup formats use HTML-style comments
-	setlocal commentstring=<!--%s-->
-	setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
+        setlocal commentstring=<!--%s-->
+        setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
     endif
     "}}}2
 endfunction
@@ -80,7 +80,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
 
     " hard wrapping at 79 chars (like in gq default)
     if &textwidth == 0
-	setlocal textwidth=79
+        setlocal textwidth=79
     endif
     " t: wrap on &textwidth
     " n: keep inner indent for list items.
@@ -89,13 +89,13 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     " pandoc syntax.
     " TODO: add support for roman numerals
     setlocal formatlistpat=^\\s*\\([*+-]\\\|\\((*\\d\\+[.)]\\+\\)\\\|\\((*\\l[.)]\\+\\)\\)\\s\\+
-    
+   
     if stridx(g:pandoc#formatting#mode, "a") >= 0
-	" a: auto-format
-	" w: lines with trailing spaces mark continuing
-	" paragraphs, and lines ending on non-spaces end paragraphs.
-	" we add `w` as a workaround to `a` joining compact lists.
-	setlocal formatoptions+=aw
+        " a: auto-format
+        " w: lines with trailing spaces mark continuing
+        " paragraphs, and lines ending on non-spaces end paragraphs.
+        " we add `w` as a workaround to `a` joining compact lists.
+        setlocal formatoptions+=aw
     endif
 endfunction
 

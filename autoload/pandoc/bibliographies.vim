@@ -1,4 +1,4 @@
-" vim: set fdm=marker :
+" vim: set fdm=marker et ts=4 sw=4 sts=4:
 
 " Init(): sets up defaults, populates b:pandoc_biblio_bibs {{{1
 function! pandoc#bibliographies#Init()
@@ -11,7 +11,7 @@ function! pandoc#bibliographies#Init()
     " g: append values in g:pandoc#biblio#bibs
     "
     if !exists("g:pandoc#biblio#sources")
-	    let g:pandoc#biblio#sources = "bcg"
+            let g:pandoc#biblio#sources = "bcg"
     endif
     "}}}
     " File extensions to check for {{{3
@@ -21,12 +21,12 @@ function! pandoc#bibliographies#Init()
     " }}}
     " Use bibtool for queries? {{{3
     if !exists("g:pandoc#biblio#use_bibtool")
-	    let g:pandoc#biblio#use_bibtool = 0
+            let g:pandoc#biblio#use_bibtool = 0
     endif
     "}}}
     " Files to add to b:pandoc_biblio_bibs if "g" is in g:pandoc#biblio#sources {{{3
     if !exists("g:pandoc#biblio#bibs")
-	    let g:pandoc#biblio#bibs = []
+            let g:pandoc#biblio#bibs = []
     endif
     " populate b:pandoc_biblio_bibs {{{2
     let b:pandoc_biblio_bibs = pandoc#bibliographies#Find_Bibliographies()
@@ -35,8 +35,8 @@ endfunction
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
 function! pandoc#bibliographies#Find_Bibliographies()
     if has("python")
-	python import vim_pandoc.bib
-	return pyeval("vim_pandoc.bib.find_bibfiles()")
+        python import vim_pandoc.bib
+        return pyeval("vim_pandoc.bib.find_bibfiles()")
     endif
     return []
 endfunction
@@ -45,7 +45,7 @@ endfunction
 " called by our omnifunc, if completion is enabled
 function! pandoc#bibliographies#GetSuggestions(partkey)
     if has("python")
-	python import vim_pandoc.bib
-	return pyeval("vim_pandoc.bib.get_suggestions()")
+        python import vim_pandoc.bib
+        return pyeval("vim_pandoc.bib.get_suggestions()")
     endif
 endfunction

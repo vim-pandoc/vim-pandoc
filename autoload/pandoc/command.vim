@@ -1,16 +1,16 @@
-" vim: set fdm=marker :
+" vim: set fdm=marker et ts=4 sw=4 sts=4:
 
 " Init(): sets up defaults, creates the Pandoc command, requires python support {{{1
 function! pandoc#command#Init()
     " set up defaults {{{2
     " use message buffers? {{{3
     if !exists("g:pandoc#command#use_message_buffers")
-	let g:pandoc#command#use_message_buffers = 1
+        let g:pandoc#command#use_message_buffers = 1
     endif
 
     " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3
     if !exists("g:pandoc#command#latex_engine")
-	let g:pandoc#command#latex_engine = "xelatex"
+        let g:pandoc#command#latex_engine = "xelatex"
     endif
     " custom function defining command to open the created files
     if !exists("g:pandoc#command#custom_open")
@@ -18,14 +18,14 @@ function! pandoc#command#Init()
     endif
     " file where to save command templates {{{3
     if !exists("g:pandoc#command#templates_file")
-        let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates" 
+        let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates"
     endif
 
     " create :Pandoc {{{2
     if has("python")
-	" let's make sure it gets loaded
-	py import vim
-        command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete 
+        " let's make sure it gets loaded
+        py import vim
+        command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete
                     \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
     endif "}}}2
     " create :PandocTemplate {{{2
@@ -40,17 +40,17 @@ endfunction
 " bang: should we open the created file afterwards?
 function! pandoc#command#Pandoc(args, bang)
     if has("python")
-	py from vim_pandoc.command import pandoc
-        let templatized_args = substitute(a:args, '#\(\S\+\)', 
+        py from vim_pandoc.command import pandoc
+        let templatized_args = substitute(a:args, '#\(\S\+\)',
                     \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
-	py pandoc(vim.eval("templatized_args"), vim.eval("a:bang") != '')
+        py pandoc(vim.eval("templatized_args"), vim.eval("a:bang") != '')
     endif
 endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
 function! pandoc#command#PandocComplete(a, c, pos)
     if has("python")
-	py from vim_pandoc.command import PandocHelpParser
+        py from vim_pandoc.command import PandocHelpParser
         let cmd_args = split(a:c, " ", 1)[1:]
         if len(cmd_args) == 1 && (cmd_args[0] == '' || pyeval("vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))"))
             return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
@@ -68,8 +68,8 @@ endfunction
 " returncode: the returncode value pandoc gave
 function! pandoc#command#PandocAsyncCallback(should_open, returncode)
     if has("python")
-	py from vim_pandoc.command import pandoc
-	py pandoc.on_done(vim.eval("a:should_open") == '1', vim.eval("a:returncode"))
+        py from vim_pandoc.command import pandoc
+        py pandoc.on_done(vim.eval("a:should_open") == '1', vim.eval("a:returncode"))
     endif
 endfunction
 
@@ -91,7 +91,7 @@ function! pandoc#command#PandocTemplate(args) "{{{2
         elseif len(cmd_args) > 2
             call pandoc#command#SaveTemplate(cmd_args[1], join(cmd_args[2:], " "))
         else
-            echohl ErrorMsg 
+            echohl ErrorMsg
             echom "pandoc:command:missing or invalid arguments for 'PandocTemplate save'"
             echohl None
         endif
@@ -115,7 +115,7 @@ function! s:LastCommandAsTemplate() "{{{2
     while 1
         let hist_item = histget("cmd", hist_item_idx)
         if match(hist_item, '^Pandoc!\? ') == 0
-            break 
+            break
         endif
         let hist_item_idx = hist_item_idx - 1
     endwhile

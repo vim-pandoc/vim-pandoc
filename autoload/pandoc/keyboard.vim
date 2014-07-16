@@ -1,17 +1,17 @@
-" vim: set fdm=marker:
+" vim: set fdm=marker et ts=4 sw=4 sts=4:
 
 " Init: {{{1
 function! pandoc#keyboard#Init()
     " set up defaults {{{2
     " Use display motions when using soft wrapping {{{3
     if !exists("g:pandoc#keyboard#display_motions")
-	let g:pandoc#keyboard#display_motions = 1
+        let g:pandoc#keyboard#display_motions = 1
     endif
- 
+
     " We use a mark for some functions, the user can change it {{{3
     " so it doesn't interfere with his settings
     if !exists("g:pandoc#keyboard#mark")
-	let g:pandoc#keyboard#mark = "r"
+        let g:pandoc#keyboard#mark = "r"
     endif
 
     " What style to use when applying header styles {{{3
@@ -19,21 +19,21 @@ function! pandoc#keyboard#Init()
     " s: setex headers for 1st and 2nd levels
     " 2: add hashes at both ends
     if !exists("g:pandoc#keyboard#header_style")
-	let g:pandoc#keyboard#header_style = "a"
+        let g:pandoc#keyboard#header_style = "a"
     endif
 
     " Display_Motion: {{{2
     if g:pandoc#keyboard#display_motions == 1
-	" these are not useful when using the hard wraps mode.
-	if exists("g:pandoc#formatting#mode") && stridx(g:pandoc#formatting#mode, "s") > -1
-	    " Remappings that make j and k behave properly with soft wrapping.
-	    nnoremap <buffer> j gj
-	    nnoremap <buffer> k gk
-	    vnoremap <buffer> j gj
-	    vnoremap <buffer> k gk
-	endif
+        " these are not useful when using the hard wraps mode.
+        if exists("g:pandoc#formatting#mode") && stridx(g:pandoc#formatting#mode, "s") > -1
+            " Remappings that make j and k behave properly with soft wrapping.
+            nnoremap <buffer> j gj
+            nnoremap <buffer> k gk
+            vnoremap <buffer> j gj
+            vnoremap <buffer> k gk
+        endif
     endif
-    
+   
     " Styling: {{{2
     " Toggle emphasis, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>i :set opfunc=pandoc#keyboard#ToggleEmphasis<cr>g@
@@ -68,7 +68,7 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>hcn :<C-U>call pandoc#keyboard#GotoNthChild(v:count1)<cr>
 
     " References: {{{2
-    " Add new reference link (or footnote link) after current paragraph. 
+    " Add new reference link (or footnote link) after current paragraph.
     noremap <buffer> <silent> <localleader>nr :call pandoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
     noremap <buffer> <silent> <localleader>rg :call pandoc#keyboard#GOTO_Ref()<CR>
@@ -84,7 +84,7 @@ endfunction
 
 function! s:MovetoLine(line)
     if a:line > 0
-	call cursor(a:line, 1)
+        call cursor(a:line, 1)
     endif
 endfunction
 " }}}1
@@ -96,40 +96,40 @@ function! pandoc#keyboard#ToggleOperator(type, ends)
     let &selection = "inclusive"
     let reg_save = @@
     if a:type ==# "v"
-	execute "normal! `<".a:type."`>x"
+        execute "normal! `<".a:type."`>x"
     elseif a:type ==# "char"
-	let cline = getline(".")
-	let ccol = getpos(".")[2]
-	let nchar = cline[ccol]
-	let pchar = cline[ccol-2]
-	if cline[ccol] == ""
-	    " at end
-	    execute "normal! `[Bv`]BEx"
-	elseif match(pchar, '[[:blank:]]') > -1
-	    if match(nchar, '[[:blank:]]') > -1
-		" single char
-		execute "normal! `[v`]egex"
-	    else
-		" after space
-		execute "normal! `[v`]BEx"
-	    endif
-	elseif match(nchar, '[[:blank:]]') > -1
-	    " before space
-	    execute "normal! `[Bv`]BEx"
-	else
-	    " inside a word
-	    execute "normal! `[EBv`]BEx"
-	endif
+        let cline = getline(".")
+        let ccol = getpos(".")[2]
+        let nchar = cline[ccol]
+        let pchar = cline[ccol-2]
+        if cline[ccol] == ""
+            " at end
+            execute "normal! `[Bv`]BEx"
+        elseif match(pchar, '[[:blank:]]') > -1
+            if match(nchar, '[[:blank:]]') > -1
+        	" single char
+        	execute "normal! `[v`]egex"
+            else
+        	" after space
+        	execute "normal! `[v`]BEx"
+            endif
+        elseif match(nchar, '[[:blank:]]') > -1
+            " before space
+            execute "normal! `[Bv`]BEx"
+        else
+            " inside a word
+            execute "normal! `[EBv`]BEx"
+        endif
     else
-	return
+        return
     endif
     let match_data = matchlist(@@, '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
     if len(match_data) == 0
-	let @@ = a:ends.@@.a:ends
-	execute "normal P"
-    else 
-	let @@ = match_data[2]
-	execute "normal P"
+        let @@ = a:ends.@@.a:ends
+        execute "normal P"
+    else
+        let @@ = match_data[2]
+        execute "normal P"
     endif
     let @@ = reg_save
     let &selection = sel_save
@@ -140,11 +140,11 @@ function! pandoc#keyboard#Apply(type, ends)
     let &selection = "inclusive"
     let reg_save = @@
     if a:type ==# "v"
-	execute "normal! `<".a:type."`>x"
+        execute "normal! `<".a:type."`>x"
     elseif a:type ==# "char"
         execute "normal! `[v`]x"
     else
-	return
+        return
     endif
     let @@ = a:ends.@@.a:ends
     execute "normal P"
@@ -233,16 +233,16 @@ endfunction
 function! pandoc#keyboard#BACKFROM_Ref()
     try
         execute 'normal  `'.g:pandoc#keyboard#mark
-	" clean up
-	execute 'delmark '.g:pandoc#keyboard#mark
+        " clean up
+        execute 'delmark '.g:pandoc#keyboard#mark
     catch /E20/ "no mark set, we must search backwards.
-	let reg_save = @@
-	"move right, because otherwise it would fail if the cursor is at the
-	"beggining of the line
+        let reg_save = @@
+        "move right, because otherwise it would fail if the cursor is at the
+        "beggining of the line
         execute "silent normal! 0l?[\<cr>vf]y"
-	let @@ = substitute(@@, '\]', '\\\]', 'g')
-	execute "silent normal! ?".@@."\<cr>"
-	let @@ = reg_save
+        let @@ = substitute(@@, '\]', '\\\]', 'g')
+        execute "silent normal! ?".@@."\<cr>"
+        let @@ = reg_save
     endtry
 endfunction
 
@@ -259,7 +259,7 @@ endfunction
 function! pandoc#keyboard#ApplyHeader(level) "{{{3
     call pandoc#keyboard#RemoveHeader()
     if a:level == 0
-	return
+        return
     endif
 
     let line_text = getline(".")
@@ -267,20 +267,20 @@ function! pandoc#keyboard#ApplyHeader(level) "{{{3
        let text = line_text
     else
        if (g:pandoc#keyboard#header_style =~ "2") == 1
-	   let tail = ' ' . repeat("#", a:level)
+           let tail = ' ' . repeat("#", a:level)
        else
-	   let tail = ''
+           let tail = ''
        endif
        let text = repeat("#", a:level) . ' ' . line_text . tail
     endif
     call setline(line("."), text)
-    
+   
     if (g:pandoc#keyboard#header_style =~ "s") == 1
-	if a:level == 1
-	    call append(line("."), repeat("=", len(text)))
-	elseif a:level == 2
-	    call append(line("."), repeat("-", len(text)))
-	endif
+        if a:level == 1
+            call append(line("."), repeat("=", len(text)))
+        elseif a:level == 2
+            call append(line("."), repeat("-", len(text)))
+        endif
     endif
 endfunction
 
@@ -288,12 +288,12 @@ function! pandoc#keyboard#RemoveHeader() "{{{3
     let lnum = line(".")
     let line_text = getline(".")
     if match(line_text, "^#") > -1
-	let line_text = substitute(line_text, "^#* *", '', '')
-	if match(line_text, " #*$") > -1
-	    let line_text = substitute(line_text, " #*$", '', '')
-	endif
+        let line_text = substitute(line_text, "^#* *", '', '')
+        if match(line_text, " #*$") > -1
+            let line_text = substitute(line_text, " #*$", '', '')
+        endif
     elseif match(getline(line(".")+1), "^[-=]") > -1
-	exe line(".")+1.'delete "_'
+        exe line(".")+1.'delete "_'
     endif
     exe lnum
     call setline(line("."), line_text)
