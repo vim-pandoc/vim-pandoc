@@ -116,7 +116,7 @@ function! pandoc#folding#MarkdownLevelSA()
     let vline = getline(v:lnum)
     let vline1 = getline(v:lnum + 1)
     if vline =~ '^#\{1,6}'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|clojure\|comment\)'
+        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|rustAttribute\|clojure\|comment\)'
 	    if g:pandoc#folding#mode == 'relative'
 		return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
 	    else

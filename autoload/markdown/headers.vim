@@ -4,7 +4,7 @@
 
 function! markdown#headers#CheckValidHeader(lnum) "{{{1
     if exists("g:vim_pandoc_syntax_exists")
-	if synIDattr(synID(a:lnum, 1, 1), "name") =~? '\(pandocDelimitedCodeBlock\|clojure\|comment\|yamlkey\)'
+	if synIDattr(synID(a:lnum, 1, 1), "name") =~? '\(pandocDelimitedCodeBlock\|rustAttribute\|clojure\|comment\|yamlkey\)'
 	    return 0
 	endif
     endif
