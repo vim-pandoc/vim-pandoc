@@ -42,8 +42,8 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>b :set opfunc=pandoc#keyboard#ToggleStrong<cr>g@
     vnoremap <buffer> <silent> <localleader>b :<C-U>call pandoc#keyboard#ToggleStrong(visualmode())<CR>
     " Toggle verbatim, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>` :set opfunc=pandoc#keyboard#ToggleVerbatim<cr>g@
-    vnoremap <buffer> <silent> <localleader>` :<C-U>call pandoc#keyboard#ToggleVerbatim(visualmode())<CR>
+    noremap <buffer> <silent> <localleader>' :set opfunc=pandoc#keyboard#ToggleVerbatim<cr>g@
+    vnoremap <buffer> <silent> <localleader>' :<C-U>call pandoc#keyboard#ToggleVerbatim(visualmode())<CR>
     " Toggle strikeout, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>~~ :set opfunc=pandoc#keyboard#ToggleStrikeout<cr>g@
     vnoremap <buffer> <silent> <localleader>~~ :<C-U>call pandoc#keyboard#ToggleStrikeout(visualmode())<CR>
