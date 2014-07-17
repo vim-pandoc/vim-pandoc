@@ -93,10 +93,10 @@ endfunction
 " Toggle Operators, WYSIWYG-style {{{3
 function! pandoc#keyboard#ToggleOperator(type, ends)
     let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
+    let &selection = "old"
+    let reg_save = getreg('*')
     if a:type ==# "v"
-        execute "normal! `<".a:type."`>x"
+        execute "normal! `<".a:type."`>".'"*x'
     elseif a:type ==# "char"
         let cline = getline(".")
         let ccol = getpos(".")[2]
@@ -104,51 +104,51 @@ function! pandoc#keyboard#ToggleOperator(type, ends)
         let pchar = cline[ccol-2]
         if cline[ccol] == ""
             " at end
-            execute "normal! `[Bv`]BEx"
+            execute "normal! `[Bv`]BE".'"*x'
         elseif match(pchar, '[[:blank:]]') > -1
             if match(nchar, '[[:blank:]]') > -1
                 " single char
-                execute "normal! `[v`]egex"
+                execute "normal! `[v`]ege".'"*x'
             else
                 " after space
-                execute "normal! `[v`]BEx"
+                execute "normal! `[v`]BE".'"*x'
             endif
         elseif match(nchar, '[[:blank:]]') > -1
             " before space
-            execute "normal! `[Bv`]BEx"
+            execute "normal! `[Bv`]BE".'"*x'
         else
             " inside a word
-            execute "normal! `[EBv`]BEx"
+            execute "normal! `[EBv`]BE".'"*x'
         endif
     else
         return
     endif
-    let match_data = matchlist(@@, '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
+    let match_data = matchlist(getreg('*'), '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
     if len(match_data) == 0
-        let @@ = a:ends.@@.a:ends
-        execute "normal P"
+        call setreg('*', a:ends.getreg('*').a:ends)
+        execute 'normal "*P'
     else
-        let @@ = match_data[2]
-        execute "normal P"
+        call setreg('*', match_data[2])
+        execute 'normal "*P'
     endif
-    let @@ = reg_save
+    call setreg('*', reg_save)
     let &selection = sel_save
 endfunction "}}}3
 " Apply style {{{3
 function! pandoc#keyboard#Apply(type, ends)
     let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
+    let &selection = "old"
+    let reg_save = getreg('*')
     if a:type ==# "v"
-        execute "normal! `<".a:type."`>x"
+        execute "normal! `<".a:type."`>".'"*x'
     elseif a:type ==# "char"
-        execute "normal! `[v`]x"
+        execute "normal! `[v`]".'"*x'
     else
         return
     endif
-    let @@ = a:ends.@@.a:ends
-    execute "normal P"
-    let @@ = reg_save
+    call setreg('*', a:ends.getreg('*').a:ends)
+    execute 'normal "*P'
+    call setreg('*', reg_save)
     let &selection = sel_save
 endfunction
 "}}}3
@@ -211,23 +211,23 @@ endfunction
 " handling: {{{2
 function! pandoc#keyboard#Insert_Ref()
     execute "normal m".g:pandoc#keyboard#mark
-    let reg_save = @@
-    normal ya[
+    let reg_save = getreg('*')
+    normal "*ya[
     call search('\n\(\n\|\_$\)\@=')
-    execute "normal! o\<cr>\<esc>0P$a: "
-    let @@ = reg_save
+    execute "normal! o\<cr>\<esc>0".'"*P'."$a: "
+    call setreg('*', reg_save)
 endfunction
 " }}}2
 " navigation: {{{2
 
 function! pandoc#keyboard#GOTO_Ref()
-    let reg_save = @@
+    let reg_save = getreg('*')
     execute "normal m".g:pandoc#keyboard#mark
-    execute "silent normal! ?[\<cr>vf]y"
-    let @@ = substitute(@@, '\[', '\\\[', 'g')
-    let @@ = substitute(@@, '\]', '\\\]', 'g')
-    execute "silent normal! /".@@.":\<cr>"
-    let @@ = reg_save
+    execute "silent normal! ?[\<cr>vf]".'"*y'
+    call setreg('*', substitute(getreg('*'), '\[', '\\\[', 'g'))
+    call setreg('*', substitute(getreg('*'), '\]', '\\\]', 'g'))
+    execute "silent normal! /".getreg('*').":\<cr>"
+    call setreg('*', reg_save)
 endfunction
 
 function! pandoc#keyboard#BACKFROM_Ref()
@@ -236,13 +236,13 @@ function! pandoc#keyboard#BACKFROM_Ref()
         " clean up
         execute 'delmark '.g:pandoc#keyboard#mark
     catch /E20/ "no mark set, we must search backwards.
-        let reg_save = @@
+        let reg_save = getreg('*')
         "move right, because otherwise it would fail if the cursor is at the
         "beggining of the line
-        execute "silent normal! 0l?[\<cr>vf]y"
-        let @@ = substitute(@@, '\]', '\\\]', 'g')
-        execute "silent normal! ?".@@."\<cr>"
-        let @@ = reg_save
+        execute "silent normal! 0l?[\<cr>vf]".'"*y'
+        call setreg('*', substitute(getreg('*'), '\]', '\\\]', 'g'))
+        execute "silent normal! ?".getreg('*')."\<cr>"
+        call setreg('*', reg_save)
     endtry
 endfunction
 
