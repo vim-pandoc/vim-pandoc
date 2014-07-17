@@ -401,6 +401,12 @@ Provides the *:TOC* command, which displays a table of contents for the
 current file using vim's location list system. The position of the TOC window
 is configured by the |g:pandoc#toc#position| variable.
 
+When the user presses <CR> (the Enter key) in the TOC buffer, the cursor is
+moved in the source window to the position selected. By default, the TOC
+buffer is closed after this, but this can be circumvented by pressing <C-CR>.
+This behavior can be reversed by setting |g:pandoc#toc#close_after_navigating|
+to 0.
+
 - CHDIR                                          *vim-pandoc-chdir-module*
 
 Changes the current window directory to the one the file is in
@@ -581,6 +587,13 @@ A description of the available configuration variables follows:
   default = "right"
 
   Where to show the TOC window. Can be "top", "left", "right", "bottom".
+
+- *g:pandoc#toc#close_after_navigating*
+  default = 1
+
+  Must the TOC window close after selecting a location? This also controls the
+  behavior of the <CR> key. If '1', <CR> navigates and closes the TOC, <C-CR>
+  simply navigates. If '0', this behavior is reversed.
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 

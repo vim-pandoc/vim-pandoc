@@ -7,6 +7,9 @@ function! pandoc#toc#Init()
     if !exists("g:pandoc#toc#position")
         let g:pandoc#toc#position = "right"
     endif
+    if !exists("g:pandoc#toc#close_after_navigating")
+        let g:pandoc#toc#close_after_navigating = 1
+    endif
     " create :TOC command {{{2
     command! -buffer TOC call pandoc#toc#Show()
     "}}}
@@ -102,5 +105,12 @@ function! pandoc#toc#ReDisplay(bufname)
 
     setlocal linebreak
 
-    map <buffer> q <esc>:lclose<CR>
+    noremap <buffer> q :lclose<CR>
+    if g:pandoc#toc#close_after_navigating == 1
+        let mod = ""
+        noremap <buffer> <C-CR> <CR>
+    else
+        let mod = "C-"
+    endif
+    exe "noremap <buffer> <".mod."CR> <CR>:lclose<CR>"
 endfunction
