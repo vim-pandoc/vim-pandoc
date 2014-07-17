@@ -48,13 +48,13 @@ function! pandoc#folding#FoldExpr()
     if g:pandoc#folding#fold_yaml == 1
         if vline =~ '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
             if vline =~ '^---$' && v:lnum == 1
-        	return ">1"
+                return ">1"
             elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlkey"
-        	return "<1"
+                return "<1"
             elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "pandocYAMLHeader"
-        	return "<1"
+                return "<1"
             else
-        	return "="
+                return "="
             endif
         endif
     endif
@@ -123,7 +123,7 @@ function! pandoc#folding#MarkdownLevelSA()
     if vline =~ '^#\{1,6}'
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|clojure\|comment\)'
             if g:pandoc#folding#mode == 'relative'
-        	return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+                return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
             else
                 return ">". len(matchstr(vline, '^#\{1,6}'))
             endif
@@ -137,9 +137,9 @@ function! pandoc#folding#MarkdownLevelSA()
         if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             if g:pandoc#folding#mode == 'relative'
-        	return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+                return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
             else
-        	return ">2"
+                return ">2"
             endif
         endif
     elseif vline =~ '^<!--.*fold-begin -->'

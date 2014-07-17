@@ -14,23 +14,23 @@ function! pandoc#completion#Complete(findstart, base)
             let line = getline('.')
             let pos = col('.') - 1
             while pos > 0 && line[pos - 1] !~ '\\\|{\|\[\|<\|\s\|@\|\^'
-        	let pos -= 1
+                let pos -= 1
             endwhile
 
             let line_start = line[:pos-1]
             if line_start =~ '.*@$'
-        	let s:completion_type = 'bib'
+                let s:completion_type = 'bib'
             else
-        	let s:completion_type = ''
+                let s:completion_type = ''
             endif
             return pos
         else
             "return suggestions in an array
             let suggestions = []
             if index(g:pandoc#modules#enabled, "bibliographies") >= 0 &&
-        		\ s:completion_type == 'bib'
-        	" suggest BibTeX entries
-        	let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
+                        \ s:completion_type == 'bib'
+                " suggest BibTeX entries
+                let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
             endif
             return suggestions
         endif

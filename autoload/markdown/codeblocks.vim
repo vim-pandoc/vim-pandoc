@@ -58,8 +58,7 @@ function! markdown#codeblocks#BodyRange(...)
         else
             " we are at the starting delimiter
             if markdown#codeblocks#InsideCodeblock(source_pos-1) == 0
-
-        	let l:range = [start_delim + 1, search('^[~`]\{3}', 'nW') -1]
+                let l:range = [start_delim + 1, search('^[~`]\{3}', 'nW') -1]
             " we are at the ending delimiter
             else
                 let l:range = [search('^[~`]\{3}', 'bnW') + 1, end_delim - 1]

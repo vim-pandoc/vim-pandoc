@@ -107,11 +107,11 @@ function! pandoc#keyboard#ToggleOperator(type, ends)
             execute "normal! `[Bv`]BEx"
         elseif match(pchar, '[[:blank:]]') > -1
             if match(nchar, '[[:blank:]]') > -1
-        	" single char
-        	execute "normal! `[v`]egex"
+                " single char
+                execute "normal! `[v`]egex"
             else
-        	" after space
-        	execute "normal! `[v`]BEx"
+                " after space
+                execute "normal! `[v`]BEx"
             endif
         elseif match(nchar, '[[:blank:]]') > -1
             " before space

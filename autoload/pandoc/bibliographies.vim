@@ -11,7 +11,7 @@ function! pandoc#bibliographies#Init()
     " g: append values in g:pandoc#biblio#bibs
     "
     if !exists("g:pandoc#biblio#sources")
-            let g:pandoc#biblio#sources = "bcg"
+        let g:pandoc#biblio#sources = "bcg"
     endif
     "}}}
     " File extensions to check for {{{3
@@ -21,12 +21,12 @@ function! pandoc#bibliographies#Init()
     " }}}
     " Use bibtool for queries? {{{3
     if !exists("g:pandoc#biblio#use_bibtool")
-            let g:pandoc#biblio#use_bibtool = 0
+        let g:pandoc#biblio#use_bibtool = 0
     endif
     "}}}
     " Files to add to b:pandoc_biblio_bibs if "g" is in g:pandoc#biblio#sources {{{3
     if !exists("g:pandoc#biblio#bibs")
-            let g:pandoc#biblio#bibs = []
+        let g:pandoc#biblio#bibs = []
     endif
     " populate b:pandoc_biblio_bibs {{{2
     let b:pandoc_biblio_bibs = pandoc#bibliographies#Find_Bibliographies()

@@ -109,7 +109,7 @@ function! markdown#headers#CurrentHeaderParent(...) "{{{1
         if markdown#headers#CheckValidHeader(arrival_lnum) != 1
             let arrival_lnum = search('\('.setext_regex.'\|^#\{1,'.parent_level.'}\s\)', "bnW")
             if markdown#headers#CheckValidHeader(arrival_lnum) != 1
-        	let arrival_lnum = 0
+                let arrival_lnum = 0
             endif
         endif
     else
@@ -137,11 +137,11 @@ function! markdown#headers#CurrentHeaderAncestral(...) "{{{1
         call cursor(p_lnum, 1)
         let a_lnum = markdown#headers#CurrentHeaderParent()
         if a_lnum != 0
-           let p_lnum = a_lnum
-       else
-           call cursor(origin_pos[1], origin_pos[2])
-           return p_lnum
-       endif
+            let p_lnum = a_lnum
+        else
+            call cursor(origin_pos[1], origin_pos[2])
+            return p_lnum
+        endif
     endwhile
     call cursor(origin_pos[1], origin_pos[2])
 endfunction
@@ -173,10 +173,10 @@ function! markdown#headers#CurrentHeaderAncestors(...) "{{{1
         call add(h_genealogy, p_lnum)
         let a_lnum = markdown#headers#CurrentHeaderParent()
         if a_lnum != 0
-           let p_lnum = a_lnum
-       else
-           break
-       endif
+            let p_lnum = a_lnum
+        else
+            break
+        endif
     endwhile
     call cursor(origin_pos[1], origin_pos[2])
     return h_genealogy
@@ -200,7 +200,7 @@ function! markdown#headers#SiblingHeader(direction, ...) "{{{1
         call cursor(ch_lnum, 1)
     endif
 
-   let l = getline(ch_lnum)
+    let l = getline(ch_lnum)
     if match(l, "^#") > -1
         let header_level = len(matchstr(l, '#*'))
     elseif match(l, '^-') > -1
@@ -296,13 +296,13 @@ function! markdown#headers#LastChild(...) "{{{1
         if n_lnum != 0
            
             while n_lnum
-        	call cursor(n_lnum, 1)
-        	let a_lnum = markdown#headers#NextSiblingHeader()
-        	if a_lnum != 0
-        	    let n_lnum = a_lnum
-        	else
-        	    break
-        	endif
+                call cursor(n_lnum, 1)
+                let a_lnum = markdown#headers#NextSiblingHeader()
+                if a_lnum != 0
+                    let n_lnum = a_lnum
+                else
+                    break
+                endif
             endwhile
         else
             let n_lnum = fc_lnum
@@ -329,7 +329,7 @@ function! markdown#headers#NthChild(count, ...) "{{{1
         for child in range(a:count-1)
             let arrival_lnum = markdown#headers#NextSiblingHeader()
             if arrival_lnum == 0
-        	break
+                break
             endif
             call cursor(arrival_lnum, 1)
         endfor
@@ -362,10 +362,10 @@ function! markdown#headers#ID(...) "{{{1
         let text = substitute(text, '\s', '-', 'g') " replace spaces with dashes
         let text = tolower(text) " turn lowercase
         if !exists("header_id") || header_id == ""
-           if match(text, "[[:alpha:]]") > -1
-        	let header_id = text
+            if match(text, "[[:alpha:]]") > -1
+                let header_id = text
             else
-        	let header_id = "section"
+                let header_id = "section"
             endif
         endif
     endif
