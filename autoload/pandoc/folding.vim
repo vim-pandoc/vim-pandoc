@@ -21,6 +21,16 @@ function! pandoc#folding#Init()
     if !exists("g:pandoc#folding#fold_div_classes")
         let g:pandoc#folding#fold_div_classes = ["notes"]
     endif
+    "}}}3
+    " Fold vim markers (see help fold-marker) {{{3
+    if !exists("g:pandoc#folding#fold_vim_markers")
+        let g:pandoc#folding#fold_vim_markers = 1
+    endif
+    " Only fold vim markers inside comments {{{3
+    if !exists("g:pandoc#folding#vim_markers_in_comments_only")
+        let g:pandoc#folding#vim_markers_in_comments_only = 1
+    endif
+    " Use basic folding fot this buffer? {{{3
     if !exists("b:pandoc_folding_basic")
         let b:pandoc_folding_basic = 0
     endif
@@ -68,6 +78,33 @@ function! pandoc#folding#FoldExpr()
     " pandoc ignores this attribute, so this is safe.
     elseif vline =~ '</div endfold>'
         return "s1"
+    endif
+
+    " fold markers?
+    if g:pandoc#folding#fold_vim_markers == 1
+        if vline =~ '[{}]\{3}'
+            if g:pandoc#folding#vim_markers_in_comments_only == 1
+                let mark_head = '<!--\s*'
+            else
+                let mark_head = ''
+            endif
+            if vline =~ mark_head.'{\{3}'
+                let level = matchstr(vline, '\({\{3}\)\@<=\d')
+                if level != ""
+                    return ">".level
+                else
+                    return "a1"
+                endif
+            endif
+            if vline =~ mark_head.'}\{3}'
+                let level = matchstr(vline, '\(}\{3}\)\@<=\d')
+                if level != ""
+                    return "<".level
+                else
+                    return "s1"
+                endif
+            endif
+        endif
     endif
 
     " Delegate to filetype specific functions

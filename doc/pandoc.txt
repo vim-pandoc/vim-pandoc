@@ -191,6 +191,14 @@ Besides this, some extensions are provided:
 
   Note: This also works in textile files, with `.. fold-begin` and `..
   fold-end`.
+* Fold emulating vim's marker folding method (see 'foldmethod'). By default,
+  this will only  work for marks within comments (see
+  |g:pandoc#folding#markers_in_comments_only|).  For example,
+
+  <!-- {{{3 -->
+  this is a marked fold
+  <!-- }}} -->
+
 
 - COMMAND                                            *vim-pandoc-command-module*
 
@@ -577,6 +585,16 @@ A description of the available configuration variables follows:
       <div class="notes">
       test
       </div foldend>
+
+- *g:pandoc#folding#fold_vim_markers*
+  default = 1
+
+  Emulate vim's "marker" foldmethod.
+
+- *g:pandoc#folding#vim_markers_in_comments_only*
+  default = 1
+
+  Only emulate marker foldmethod for marks inside HTML comments.
 
 - *b:pandoc_folding_basic*
   buffer local. default = 0
