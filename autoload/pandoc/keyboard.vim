@@ -81,7 +81,7 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>ln :call pandoc#keyboard#NextListItem()<cr>
     noremap <buffer> <silent> <localleader>lp :call pandoc#keyboard#PrevListItem()<cr>
     noremap <buffer> <silent> <localleader>ll :call pandoc#keyboard#CurrentListItem()<cr>
-    noremap <buffer> <silent> <localleader>lp :call pandoc#keyboard#CurrentListItemParent()<cr>
+    noremap <buffer> <silent> <localleader>llp :call pandoc#keyboard#CurrentListItemParent()<cr>
     noremap <buffer> <silent> <localleader>lsn :call pandoc#keyboard#NextListItemSibling()<cr>
     noremap <buffer> <silent> <localleader>lsp :call pandoc#keyboard#PrevListItemSibling()<cr>
     noremap <buffer> <silent> <localleader>lcf :call pandoc#keyboard#FirstListItemChild()<cr>
