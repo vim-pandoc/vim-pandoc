@@ -168,10 +168,61 @@ function! markdown#lists#PrevListItemSibling(...) "{{{1
 endfunction
 
 function! markdown#lists#FirstChild(...) "{{{1
+    if a:0 > 0
+        let search_from = a:1
+    else
+        let search_from = line('.')
+    endif
+    let c_listitem_level = markdown#lists#ListItemLevel(getline(markdown#lists#CurrentListItem()))
+    let n_litem_lnum = markdown#lists#NextListItem()
+    let n_litem_text = getline(n_litem_lnum)
+    let n_litem_level = markdown#lists#ListItemLevel(n_litem_text)
+    if n_litem_level > c_listitem_level
+        return n_litem_lnum
+    else
+        return -1
+    endif
 endfunction
 
 function! markdown#lists#LastChild(...) "{{{1
+    if a:0 > 0
+        let search_from = a:1
+    else
+        let search_from = line('.')
+    endif
+    let first_child = markdown#lists#FirstChild(search_from)
+    if first_child != -1
+        let n_litem_lnum = markdown#lists#NextListItemSibling(first_child)
+        let n_litem_parent_lnum = markdown#lists#CurrentListItemParent(n_litem_lnum)
+        while 1
+            let n_n_litem_lnum = markdown#lists#NextListItemSibling(n_litem_lnum)
+            if n_n_litem_lnum == -1
+                return n_litem_lnum
+            else
+                let n_litem_lnum = n_n_litem_lnum
+            endif
+        endwhile
+    else
+        return -1
+    endif
+    return -1
 endfunction
 
 function! markdown#lists#NthChild(count, ...) "{{{1
+    if a:0 > 0
+        let search_from = a:1
+    else
+        let search_from = line('.')
+    endif
+    let item_lnum = markdown#lists#FirstChild(search_from)
+    if item_lnum != -1
+        if a:count == 1
+            return item_lnum
+        else
+            for idx in range(a:count-1)
+                let item_lnum = markdown#lists#NextListItemSibling(item_lnum)
+            endfor
+        endif
+        return item_lnum
+    endif
 endfunction

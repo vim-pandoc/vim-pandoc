@@ -85,7 +85,7 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>lsn :call pandoc#keyboard#NextListItemSibling()<cr>
     noremap <buffer> <silent> <localleader>lsp :call pandoc#keyboard#PrevListItemSibling()<cr>
     noremap <buffer> <silent> <localleader>lcf :call pandoc#keyboard#FirstListItemChild()<cr>
-    noremap <buffer> <silent> <localleader>lcf :call pandoc#keyboard#LastListItemChild()<cr>
+    noremap <buffer> <silent> <localleader>lcl :call pandoc#keyboard#LastListItemChild()<cr>
     noremap <buffer> <silent> <localleader>lcn :<C-U>call pandoc#keyboard#GotoNthListItemChild(v:count1)<cr>
     "}}}2
 endfunction
@@ -99,6 +99,7 @@ function! s:MovetoLine(line)
     if a:line > 0
         call cursor(a:line, 1)
     endif
+    normal ^
 endfunction
 " }}}1
 " Styling: {{{1
@@ -378,14 +379,14 @@ function! pandoc#keyboard#PrevListItemSibling() "{{{3
 endfunction
 
 function! pandoc#keyboard#FirstListItemChild() "{{{3
-    call s:MovetoLine(markdown#lists#FirstListItemChild())
+    call s:MovetoLine(markdown#lists#FirstChild())
 endfunction
 
 function! pandoc#keyboard#LastListItemChild() "{{{3
-    call s:MovetoLine(markdown#lists#LastListItemChild())
+    call s:MovetoLine(markdown#lists#LastChild())
 endfunction
 
 function! pandoc#keyboard#GotoNthListItemChild(count) "{{{3
-    call s:MovetoLine(markdown#lists#GotoNthListItemChild(a:count))
+    call s:MovetoLine(markdown#lists#NthChild(a:count))
 endfunction
 " }}}1
