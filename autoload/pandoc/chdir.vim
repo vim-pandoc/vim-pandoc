@@ -5,5 +5,7 @@ function! pandoc#chdir#Init()
         lcd %:h
     catch /E499/
         return
+    catch /E344/
+        return
     endtry
 endfunction
