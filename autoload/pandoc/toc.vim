@@ -50,7 +50,7 @@ endfunction
 " Update(): update location list {{{1
 function! pandoc#toc#Update()
     try
-        silent lvimgrep /\(^\S.*\(\n[=-]\+\n\)\@=\|^#\+\|\%^%\)/ %
+        silent lvimgrep /\(^\S.*\(\n[=-]\+\n\)\@=\|^#\{1,6}[^.]\|\%^%\)/ %
     catch /E480/
         return
     catch /E499/ " % has no name
