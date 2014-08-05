@@ -2,6 +2,8 @@
 
 function! pandoc#menu#Init()
     call pandoc#menu#CreateMenu()
+    au! BufEnter <buffer> call pandoc#menu#CreateMenu()
+    au! BufLeave <buffer> aunmenu Pandoc
 endfunction
 
 function! pandoc#menu#CreateMenu()

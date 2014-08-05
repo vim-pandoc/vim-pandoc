@@ -22,7 +22,8 @@ function! pandoc#keyboard#Init()
         let g:pandoc#keyboard#header_style = "a"
     endif
 
-    " Display_Motion: {{{2
+    " Mappings: {{{2
+    " Display_Motion: {{{3
     if g:pandoc#keyboard#display_motions == 1
         " these are not useful when using the hard wraps mode.
         if exists("g:pandoc#formatting#mode") && stridx(g:pandoc#formatting#mode, "s") > -1
@@ -34,7 +35,7 @@ function! pandoc#keyboard#Init()
         endif
     endif
    
-    " Styling: {{{2
+    " Styling: {{{3
     " Toggle emphasis, WYSIWYG word processor style
     noremap <buffer> <silent> <localleader>i :set opfunc=pandoc#keyboard#ToggleEmphasis<cr>g@
     vnoremap <buffer> <silent> <localleader>i :<C-U>call pandoc#keyboard#ToggleEmphasis(visualmode())<CR>
@@ -54,7 +55,7 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>_ :set opfunc=pandoc#keyboard#ToggleSubscript<cr>g@
     vnoremap <buffer> <silent> <localleader>_ :<C-U>call pandoc#keyboard#ToggleSubscript(visualmode())<CR>
 
-    " Headers: {{{2
+    " Headers: {{{3
     noremap <buffer> <silent> <localleader># :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
     noremap <buffer> <silent> <localleader>hd :call pandoc#keyboard#RemoveHeader()<cr>
     noremap <buffer> <silent> <localleader>hn :call pandoc#keyboard#NextHeader()<cr>
@@ -67,7 +68,7 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <localleader>hcl :call pandoc#keyboard#LastChild()<cr>
     noremap <buffer> <silent> <localleader>hcn :<C-U>call pandoc#keyboard#GotoNthChild(v:count1)<cr>
 
-    " References: {{{2
+    " References: {{{3
     " Add new reference link (or footnote link) after current paragraph.
     noremap <buffer> <silent> <localleader>nr :call pandoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
@@ -75,6 +76,18 @@ function! pandoc#keyboard#Init()
     " Go back to last point in the text we jumped to a reference from.
     noremap <buffer> <silent> <localleader>rb :call pandoc#keyboard#BACKFROM_Ref()<CR>
     " }}}
+    " Lists: {{{3
+    " navigation: {{{4
+    noremap <buffer> <silent> <localleader>ln :call pandoc#keyboard#NextListItem()<cr>
+    noremap <buffer> <silent> <localleader>lp :call pandoc#keyboard#PrevListItem()<cr>
+    noremap <buffer> <silent> <localleader>ll :call pandoc#keyboard#CurrentListItem()<cr>
+    noremap <buffer> <silent> <localleader>llp :call pandoc#keyboard#CurrentListItemParent()<cr>
+    noremap <buffer> <silent> <localleader>lsn :call pandoc#keyboard#NextListItemSibling()<cr>
+    noremap <buffer> <silent> <localleader>lsp :call pandoc#keyboard#PrevListItemSibling()<cr>
+    noremap <buffer> <silent> <localleader>lcf :call pandoc#keyboard#FirstListItemChild()<cr>
+    noremap <buffer> <silent> <localleader>lcl :call pandoc#keyboard#LastListItemChild()<cr>
+    noremap <buffer> <silent> <localleader>lcn :<C-U>call pandoc#keyboard#GotoNthListItemChild(v:count1)<cr>
+    "}}}2
 endfunction
 "}}}1
 " Auxiliary: {{{1
@@ -86,6 +99,7 @@ function! s:MovetoLine(line)
     if a:line > 0
         call cursor(a:line, 1)
     endif
+    normal ^
 endfunction
 " }}}1
 " Styling: {{{1
@@ -304,6 +318,7 @@ function! pandoc#keyboard#NextHeader() "{{{3
     call s:MovetoLine(markdown#headers#NextHeader())
 endfunction
 
+
 function! pandoc#keyboard#PrevHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevHeader())
 endfunction
@@ -336,4 +351,42 @@ function! pandoc#keyboard#GotoNthChild(count) "{{{3
     call s:MovetoLine(markdown#headers#NthChild(a:count))
 endfunction
 " "}}}2
+" }}}1
+" Lists: {{{1
+" navigation:{{{2
+function! pandoc#keyboard#NextListItem() "{{{3
+    call s:MovetoLine(markdown#lists#NextListItem())
+endfunction
+
+function! pandoc#keyboard#PrevListItem() "{{{3
+    call s:MovetoLine(markdown#lists#PrevListItem())
+endfunction
+
+function! pandoc#keyboard#CurrentListItem() "{{{3
+    call s:MovetoLine(markdown#lists#CurrentListItem())
+endfunction
+
+function! pandoc#keyboard#CurrentListItemParent() "{{{3
+    call s:MovetoLine(markdown#lists#CurrentListItemParent())
+endfunction
+
+function! pandoc#keyboard#NextListItemSibling() "{{{3
+    call s:MovetoLine(markdown#lists#NextListItemSibling())
+endfunction
+
+function! pandoc#keyboard#PrevListItemSibling() "{{{3
+    call s:MovetoLine(markdown#lists#PrevListItemSibling())    
+endfunction
+
+function! pandoc#keyboard#FirstListItemChild() "{{{3
+    call s:MovetoLine(markdown#lists#FirstChild())
+endfunction
+
+function! pandoc#keyboard#LastListItemChild() "{{{3
+    call s:MovetoLine(markdown#lists#LastChild())
+endfunction
+
+function! pandoc#keyboard#GotoNthListItemChild(count) "{{{3
+    call s:MovetoLine(markdown#lists#NthChild(a:count))
+endfunction
 " }}}1
