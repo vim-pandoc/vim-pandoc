@@ -136,8 +136,12 @@ The module behavior is configured through the |g:pandoc#formatting#mode|
 variable. For example, giving it the value 'ha' will enable hard breaks, and
 autoformatting. The default is to use soft wraps.
 
-This module also configures whether to use pandoc for |`equalprog`| or not.
-See |g:pandoc#formatting#pandoc_equalprog|.
+This module also configures the program used for the |=| command, which you
+can use to reformat your document (by default: wraps lines, returns inline
+links and footnotes into reference links, etc.). This is configured with the
+|g:pandoc#formatting#equalprg|) variable. Please note that if you pass a
+whole file through the default filter, it might delete some stuff, like LaTeX
+macro definitions and title blocks. 
 
 - FOLDING                                            *vim-pandoc-folding-module*
 
@@ -465,10 +469,11 @@ A description of the available configuration variables follows:
 	a: autoformat
 	s: use soft wraps
 
-- *g:pandoc#formatting#pandoc_equalprog*
-  default = 1
+- *g:pandoc#formatting#equalprg*
+  default = "pandoc -t markdown --reference-links [-- columns 79|no-wrap]"
 
-  Use pandoc as the equalprog
+  What command to use for equalprg. If set to '', vim's default will be used.
+  See |'equalprg'|.
 
 - *g:pandoc#command#use_message_buffers*
   default = 1

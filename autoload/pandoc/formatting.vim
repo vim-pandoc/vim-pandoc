@@ -12,9 +12,14 @@ function! pandoc#formatting#Init() "{{{1
     endif
     "}}}
     " = {{{3
-    " Use pandoc as equalprg? {{{4
-    if !exists("g:pandoc#formatting#pandoc_equalprg")
-        let g:pandoc#formatting#pandoc_equalprg = 1
+    " what program to use equalprg? {{{4
+    if !exists("g:pandoc#formattingequalprg")
+        let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
+        if g:pandoc#formatting#mode =~ "h"
+            let g:pandoc#formatting#equalprg.= " --columns 79"
+        else
+            let g:pandoc#formatting#equalprg.= " --no-wrap"
+        endif
     endif
     " }}}4
     " Use a custom indentexpr? {{{4
@@ -39,11 +44,8 @@ function! pandoc#formatting#Init() "{{{1
     "
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
-    if g:pandoc#formatting#pandoc_equalprg > 0
-        let &l:equalprg="pandoc -t markdown --reference-links"
-        if &textwidth > 0
-            let &l:equalprg.=" --columns " . &textwidth
-        endif
+    if g:pandoc#formatting#equalprg != ''
+        let &l:equalprg=g:pandoc#formatting#equalprg
     endif
 
     " common settings {{{2
