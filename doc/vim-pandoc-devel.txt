@@ -6,7 +6,7 @@
 
 This is a guide to developing modules for vim-pandoc. It is aimed at anyone
 who wants to customize vim-pandoc further (or contribute some feature), and it
-doesn't pressupose much knowledge on the reader's part.
+doesn't presuppose much knowledge on the reader's part.
 
 |vim-pandoc|'s modules are viml files located in the `autoload/pandoc`
 directory, which are called by the pandoc filetype plugin depending on the
@@ -84,7 +84,7 @@ Note the buffer-scoped variable uses underscores instead of hashes (b:
 variables' names can't contain them).
 
 If we wanted to add a keyboard mapping to call the :PandocFancy command more
-esasily, we should add something like
+easily, we should add something like
 
     noremap <buffer> <LocalLeader>ff :PandocFancy<cr>
 
