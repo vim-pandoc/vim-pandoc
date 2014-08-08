@@ -30,6 +30,10 @@ function! pandoc#folding#Init()
     if !exists("g:pandoc#folding#vim_markers_in_comments_only")
         let g:pandoc#folding#vim_markers_in_comments_only = 1
     endif
+    " Fold fenced codeblocks? {{{3
+    if !exists("g:pandoc#folding#fold_fenced_codeblocks")
+        let g:pandoc#folding#fold_fenced_codeblocks = 0
+    endif
     " Use basic folding fot this buffer? {{{3
     if !exists("b:pandoc_folding_basic")
         let b:pandoc_folding_basic = 0
@@ -183,6 +187,14 @@ function! pandoc#folding#MarkdownLevelSA()
         return "a1"
     elseif vline =~ '^<!--.*fold-end -->'
         return "s1"
+    elseif vline =~ '[`~]\{3}'
+        if g:pandoc#folding#fold_fenced_codeblocks == 1
+            if vline1 =~ '\n'
+                return "s1"
+            else
+                return  "a1"
+            endif
+        endif
     endif
     return "="
 endfunction

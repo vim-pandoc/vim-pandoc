@@ -203,6 +203,9 @@ Besides this, some extensions are provided:
   this is a marked fold
   <!-- }}} -->
 
+* Fold fenced codeblocks. By default, this is disabled, but can be turned on
+  by setting |g:pandoc#folding#fold_fenced_codeblocks| to 1.
+
 
 - COMMAND                                            *vim-pandoc-command-module*
 
@@ -600,6 +603,11 @@ A description of the available configuration variables follows:
   default = 1
 
   Only emulate marker foldmethod for marks inside HTML comments.
+
+- *g:pandoc#folding#fold_fenced_codeblocks*
+  default = 0
+
+  Fold fenced codeblocks.
 
 - *b:pandoc_folding_basic*
   buffer local. default = 0
