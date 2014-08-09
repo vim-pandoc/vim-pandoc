@@ -232,16 +232,21 @@ will create an incantation like:
 :Pandoc will also use the value of |b:pandoc_biblio_bibs| to pass
 `--bibliography` arguments, so the user shouldn't do that himself.
 
-Depending on the value of |g:pandoc#command#use_message_buffers|, once pandoc runs
-a buffer will open displaying the command output. You can dismiss this buffer
-pressing <Esc>.
+Once pandoc runs, depending on the value of
+|g:pandoc#command#use_message_buffers| and if some error occurred, a buffer
+will open displaying the command output. You can dismiss this buffer pressing
+'q'. Regardless of pandoc's execution status, the invocation used will be logged so
+it can be checked using |:messages|.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
 the created file in its associated program. This behavior can be customized
 through the |g:pandoc#command#custom_open| variable. 
 
 Note: The pandoc execution is performed asynchronously if vim supports the
-"clientserver" feature. This requires python to be available in the system.
+|clientserver| feature and the running instance is a valid server (this is the
+default for gvim, but must be made explicit when running in a terminal, see
+|x11-clientserver|). This feature also requires python to be available in the
+system. 
 
 The :Pandoc command has argument completion for supported output formats and
 pandoc option arguments.
