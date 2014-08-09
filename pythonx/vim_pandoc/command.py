@@ -198,7 +198,11 @@ class PandocCommand(object):
 
     def on_done(self, should_open, returncode):
         if self._run_command and self._output_file_path:
-            if vim.eval("g:pandoc#command#use_message_buffers") == '1' and returncode != '0':
+            vim.command("echohl Statement")
+            vim.command("echom 'vim-pandoc:ran:" + self._run_command + "'")
+            vim.command("echohl None")
+
+            if vim.eval("g:pandoc#command#use_message_buffers") == '1' and returncode not in  ('0', 0):
                 vim.command("let split = &splitbelow")
                 vim.command("set splitbelow")
 
@@ -206,7 +210,7 @@ class PandocCommand(object):
                 vim.command("let &splitbelow = split")
                 vim.command("setlocal wrap")
                 vim.command("setlocal linebreak")
-                vim.current.buffer[0] = "# Press <Esc> to close this"
+                vim.current.buffer[0] = "# Press q to close this"
                 vim.current.buffer.append("▶ " + self._run_command)
                 vim.command("normal! G")
                 if vim.eval('filereadable("pandoc.out")') == '1':
@@ -230,9 +234,6 @@ class PandocCommand(object):
                 sleep(1)
             if os.path.exists("pandoc.out"):
                 os.remove("pandoc.out")
-            vim.command("echohl Statement")
-            vim.command("echom 'vim-pandoc:execute:" + self._run_command + "'")
-            vim.command("echohl None")
 
             # open file if needed
             if os.path.exists(self._output_file_path) and should_open:
@@ -261,5 +262,10 @@ class PandocCommand(object):
             # we reset this
             self._output_file_path = None
             self._run_command = None
+            vim.command("redraw")
+            if returncode in ("0", 0):
+                vim.command("echohl Statement")
+                vim.command("echom 'vim-pandoc:ran successfully.'")
+                vim.command("echohl None")
 
 pandoc = PandocCommand()
