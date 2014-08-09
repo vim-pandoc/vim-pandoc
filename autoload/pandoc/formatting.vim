@@ -61,6 +61,9 @@ function! pandoc#formatting#Init() "{{{1
     " Always use linebreak.
     setlocal linebreak
     setlocal breakat-=*
+    if exists('+breakindent')
+        setlocal breakindent
+    endif
 
     " Textile uses .. for comments
     if &ft == "textile"
@@ -77,6 +80,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     " reset settings that might have changed by UseSoftWraps
     setlocal formatoptions&
     setlocal display&
+    setlocal wrap&
     silent! unmap j
     silent! unmap k
 
@@ -108,6 +112,7 @@ function! pandoc#formatting#UseSoftWraps() "{{{1
     setlocal formatlistpat&
 
     " soft wrapping
+    setlocal wrap
     setlocal formatoptions=1
 
     " Show partial wrapped lines
