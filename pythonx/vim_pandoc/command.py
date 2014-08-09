@@ -213,8 +213,8 @@ class PandocCommand(object):
                     vim.command("silent r pandoc.out")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal nobuflisted")
-                # pressing <esc> on the buffer will delete it
-                vim.command("map <buffer> <esc> :bd<cr>")
+                # pressing q on the buffer will delete it
+                vim.command("map <buffer> q :bd<cr>")
                 # we will highlight some elements in the buffer
                 vim.command("syn match PandocOutputMarks /^>>/")
                 vim.command("syn match PandocCommand /^▶.*$/hs=s+1")
