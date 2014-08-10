@@ -427,10 +427,30 @@ buffer is closed after this, but this can be circumvented by pressing <C-CR>.
 This behavior can be reversed by setting |g:pandoc#toc#close_after_navigating|
 to 0.
 
-- CHDIR                                          *vim-pandoc-chdir-module*
+- CHDIR                                                *vim-pandoc-chdir-module*
 
 Changes the current window directory to the one the file is in
 ("%:h"). Enabled by default.
+
+- HYPERTEXT                                        *vim-pandoc-hypertext-module*
+
+Adds some basic hypertext functions. Files and addresses can be opened in
+system defined applications by pressing <C-o>s, or within vim, if possible, by
+pressing <C-o>l. 
+
+Let's suppose you are editing the file "notes.md" with the contents:
+
+     #) [important thing to do](important.html)
+     #) [another thing to do](another.html)
+
+and the files "important.md" and "another.md" are available. Pressing <C-o>l
+over "important.html" will open "important.md" within the current vim instance
+(this behavior of opening alternate files can be disabled by setting
+|g:pandoc#hypertext#open_editable_alternates| to 0). <C-o>s would open
+"important.html" in the browser, if the file existed. 
+
+See ||g:pandoc#hypertext#open_cmd| and |g:pandoc#hypertext#preferred_alternate| for
+info on how to configure this modules's behavior.
 
 SETTINGS                                                   *vim-pandoc-settings*
 
@@ -459,7 +479,7 @@ A description of the available configuration variables follows:
 - *g:pandoc#modules#enabled* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "metadata", "menu", "executors", "keyboard", "toc", "chdir"]
+  "metadata", "menu", "executors", "keyboard", "toc", "chdir", "hypertext"]
 
   A list of the modules to enable on the files determined by
   |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
@@ -630,6 +650,26 @@ A description of the available configuration variables follows:
   Must the TOC window close after selecting a location? This also controls the
   behavior of the <CR> key. If '1', <CR> navigates and closes the TOC, <C-CR>
   simply navigates. If '0', this behavior is reversed.
+
+- *g:pandoc#hypertext#open_editable_alternates*
+  default = 1
+
+  If opening locally files with *.pdf, *.html, *.odt and *.doc extensions, try
+  to open a vim editable file instead. For example, if you try to open
+  "test.html" and "test.md" is available in the same folder, vim will try to
+  edit "test.md".
+
+- *g:pandoc#hypertext#preferred_alternate*
+  default = "md"
+
+  What alternate extension should be preferred, for cases where several
+  editable files are available when opening locally and
+  |g:pandoc#hypertext#open_editable_alternates| is 1.
+
+- *g:pandoc#hypertext#open_cmd*
+  default = "botright vsplit"
+
+  How to open files within vim.
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
