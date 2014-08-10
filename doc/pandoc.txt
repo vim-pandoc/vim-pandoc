@@ -34,6 +34,7 @@ CONTENTS
     - COMPLETION |vim-pandoc-completion-module|
     - TOC |vim-pandoc-toc-module|
     - CHDIR |vim-pandoc-chdir-module|
+    - HYPERTEXT |vim-pandoc-hypertext-module|
 - CONFIGURATION
     - SETTINGS |vim-pandoc-settings|
 
