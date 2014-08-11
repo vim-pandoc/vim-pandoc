@@ -10,8 +10,8 @@ function! pandoc#hypertext#Init()
     if !exists("g:pandoc#hypertext#preferred_alternate")
         let g:pandoc#hypertext#preferred_alternate = "md"
     endif
-    noremap <C-o>l :call pandoc#hypertext#OpenLocal()<cr>
-    noremap <C-o>s :call pandoc#hypertext#OpenSystem()<cr>
+    noremap <silent> <buffer> <C-o>l :call pandoc#hypertext#OpenLocal()<cr>
+    noremap <silent> <buffer> <C-o>s :call pandoc#hypertext#OpenSystem()<cr>
 endfunction
 
 function! s:IsEditable(path)
