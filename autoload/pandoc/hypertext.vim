@@ -12,6 +12,7 @@ function! pandoc#hypertext#Init()
     endif
     noremap <silent> <buffer> <C-o>l :call pandoc#hypertext#OpenLocal()<cr>
     noremap <silent> <buffer> <C-o>s :call pandoc#hypertext#OpenSystem()<cr>
+    noremap <silent> <buffer> <C-o>i :call pandoc#hypertext#GotoID()<cr>
 endfunction
 
 function! s:IsEditable(path)
@@ -67,5 +68,24 @@ function! pandoc#hypertext#OpenSystem()
         call system('cmd /c "start '. addr .'"')
     elseif has("macunix")
         call system('open '. addr)
+    endif
+endfunction
+
+function! pandoc#hypertext#GotoID()
+    if synIDattr(synID(line('.'), col('.'), 0), 'name') != 'pandocHeaderID'
+        let id = expand("<cfile>")
+        let cur_lnum = line('.')
+        let q_lnum = search(id.'-\@!', 'nc') "add -\@! so we don't move to position 'id' is a substring of the actual id
+        if q_lnum != cur_lnum && q_lnum > 0
+            call search(id.'-\@!')
+            normal 0
+        else
+            let title_regex = '#*\s*'.substitute(substitute(id, '#', '', ''), '-', '\\s', 'g')
+            let auto_q_lnum = search(title_regex.'-\@!', 'nc')
+            if q_lnum > 0
+                call search(title_regex.'-\@!')
+                normal 0
+            endif
+        endif
     endif
 endfunction
