@@ -187,12 +187,13 @@ function! pandoc#folding#MarkdownLevelSA()
         return "a1"
     elseif vline =~ '^<!--.*fold-end -->'
         return "s1"
-    elseif vline =~ '[`~]\{3}'
+    elseif vline =~ '^\s*[`~]\{3}'
         if g:pandoc#folding#fold_fenced_codeblocks == 1
-            if vline1 =~ '\n'
+            let synId = synIDattr(synID(v:lnum, match(vline, '[`~]') + 1, 1), "name")
+            if synId == 'pandocDelimitedCodeBlockStart'
+                return "a1"
+            elseif synId =~ '^pandoc\(DelimitedCodeBlock$\)\@!'
                 return "s1"
-            else
-                return  "a1"
             endif
         endif
     endif
