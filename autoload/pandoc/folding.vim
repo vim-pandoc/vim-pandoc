@@ -162,10 +162,7 @@ function! pandoc#folding#MarkdownLevelSA()
     let vline = getline(v:lnum)
     let vline1 = getline(v:lnum + 1)
     if vline =~ '^#\{1,6}[^.]'
-        let synId = synIDattr(synID(v:lnum, 1, 1), "name")
-        if synId !~? '\(pandocDelimitedCodeBlock\|rustAttribute\|clojure\|comment\)' && !
-                    \ (!empty(synId) && synId !~? '^pandoc' &&
-                    \  exists('g:pandoc#syntax#codeblocks#embeds#langs') && !empty('g:pandoc#syntax#codeblocks#embeds#langs'))
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'
             if g:pandoc#folding#mode == 'relative'
                 return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
             else
@@ -173,12 +170,12 @@ function! pandoc#folding#MarkdownLevelSA()
             endif
         endif
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^=\+$'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             return ">1"
         endif
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^-\+$'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             if g:pandoc#folding#mode == 'relative'
                 return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))

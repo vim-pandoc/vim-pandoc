@@ -4,7 +4,8 @@
 
 function! markdown#headers#CheckValidHeader(lnum) "{{{1
     if exists("g:vim_pandoc_syntax_exists")
-        if synIDattr(synID(a:lnum, 1, 1), "name") =~? '\(pandocDelimitedCodeBlock\|rustAttribute\|clojure\|comment\|yamlkey\)'
+        let synId = synIDattr(synID(a:lnum, 1, 1), "name")
+        if synId !~ '^pandoc' || synId == 'pandocDelimitedCodeBlock'
             return 0
         endif
     endif
