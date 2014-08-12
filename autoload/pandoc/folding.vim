@@ -162,7 +162,7 @@ function! pandoc#folding#MarkdownLevelSA()
     let vline = getline(v:lnum)
     let vline1 = getline(v:lnum + 1)
     if vline =~ '^#\{1,6}[^.]'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|rustAttribute\|clojure\|comment\)'
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'
             if g:pandoc#folding#mode == 'relative'
                 return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
             else
@@ -170,12 +170,12 @@ function! pandoc#folding#MarkdownLevelSA()
             endif
         endif
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^=\+$'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             return ">1"
         endif
     elseif vline =~ '^[^-=].\+$' && vline1 =~ '^-\+$'
-        if synIDattr(synID(v:lnum, 1, 1), "name") !~? '\(pandocDelimitedCodeBlock\|comment\)'  &&
+        if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'  &&
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             if g:pandoc#folding#mode == 'relative'
                 return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
@@ -187,12 +187,13 @@ function! pandoc#folding#MarkdownLevelSA()
         return "a1"
     elseif vline =~ '^<!--.*fold-end -->'
         return "s1"
-    elseif vline =~ '[`~]\{3}'
+    elseif vline =~ '^\s*[`~]\{3}'
         if g:pandoc#folding#fold_fenced_codeblocks == 1
-            if vline1 =~ '\n'
+            let synId = synIDattr(synID(v:lnum, match(vline, '[`~]') + 1, 1), "name")
+            if synId == 'pandocDelimitedCodeBlockStart'
+                return "a1"
+            elseif synId =~ '^pandoc\(DelimitedCodeBlock$\)\@!'
                 return "s1"
-            else
-                return  "a1"
             endif
         endif
     endif
