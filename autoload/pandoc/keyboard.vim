@@ -21,9 +21,13 @@ function! pandoc#keyboard#Init()
     if !exists("g:pandoc#keyboard#header_style")
         let g:pandoc#keyboard#header_style = "a"
     endif
-    " {{{3
+    " Use default mappings? {{{3
     if !exists("g:pandoc#keyboard#use_default_mappings")
         let g:pandoc#keyboard#use_default_mappings = 1
+    endif
+    " Override section movements? {{{3
+    if !exists("g:pandoc#keyboard#headers#override")
+        let g:pandoc#keyboard#headers#override = 1
     endif
 
     " Mappings: {{{2
@@ -104,6 +108,12 @@ function! pandoc#keyboard#Init()
         nmap <buffer> <localleader>hcf <Plug>(pandoc-keyboard-first-header-child)
         nmap <buffer> <localleader>hcl <Plug>(pandoc-keyboard-last-header-child)
         nmap <buffer> <localleader>hcn <Plug>(pandoc-keyboard-nth-header-child)
+        if g:pandoc#keyboard#headers#override == 1
+            nmap <buffer> ]] <Plug>(pandoc-keyboard-next-header)
+            nmap <buffer> [[ <Plug>(pandoc-keyboard-prev-header)
+            nmap <buffer> ][ <Plug>(pandoc-keyboard-next-header-sibling)
+            nmap <buffer> [] <Plug>(pandoc-keyboard-prev-header-sibling)
+        endif
         nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
         nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
         nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)

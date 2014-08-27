@@ -436,18 +436,18 @@ Changes the current window directory to the one the file is in
 - HYPERTEXT                                        *vim-pandoc-hypertext-module*
 
 Adds some basic hypertext functions. Files and addresses can be opened in
-system defined applications by pressing <C-o>s, or within vim, if possible, by
-pressing <C-o>l. 
+system defined applications by pressing `gx`, or within vim, if possible, by
+pressing `gf`. 
 
 Let's suppose you are editing the file "notes.md" with the contents:
 
      #) [important thing to do](important.html)
      #) [another thing to do](another.html)
 
-and the files "important.md" and "another.md" are available. Pressing <C-o>l
+and the files "important.md" and "another.md" are available. Pressing `gf`
 over "important.html" will open "important.md" within the current vim instance
 (this behavior of opening alternate files can be disabled by setting
-|g:pandoc#hypertext#open_editable_alternates| to 0). <C-o>s would open
+|g:pandoc#hypertext#open_editable_alternates| to 0). `gx` would open
 "important.html" in the browser, if the file existed. 
 
 See ||g:pandoc#hypertext#open_cmd| and |g:pandoc#hypertext#preferred_alternate| for
@@ -581,6 +581,16 @@ A description of the available configuration variables follows:
   everywhere. "s" enables setext headers for level 1 and 2 headers, "2"
   appends atx marks at both ends of the header.
 
+- *g:pandoc#keyboard#use_default_mappings*
+  default = 1
+
+  Use default mappings. Otherwise, the user should provide his own.
+
+- *g:pandoc#keyboard#headers#override*
+  default = 1
+
+  Override ]] and [[ movements.
+
 - *g:pandoc#folding#level*
   default = &foldlevel
 
@@ -671,6 +681,11 @@ A description of the available configuration variables follows:
   default = "botright vsplit"
 
   How to open files within vim.
+
+- *g:pandoc#hypertext#use_default_mappings*
+  default = 1
+
+  Use default mappings.
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
