@@ -10,9 +10,19 @@ function! pandoc#hypertext#Init()
     if !exists("g:pandoc#hypertext#preferred_alternate")
         let g:pandoc#hypertext#preferred_alternate = "md"
     endif
-    noremap <silent> <buffer> <C-o>l :call pandoc#hypertext#OpenLocal()<cr>
-    noremap <silent> <buffer> <C-o>s :call pandoc#hypertext#OpenSystem()<cr>
-    noremap <silent> <buffer> <C-o>i :call pandoc#hypertext#GotoID()<cr>
+    if !exists("g:pandoc#hypertext#use_default_mappings")
+        let g:pandoc#hypertext#use_default_mappings = 1
+    endif
+
+    nnoremap <silent> <buffer> <Plug>(pandoc-hypertext-open-local) :<C-u>call pandoc#hypertext#OpenLocal()<cr>
+    nnoremap <silent> <buffer> <Plug>(pandoc-hypertext-open-system) :<C-u>call pandoc#hypertext#OpenSystem()<cr>
+    nnoremap <silent> <buffer> <Plug>(pandoc-hypertext-goto-id) :<C-u>call pandoc#hypertext#GotoID()<cr>
+
+    if g:pandoc#hypertext#use_default_mappings == 1
+        nmap <buffer> gf <Plug>(pandoc-hypertext-open-local)
+        nmap <buffer> gx <Plug>(pandoc-hypertext-open-system)
+        nmap <buffer> <localleader>xi <Plug>(pandoc-hypertext-goto-id)
+    endif
 endfunction
 
 function! s:IsEditable(path)

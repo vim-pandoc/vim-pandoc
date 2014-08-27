@@ -21,6 +21,10 @@ function! pandoc#keyboard#Init()
     if !exists("g:pandoc#keyboard#header_style")
         let g:pandoc#keyboard#header_style = "a"
     endif
+    " {{{3
+    if !exists("g:pandoc#keyboard#use_default_mappings")
+        let g:pandoc#keyboard#use_default_mappings = 1
+    endif
 
     " Mappings: {{{2
     " Display_Motion: {{{3
@@ -36,58 +40,84 @@ function! pandoc#keyboard#Init()
     endif
    
     " Styling: {{{3
-    " Toggle emphasis, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>i :set opfunc=pandoc#keyboard#ToggleEmphasis<cr>g@
-    vnoremap <buffer> <silent> <localleader>i :<C-U>call pandoc#keyboard#ToggleEmphasis(visualmode())<CR>
-    " Toggle strong, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>b :set opfunc=pandoc#keyboard#ToggleStrong<cr>g@
-    vnoremap <buffer> <silent> <localleader>b :<C-U>call pandoc#keyboard#ToggleStrong(visualmode())<CR>
-    " Toggle verbatim, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>' :set opfunc=pandoc#keyboard#ToggleVerbatim<cr>g@
-    vnoremap <buffer> <silent> <localleader>' :<C-U>call pandoc#keyboard#ToggleVerbatim(visualmode())<CR>
-    " Toggle strikeout, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>~~ :set opfunc=pandoc#keyboard#ToggleStrikeout<cr>g@
-    vnoremap <buffer> <silent> <localleader>~~ :<C-U>call pandoc#keyboard#ToggleStrikeout(visualmode())<CR>
-    " Toggle superscript, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>^ :set opfunc=pandoc#keyboard#ToggleSuperscript<cr>g@
-    vnoremap <buffer> <silent> <localleader>^ :<C-U>call pandoc#keyboard#ToggleSuperscript(visualmode())<CR>
-    " Toggle subscript, WYSIWYG word processor style
-    noremap <buffer> <silent> <localleader>_ :set opfunc=pandoc#keyboard#ToggleSubscript<cr>g@
-    vnoremap <buffer> <silent> <localleader>_ :<C-U>call pandoc#keyboard#ToggleSubscript(visualmode())<CR>
+    for style in ["emphasis", "strong", "verbatim", "strikeout", "superscript", "subscript"]
+        let u_style = substitute(style, '\<.', '\u&', '') " capitalize first char: emphasis -> Emphasis
+        exe 'noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :set opfunc=pandoc#keyboard#Toggle'.u_style.'<cr>g@'
+        exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :<C-U>call pandoc#keyboard#Toggle'.u_style.'(visualmode())<CR>'
+    endfor
 
     " Headers: {{{3
-    noremap <buffer> <silent> <localleader># :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
-    noremap <buffer> <silent> <localleader>hd :call pandoc#keyboard#RemoveHeader()<cr>
-    noremap <buffer> <silent> <localleader>hn :call pandoc#keyboard#NextHeader()<cr>
-    noremap <buffer> <silent> <localleader>hb :call pandoc#keyboard#PrevHeader()<cr>
-    noremap <buffer> <silent> <localleader>hh :call pandoc#keyboard#CurrentHeader()<cr>
-    noremap <buffer> <silent> <localleader>hp :call pandoc#keyboard#CurrentHeaderParent()<cr>
-    noremap <buffer> <silent> <localleader>hsn :call pandoc#keyboard#NextSiblingHeader()<cr>
-    noremap <buffer> <silent> <localleader>hsb :call pandoc#keyboard#PrevSiblingHeader()<cr>
-    noremap <buffer> <silent> <localleader>hcf :call pandoc#keyboard#FirstChild()<cr>
-    noremap <buffer> <silent> <localleader>hcl :call pandoc#keyboard#LastChild()<cr>
-    noremap <buffer> <silent> <localleader>hcn :<C-U>call pandoc#keyboard#GotoNthChild(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-apply-header) :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-remove-header) :call pandoc#keyboard#RemoveHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header) :call pandoc#keyboard#NextHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-header) :call pandoc#keyboard#PrevHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header) :call pandoc#keyboard#CurrentHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header-parent) :call pandoc#keyboard#CurrentHeaderParent()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header-sibling) :call pandoc#keyboard#NextSiblingHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-header-sibling) :call pandoc#keyboard#PrevSiblingHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-header-child) :call pandoc#keyboard#FirstChildHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-header-child) :call pandoc#keyboard#LastChildHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-header-child) :<C-U>call pandoc#keyboard#GotoNthChildHeader(v:count1)<cr>
 
     " References: {{{3
     " Add new reference link (or footnote link) after current paragraph.
-    noremap <buffer> <silent> <localleader>nr :call pandoc#keyboard#Insert_Ref()<cr>a
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-insert) :call pandoc#keyboard#Insert_Ref()<cr>a
     " Go to link or footnote definition for label under the cursor.
-    noremap <buffer> <silent> <localleader>rg :call pandoc#keyboard#GOTO_Ref()<CR>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-goto) :call pandoc#keyboard#GOTO_Ref()<CR>
     " Go back to last point in the text we jumped to a reference from.
-    noremap <buffer> <silent> <localleader>rb :call pandoc#keyboard#BACKFROM_Ref()<CR>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-backfrom) :call pandoc#keyboard#BACKFROM_Ref()<CR>
     " }}}
     " Lists: {{{3
     " navigation: {{{4
-    noremap <buffer> <silent> <localleader>ln :call pandoc#keyboard#NextListItem()<cr>
-    noremap <buffer> <silent> <localleader>lp :call pandoc#keyboard#PrevListItem()<cr>
-    noremap <buffer> <silent> <localleader>ll :call pandoc#keyboard#CurrentListItem()<cr>
-    noremap <buffer> <silent> <localleader>llp :call pandoc#keyboard#CurrentListItemParent()<cr>
-    noremap <buffer> <silent> <localleader>lsn :call pandoc#keyboard#NextListItemSibling()<cr>
-    noremap <buffer> <silent> <localleader>lsp :call pandoc#keyboard#PrevListItemSibling()<cr>
-    noremap <buffer> <silent> <localleader>lcf :call pandoc#keyboard#FirstListItemChild()<cr>
-    noremap <buffer> <silent> <localleader>lcl :call pandoc#keyboard#LastListItemChild()<cr>
-    noremap <buffer> <silent> <localleader>lcn :<C-U>call pandoc#keyboard#GotoNthListItemChild(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-li) :call pandoc#keyboard#NextListItem()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-li) :call pandoc#keyboard#PrevListItem()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-li) :call pandoc#keyboard#CurrentListItem()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-li-parent) :call pandoc#keyboard#CurrentListItemParent()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-li-sibling) :call pandoc#keyboard#NextListItemSibling()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-li-sibling) :call pandoc#keyboard#PrevListItemSibling()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-li-child) :call pandoc#keyboard#FirstListItemChild()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-li-child) :call pandoc#keyboard#LastListItemChild()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-li-child) :<C-U>call pandoc#keyboard#GotoNthListItemChild(v:count1)<cr>
     "}}}2
+    " Default mappings: {{{2
+    if g:pandoc#keyboard#use_default_mappings == 1
+        nmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
+        vmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
+        nmap <buffer> <localleader>b <Plug>(pandoc-keyboard-toggle-strong)
+        vmap <buffer> <localleader>b <Plug>(pandoc-keyboard-toggle-strong)
+        nmap <buffer> <localleader>' <Plug>(pandoc-keyboard-toggle-verbatim)
+        vmap <buffer> <localleader>' <Plug>(pandoc-keyboard-toggle-verbatim)
+        nmap <buffer> <localleader>~~ <Plug>(pandoc-keyboard-toggle-strikeout)
+        vmap <buffer> <localleader>~~ <Plug>(pandoc-keyboard-toggle-strikeout)
+        nmap <buffer> <localleader>^ <Plug>(pandoc-keyboard-toggle-superscript)
+        vmap <buffer> <localleader>^ <Plug>(pandoc-keyboard-toggle-superscript)
+        nmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
+        vmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
+        nmap <buffer> <localleader># <Plug>(pandoc-keyboard-apply-header)
+        nmap <buffer> <localleader>hd <Plug>(pandoc-keyboard-remove-header)
+        nmap <buffer> <localleader>hn <Plug>(pandoc-keyboard-next-header)
+        nmap <buffer> <localleader>hb <Plug>(pandoc-keyboard-prev-header)
+        nmap <buffer> <localleader>hh <Plug>(pandoc-keyboard-cur-header)
+        nmap <buffer> <localleader>hp <Plug>(pandoc-keyboard-cur-header-parent)
+        nmap <buffer> <localleader>hsn <Plug>(pandoc-keyboard-next-header-sibling)
+        nmap <buffer> <localleader>hsb <Plug>(pandoc-keyboard-prev-header-sibling)
+        nmap <buffer> <localleader>hcf <Plug>(pandoc-keyboard-first-header-child)
+        nmap <buffer> <localleader>hcl <Plug>(pandoc-keyboard-last-header-child)
+        nmap <buffer> <localleader>hcn <Plug>(pandoc-keyboard-nth-header-child)
+        nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
+        nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
+        nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)
+        nmap <buffer> <localleader>ln <Plug>(pandoc-keyboard-next-li)
+        nmap <buffer> <localleader>lp <Plug>(pandoc-keyboard-prev-li)
+        nmap <buffer> <localleader>ll <Plug>(pandoc-keyboard-cur-li)
+        nmap <buffer> <localleader>llp <Plug>(pandoc-keyboard-cur-li-parent)
+        nmap <buffer> <localleader>lsn <Plug>(pandoc-keyboard-next-li-sibling)
+        nmap <buffer> <localleader>lsp <Plug>(pandoc-keyboard-prev-li-sibling)
+        nmap <buffer> <localleader>lcf <Plug>(pandoc-keyboard-first-li-child)
+        nmap <buffer> <localleader>lcl <Plug>(pandoc-keyboard-last-li-child)
+        nmap <buffer> <localleader>lcn <Plug>(pandoc-keyboard-nth-li-child)
+    endif
+    " }}}2
 endfunction
 "}}}1
 " Auxiliary: {{{1
@@ -339,15 +369,15 @@ function! pandoc#keyboard#PrevSiblingHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevSiblingHeader())
 endfunction
 
-function! pandoc#keyboard#FirstChild() "{{{3
+function! pandoc#keyboard#FirstChildHeader() "{{{3
     call s:MovetoLine(markdown#headers#FirstChild())
 endfunction
 
-function! pandoc#keyboard#LastChild() "{{{3
+function! pandoc#keyboard#LastChildHeader() "{{{3
     call s:MovetoLine(markdown#headers#LastChild())
 endfunction
 
-function! pandoc#keyboard#GotoNthChild(count) "{{{3
+function! pandoc#keyboard#GotoNthChildHeader(count) "{{{3
     call s:MovetoLine(markdown#headers#NthChild(a:count))
 endfunction
 " "}}}2
