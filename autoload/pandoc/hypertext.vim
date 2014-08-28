@@ -54,8 +54,16 @@ function! s:FindAlternates(path)
     return []
 endfunction
 
-function! pandoc#hypertext#OpenLocal()
+function! s:ExtendedCFILE()
+    let orig_isfname = &isfname
+    let &isfname = orig_isfname . ",?,&,:"
     let addr = expand("<cfile>")
+    let &isfname = orig_isfname
+    return addr
+endfunction
+
+function! pandoc#hypertext#OpenLocal()
+    let addr = s:ExtendedCFILE()
     if g:pandoc#hypertext#open_editable_alternates == 1
         let ext = fnamemodify(addr, ":e")
         if ext =~ '\(pdf\|htm\|odt\|doc\)'
@@ -71,7 +79,7 @@ function! pandoc#hypertext#OpenLocal()
 endfunction
 
 function! pandoc#hypertext#OpenSystem()
-    let addr = expand("<cfile>")
+    let addr = s:ExtendedCFILE()
     if has("unix") && executable("xdg-open")
         call system("xdg-open ". addr)
     elseif has("win32") || has("win64")
