@@ -25,10 +25,6 @@ function! pandoc#keyboard#Init()
     if !exists("g:pandoc#keyboard#use_default_mappings")
         let g:pandoc#keyboard#use_default_mappings = 1
     endif
-    " Override section movements? {{{3
-    if !exists("g:pandoc#keyboard#headers#override")
-        let g:pandoc#keyboard#headers#override = 1
-    endif
 
     " Mappings: {{{2
     " Display_Motion: {{{3
@@ -55,6 +51,8 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-remove-header) :call pandoc#keyboard#RemoveHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header) :call pandoc#keyboard#NextHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-header) :call pandoc#keyboard#PrevHeader()<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-ff-header) :<C-U>call pandoc#keyboard#ForwardHeader(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-rw-header) :<C-U>call pandoc#keyboard#BackwardHeader(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header) :call pandoc#keyboard#CurrentHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header-parent) :call pandoc#keyboard#CurrentHeaderParent()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header-sibling) :call pandoc#keyboard#NextSiblingHeader()<cr>
@@ -108,12 +106,8 @@ function! pandoc#keyboard#Init()
         nmap <buffer> <localleader>hcf <Plug>(pandoc-keyboard-first-header-child)
         nmap <buffer> <localleader>hcl <Plug>(pandoc-keyboard-last-header-child)
         nmap <buffer> <localleader>hcn <Plug>(pandoc-keyboard-nth-header-child)
-        if g:pandoc#keyboard#headers#override == 1
-            nmap <buffer> ]] <Plug>(pandoc-keyboard-next-header)
-            nmap <buffer> [[ <Plug>(pandoc-keyboard-prev-header)
-            nmap <buffer> ][ <Plug>(pandoc-keyboard-next-header-sibling)
-            nmap <buffer> [] <Plug>(pandoc-keyboard-prev-header-sibling)
-        endif
+        nmap <buffer> ]] <Plug>(pandoc-keyboard-ff-header)
+        nmap <buffer> [[ <Plug>(pandoc-keyboard-rw-header)
         nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
         nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
         nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)
@@ -361,6 +355,12 @@ endfunction
 
 function! pandoc#keyboard#PrevHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevHeader())
+endfunction
+function! pandoc#keyboard#ForwardHeader(count) "{{{3
+    call s:MovetoLine(markdown#headers#ForwardHeader(a:count))
+endfunction
+function! pandoc#keyboard#BackwardHeader(count) "{{{3
+    call s:MovetoLine(markdown#headers#BackwardHeader(a:count))
 endfunction
 
 function! pandoc#keyboard#CurrentHeader() "{{{3

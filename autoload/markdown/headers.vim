@@ -64,6 +64,22 @@ function! markdown#headers#PrevHeader(...) "{{{1
     return h_lnum
 endfunction
 
+function! markdown#headers#ForwardHeader(count) "{{{
+    let lnum = line('.') 
+    for i in range(a:count)
+        let lnum = markdown#headers#NextHeader(lnum)
+    endfor
+    return lnum
+endfunction
+
+function! markdown#headers#BackwardHeader(count) "{{{
+    let lnum = line('.') 
+    for i in range(a:count)
+        let lnum = markdown#headers#PrevHeader(lnum)
+    endfor
+    return lnum
+endfunction
+
 function! markdown#headers#CurrentHeader(...) "{{{1
     if a:0 > 0
         let search_from = [0, a:1, 1, 0]

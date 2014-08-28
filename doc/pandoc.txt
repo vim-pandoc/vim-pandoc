@@ -586,11 +586,6 @@ A description of the available configuration variables follows:
 
   Use default mappings. Otherwise, the user should provide his own.
 
-- *g:pandoc#keyboard#headers#override*
-  default = 1
-
-  Override ]] and [[ movements.
-
 - *g:pandoc#folding#level*
   default = &foldlevel
 
