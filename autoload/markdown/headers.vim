@@ -3,14 +3,16 @@
 " functions for header navigation and information retrieval.
 
 function! markdown#headers#CheckValidHeader(lnum) "{{{1
-    if exists("g:vim_pandoc_syntax_exists")
-        let synId = synIDattr(synID(a:lnum, 1, 1), "name")
-        if synId !~ '^pandoc' || synId == 'pandocDelimitedCodeBlock'
-            return 0
+    if a:lnum != 0
+        if exists("g:vim_pandoc_syntax_exists")
+            let synId = synIDattr(synID(a:lnum, 1, 1), "name")
+            if synId !~ '^pandoc' || synId == 'pandocDelimitedCodeBlock'
+                return 0
+            endif
         endif
-    endif
-    if match(getline(a:lnum), "^#") >= 0 || match(getline(a:lnum+1), "^[-=]") >= 0
-        return 1
+        if match(getline(a:lnum), "^#") >= 0 || match(getline(a:lnum+1), "^[-=]") >= 0
+            return 1
+        endif
     endif
     return 0
 endfunction
@@ -24,7 +26,7 @@ function! markdown#headers#NextHeader(...) "{{{1
     endif
     call cursor(search_from[1], 2)
     let h_lnum = search('\(^.*\n[-=]\|^#\)','nW')
-    if markdown#headers#CheckValidHeader(h_lnum) != 1
+    if h_lnum != 0 && markdown#headers#CheckValidHeader(h_lnum) != 1
         let h_lnum = markdown#headers#NextHeader(h_lnum)
     endif
     if h_lnum == 0
@@ -45,7 +47,7 @@ function! markdown#headers#PrevHeader(...) "{{{1
     endif
     call cursor(search_from[1], 1)
     let h_lnum = search('\(^.*\n[-=]\|^#\)', 'bnW')
-    if markdown#headers#CheckValidHeader(h_lnum) != 1
+    if h_lnum != 0 && markdown#headers#CheckValidHeader(h_lnum) != 1
         let h_lnum = markdown#headers#PrevHeader(h_lnum)
         " we might go back into the YAML frontmatter, we must recheck if we
         " are fine
