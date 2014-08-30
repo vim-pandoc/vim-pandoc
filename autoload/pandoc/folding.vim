@@ -3,6 +3,10 @@
 " Init: {{{1
 function! pandoc#folding#Init()
     " set up defaults {{{2
+    "  Show foldcolum {{{3
+    if !exists("g:pandoc#folding#fdc")
+        let g:pandoc#folding#fdc = 1
+    endif
     " Initial foldlevel {{{3
     if !exists("g:pandoc#folding#level")
         let g:pandoc#folding#level = &foldlevel
@@ -50,6 +54,9 @@ function! pandoc#folding#Init()
     augroup end  
     setlocal foldexpr=pandoc#folding#FoldExpr()
     setlocal foldtext=pandoc#folding#FoldText()
+    if g:pandoc#folding#fdc > 0
+        let &foldcolumn = g:pandoc#folding#fdc
+    endif
     "}}}
 endfunction
 

@@ -148,7 +148,9 @@ macro definitions and title blocks.
 
 Provides folding support for markdown and textile files.
 
-The initial |'foldlevel'| is set with |g:pandoc#folding#level|.
+The initial |'foldlevel'| is set with |g:pandoc#folding#level|. By default,
+vim-pandoc will enable the |foldcolumn| with a width of 1. This can be
+configured with the |g:pandoc#folding#fdc| variable.
 
 As expected, folds are created for headers in markdown and textile files. The
 folding level for the headers can be defined by two methods, configurable with
@@ -590,6 +592,11 @@ A description of the available configuration variables follows:
   default = &foldlevel
 
   The value of |'foldlevel'| for opened files.
+
+- *g:pandoc#folding#fdc*
+  default = 1
+
+  Width of the window's |foldcolumn|. To disable, set to 0.
 
 - *g:pandoc#folding#mode*
   default = 'syntax'
