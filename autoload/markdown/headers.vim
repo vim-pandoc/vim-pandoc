@@ -64,7 +64,7 @@ function! markdown#headers#PrevHeader(...) "{{{1
     return h_lnum
 endfunction
 
-function! markdown#headers#ForwardHeader(count) "{{{
+function! markdown#headers#ForwardHeader(count) "{{{1
     let lnum = line('.') 
     for i in range(a:count)
         let lnum = markdown#headers#NextHeader(lnum)
@@ -72,7 +72,7 @@ function! markdown#headers#ForwardHeader(count) "{{{
     return lnum
 endfunction
 
-function! markdown#headers#BackwardHeader(count) "{{{
+function! markdown#headers#BackwardHeader(count) "{{{1
     let lnum = line('.') 
     for i in range(a:count)
         let lnum = markdown#headers#PrevHeader(lnum)

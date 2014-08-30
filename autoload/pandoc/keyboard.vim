@@ -45,7 +45,6 @@ function! pandoc#keyboard#Init()
         exe 'noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :set opfunc=pandoc#keyboard#Toggle'.u_style.'<cr>g@'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :<C-U>call pandoc#keyboard#Toggle'.u_style.'(visualmode())<CR>'
     endfor
-
     " Headers: {{{3
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-apply-header) :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-remove-header) :call pandoc#keyboard#RemoveHeader()<cr>
@@ -53,6 +52,8 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-header) :call pandoc#keyboard#PrevHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-ff-header) :<C-U>call pandoc#keyboard#ForwardHeader(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-rw-header) :<C-U>call pandoc#keyboard#BackwardHeader(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-ff-sect-end) :<C-U>call pandoc#keyboard#NextSectionEnd(v:count1)<cr>
+    noremap <buffer> <silent> <Plug>(pandoc-keyboard-rw-sect-end) :<C-U>call pandoc#keyboard#PrevSectionEnd(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header) :call pandoc#keyboard#CurrentHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header-parent) :call pandoc#keyboard#CurrentHeaderParent()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header-sibling) :call pandoc#keyboard#NextSiblingHeader()<cr>
@@ -60,7 +61,6 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-header-child) :call pandoc#keyboard#FirstChildHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-header-child) :call pandoc#keyboard#LastChildHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-header-child) :<C-U>call pandoc#keyboard#GotoNthChildHeader(v:count1)<cr>
-
     " References: {{{3
     " Add new reference link (or footnote link) after current paragraph.
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-insert) :call pandoc#keyboard#Insert_Ref()<cr>a
@@ -108,6 +108,8 @@ function! pandoc#keyboard#Init()
         nmap <buffer> <localleader>hcn <Plug>(pandoc-keyboard-nth-header-child)
         nmap <buffer> ]] <Plug>(pandoc-keyboard-ff-header)
         nmap <buffer> [[ <Plug>(pandoc-keyboard-rw-header)
+        nmap <buffer> ][ <Plug>(pandoc-keyboard-ff-sect-end)
+        nmap <buffer> [] <Plug>(pandoc-keyboard-rw-sect-end)
         nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
         nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
         nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)
@@ -352,15 +354,32 @@ function! pandoc#keyboard#NextHeader() "{{{3
     call s:MovetoLine(markdown#headers#NextHeader())
 endfunction
 
-
 function! pandoc#keyboard#PrevHeader() "{{{3
     call s:MovetoLine(markdown#headers#PrevHeader())
 endfunction
+
 function! pandoc#keyboard#ForwardHeader(count) "{{{3
     call s:MovetoLine(markdown#headers#ForwardHeader(a:count))
 endfunction
+
 function! pandoc#keyboard#BackwardHeader(count) "{{{3
     call s:MovetoLine(markdown#headers#BackwardHeader(a:count))
+endfunction
+
+function! pandoc#keyboard#NextSectionEnd(count) "{{{3
+    let lnum = line('.')
+    for i in range(a:count)
+        let lnum = markdown#sections#NextEndSection(0, lnum)
+    endfor
+    call s:MovetoLine(lnum)
+endfunction
+
+function! pandoc#keyboard#PrevSectionEnd(count) "{{{3
+    let lnum = line('.')
+    for i in range(a:count)
+        let lnum = markdown#sections#PrevEndSection(lnum)
+    endfor
+    call s:MovetoLine(lnum)
 endfunction
 
 function! pandoc#keyboard#CurrentHeader() "{{{3
