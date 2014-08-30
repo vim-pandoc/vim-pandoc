@@ -49,3 +49,28 @@ function! markdown#sections#PrevEndSection(...)
     call cursor(origin_pos[1], origin_pos[2])
     return lnum
 endfunction
+
+function! markdown#sections#SectionRange(mode, ...)
+    let c_header = markdown#headers#CurrentHeader()
+    if c_header == 0
+        let start = 1
+    else
+        if a:mode == 'inclusive'
+            let start = c_header 
+        elseif a:mode == 'exclusive'
+            let start = c_header + 1
+        endif
+    endif
+    let n_sibling_header = markdown#headers#NextSiblingHeader()
+    if n_sibling_header == 0
+        let n_header = markdown#headers#NextHeader()
+        if n_header == 0 || n_header == line('.')
+            let end = line('$')
+        else
+            let end = n_header - 1
+        endif
+    else
+        let end = n_sibling_header - 1
+    endif
+    return [start, end]
+endfunction

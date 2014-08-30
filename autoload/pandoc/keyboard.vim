@@ -45,7 +45,7 @@ function! pandoc#keyboard#Init()
         exe 'noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :set opfunc=pandoc#keyboard#Toggle'.u_style.'<cr>g@'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :<C-U>call pandoc#keyboard#Toggle'.u_style.'(visualmode())<CR>'
     endfor
-    " Headers: {{{3
+    " Sections: {{{3
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-apply-header) :<C-U>call pandoc#keyboard#ApplyHeader(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-remove-header) :call pandoc#keyboard#RemoveHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header) :call pandoc#keyboard#NextHeader()<cr>
@@ -56,6 +56,8 @@ function! pandoc#keyboard#Init()
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-rw-sect-end) :<C-U>call pandoc#keyboard#PrevSectionEnd(v:count1)<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header) :call pandoc#keyboard#CurrentHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-header-parent) :call pandoc#keyboard#CurrentHeaderParent()<cr>
+    vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-section-inclusive) :<C-U>call pandoc#keyboard#SelectSection('inclusive')<cr>
+    vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-section-exclusive) :<C-U>call pandoc#keyboard#SelectSection('exclusive')<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-header-sibling) :call pandoc#keyboard#NextSiblingHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-header-sibling) :call pandoc#keyboard#PrevSiblingHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-header-child) :call pandoc#keyboard#FirstChildHeader()<cr>
@@ -110,6 +112,10 @@ function! pandoc#keyboard#Init()
         nmap <buffer> [[ <Plug>(pandoc-keyboard-rw-header)
         nmap <buffer> ][ <Plug>(pandoc-keyboard-ff-sect-end)
         nmap <buffer> [] <Plug>(pandoc-keyboard-rw-sect-end)
+        vmap <buffer> aS <Plug>(pandoc-keyboard-select-section-inclusive)
+        omap <buffer> aS :normal VaS<cr>
+        vmap <buffer> iS <Plug>(pandoc-keyboard-select-section-exclusive)
+        omap <buffer> iS :normal ViS<cr>
         nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
         nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
         nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)
@@ -303,7 +309,7 @@ function! pandoc#keyboard#PrevRefDefinition()
 endfunction
 " }}}2
 " }}}1
-" Headers: {{{1
+" Sections: {{{1
 
 " handling: {{{2
 function! pandoc#keyboard#ApplyHeader(level) "{{{3
@@ -410,6 +416,14 @@ function! pandoc#keyboard#GotoNthChildHeader(count) "{{{3
     call s:MovetoLine(markdown#headers#NthChild(a:count))
 endfunction
 " "}}}2
+" text objects: {{{2
+function! pandoc#keyboard#SelectSection(mode) "{{{3
+    let range = markdown#sections#SectionRange(a:mode)
+    let start= range[0]
+    let end = range[1] - 1
+    exe "normal! ".start."GV".end."G\<cr>"
+endfunction
+"}}}2
 " }}}1
 " Lists: {{{1
 " navigation:{{{2
