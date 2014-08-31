@@ -23,28 +23,28 @@ function! pandoc#keyboard#styles#Init() "{{{1
         vmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
         vmap <buffer> <silent> ape <Plug>(pandoc-keyboard-select-emphasis-inclusive)
         vmap <buffer> <silent> ipe <Plug>(pandoc-keyboard-select-emphasis-exclusive)
-        omap <buffer> ape :normal va*<cr>
-        omap <buffer> ipe :normal vi*<cr>
+        omap <buffer> ape :normal vape<cr>
+        omap <buffer> ipe :normal vipe<cr>
         vmap <buffer> <silent> aps <Plug>(pandoc-keyboard-select-strong-inclusive)
         vmap <buffer> <silent> ips <Plug>(pandoc-keyboard-select-strong-exclusive)
-        omap <buffer> aps :normal va*<cr>
-        omap <buffer> ips :normal vi*<cr>
+        omap <buffer> aps :normal vaps<cr>
+        omap <buffer> ips :normal vips<cr>
         vmap <buffer> <silent> apv <Plug>(pandoc-keyboard-select-verbatim-inclusive)
         vmap <buffer> <silent> ipv <Plug>(pandoc-keyboard-select-verbatim-exclusive)
-        omap <buffer> apv :normal va*<cr>
-        omap <buffer> ipv :normal vi*<cr>
+        omap <buffer> apv :normal vapv<cr>
+        omap <buffer> ipv :normal vipv<cr>
         vmap <buffer> <silent> apk <Plug>(pandoc-keyboard-select-strikeout-inclusive)
         vmap <buffer> <silent> ipk <Plug>(pandoc-keyboard-select-strikeout-exclusive)
-        omap <buffer> apk :normal va*<cr>
-        omap <buffer> ipk :normal vi*<cr>
+        omap <buffer> apk :normal vapk<cr>
+        omap <buffer> ipk :normal vipk<cr>
         vmap <buffer> <silent> apu <Plug>(pandoc-keyboard-select-superscript-inclusive)
         vmap <buffer> <silent> ipu <Plug>(pandoc-keyboard-select-superscript-exclusive)
-        omap <buffer> apu :normal va*<cr>
-        omap <buffer> ipu :normal vi*<cr>
-        vmap <buffer> <silent> apl <Plug>(pandoc-keyboard-select-subscript-inclusive)
-        vmap <buffer> <silent> ipl <Plug>(pandoc-keyboard-select-subscript-exclusive)
-        omap <buffer> apl :normal va*<cr>
-        omap <buffer> ipl :normal vi*<cr>
+        omap <buffer> apu :normal vapu<cr>
+        omap <buffer> ipu :normal vipu<cr>
+        vmap <buffer> <silent> apt <Plug>(pandoc-keyboard-select-subscript-inclusive)
+        vmap <buffer> <silent> ipt <Plug>(pandoc-keyboard-select-subscript-exclusive)
+        omap <buffer> apt :normal vapl<cr>
+        omap <buffer> ipt :normal vipl<cr>
     endif
 endfunction 
 
@@ -173,36 +173,48 @@ endfunction
 " }}}2
 " Objects: {{{2
 function! pandoc#keyboard#styles#SelectSpan(mode, char)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocEmphasis"
-        let [start_l, start_c] = searchpos(a:char, 'bn')
-        let [end_l, end_c] = searchpos(a:char, 'n')
-        if a:mode == 'inclusive'
-            let start_c = start_c - 1
-            let end_c = end_c - 1
-        elseif a:mode == 'exclusive'
-            let end_c = end_c - 2
-        endif
-        exe "normal! ".start_l. "G". start_c. "lv". end_l . "G". end_c ."l"
+    let [start_l, start_c] = searchpos(a:char, 'bn')
+    let [end_l, end_c] = searchpos(a:char, 'n')
+    let offset = len(substitute(a:char, '\\', '', 'g')) - 1
+    if a:mode == 'inclusive'
+        let start_c = start_c - 1
+        let end_c = end_c + offset  - 1
+    elseif a:mode == 'exclusive'
+        let start_c = start_c + offset
+        let end_c = end_c - 2 
     endif
+    exe "normal! ".start_l. "G". start_c. "lv". end_l . "G". end_c ."l"
 endfunction
 
 function! pandoc#keyboard#styles#SelectEmphasis(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '*')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocEmphasis"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\*')
+    endif
 endfunction
 function! pandoc#keyboard#styles#SelectStrong(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '**')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocStrong"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\*\*')
+    endif
 endfunction
 function! pandoc#keyboard#styles#SelectVerbatim(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '`')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocNoFormatted"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\`')
+    endif
 endfunction
 function! pandoc#keyboard#styles#SelectStrikeout(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '~~')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocStrikeout"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\~\~')
+    endif
 endfunction
 function! pandoc#keyboard#styles#SelectSuperscript(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '^')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocSuperscript"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\^')
+    endif
 endfunction
 function! pandoc#keyboard#styles#SelectSubscript(mode)
-    call pandoc#keyboard#styles#SelectSpan(a:mode, '_')
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocSubscript"
+        call pandoc#keyboard#styles#SelectSpan(a:mode, '\~')
+    endif
 endfunction
 " }}}2
 "
