@@ -5,6 +5,8 @@ function! pandoc#keyboard#styles#Init() "{{{1
         let u_style = substitute(style, '\<.', '\u&', '') " capitalize first char: emphasis -> Emphasis
         exe 'noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :set opfunc=pandoc#keyboard#styles#Toggle'.u_style.'<cr>g@'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :<C-U>call pandoc#keyboard#styles#Toggle'.u_style.'(visualmode())<CR>'
+        exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-inclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("inclusive")<cr>'
+        exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-exclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("exclusive")<cr>'
     endfor
     if g:pandoc#keyboard#use_default_mappings == 1
         nmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
@@ -19,6 +21,30 @@ function! pandoc#keyboard#styles#Init() "{{{1
         vmap <buffer> <localleader>^ <Plug>(pandoc-keyboard-toggle-superscript)
         nmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
         vmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
+        vmap <buffer> <silent> ape <Plug>(pandoc-keyboard-select-emphasis-inclusive)
+        vmap <buffer> <silent> ipe <Plug>(pandoc-keyboard-select-emphasis-exclusive)
+        omap <buffer> ape :normal va*<cr>
+        omap <buffer> ipe :normal vi*<cr>
+        vmap <buffer> <silent> aps <Plug>(pandoc-keyboard-select-strong-inclusive)
+        vmap <buffer> <silent> ips <Plug>(pandoc-keyboard-select-strong-exclusive)
+        omap <buffer> aps :normal va*<cr>
+        omap <buffer> ips :normal vi*<cr>
+        vmap <buffer> <silent> apv <Plug>(pandoc-keyboard-select-verbatim-inclusive)
+        vmap <buffer> <silent> ipv <Plug>(pandoc-keyboard-select-verbatim-exclusive)
+        omap <buffer> apv :normal va*<cr>
+        omap <buffer> ipv :normal vi*<cr>
+        vmap <buffer> <silent> apk <Plug>(pandoc-keyboard-select-strikeout-inclusive)
+        vmap <buffer> <silent> ipk <Plug>(pandoc-keyboard-select-strikeout-exclusive)
+        omap <buffer> apk :normal va*<cr>
+        omap <buffer> ipk :normal vi*<cr>
+        vmap <buffer> <silent> apu <Plug>(pandoc-keyboard-select-superscript-inclusive)
+        vmap <buffer> <silent> ipu <Plug>(pandoc-keyboard-select-superscript-exclusive)
+        omap <buffer> apu :normal va*<cr>
+        omap <buffer> ipu :normal vi*<cr>
+        vmap <buffer> <silent> apl <Plug>(pandoc-keyboard-select-subscript-inclusive)
+        vmap <buffer> <silent> ipl <Plug>(pandoc-keyboard-select-subscript-exclusive)
+        omap <buffer> apl :normal va*<cr>
+        omap <buffer> ipl :normal vi*<cr>
     endif
 endfunction 
 
@@ -145,5 +171,40 @@ function! pandoc#keyboard#styles#ToggleSubscript(type)
     return pandoc#keyboard#styles#ToggleOperator(a:type, "~")
 endfunction
 " }}}2
+" Objects: {{{2
+function! pandoc#keyboard#styles#SelectSpan(mode, char)
+    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocEmphasis"
+        let [start_l, start_c] = searchpos(a:char, 'bn')
+        let [end_l, end_c] = searchpos(a:char, 'n')
+        if a:mode == 'inclusive'
+            let start_c = start_c - 1
+            let end_c = end_c - 1
+        elseif a:mode == 'exclusive'
+            let end_c = end_c - 2
+        endif
+        exe "normal! ".start_l. "G". start_c. "lv". end_l . "G". end_c ."l"
+    endif
+endfunction
+
+function! pandoc#keyboard#styles#SelectEmphasis(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '*')
+endfunction
+function! pandoc#keyboard#styles#SelectStrong(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '**')
+endfunction
+function! pandoc#keyboard#styles#SelectVerbatim(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '`')
+endfunction
+function! pandoc#keyboard#styles#SelectStrikeout(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '~~')
+endfunction
+function! pandoc#keyboard#styles#SelectSuperscript(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '^')
+endfunction
+function! pandoc#keyboard#styles#SelectSubscript(mode)
+    call pandoc#keyboard#styles#SelectSpan(a:mode, '_')
+endfunction
+" }}}2
+"
 "}}}1
 
