@@ -140,7 +140,7 @@ class PandocCommand(object):
                 return (i[0], i[1])
         c_opts = [wrap_args(i) for i in c_opts]
 
-        output_format = c_args[0] if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
+        output_format = c_args.pop(0) if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
         self._output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
         output_arg = '-o "' + self._output_file_path + '"'
@@ -159,6 +159,8 @@ class PandocCommand(object):
 
         extra_args = " ".join(extra)
 
+        extra_input_args = '"' + '" "'.join(c_args) + '"' if len(c_args) > 0 else ""
+
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
         self._run_command = " ".join(filter(lambda i: i != "", ["pandoc", \
@@ -168,6 +170,7 @@ class PandocCommand(object):
                                                                 engine_arg, \
                                                                 output_arg, \
                                                                 extra_args, \
+                                                                extra_input_args, \
                                                                 input_arg]))
 
         # execute
