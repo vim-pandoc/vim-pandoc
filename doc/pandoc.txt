@@ -297,7 +297,8 @@ you can build your documents from it.
 - KEYBOARD                                           *vim-pandoc-keyboard-module*
 
 Registers custom mappings for applying text styles, navigating the documents
-and more. 
+and more. To keep things neat, this module loads mappings from submodules.
+|g:pandoc#keyboard#enabled_submodules| determines which of those are enabled. 
 
 This is list of the mappings currently implemented (in brackets, the modes
 where they are available):
@@ -318,18 +319,34 @@ where they are available):
 - *<localleader>hsb*   move to previous sibling header [n]
 - *<localleader>hcf*   move fo first child header [n]
 - *<localleader>hcl*   move to last child header [n]
-- *<localleader>hcn*   move to nth child header (accepts a count) [n]
+- *<localleader>hcn*   move to [count] nth child header [n]
+- ]]                 [count] sections forward (like <localleader>hn) [n]
+- [[                 [count] sections backwards [n]
+- ][                 [count] move to the next section end [n]
+- []                 [count] move to the previous section end [n]
+- aS                 select a section, including header [vo]
+- iS                 select a section, excluding header [vo]
 - *<localleader>nr*    insert a ref definition after this paragraph [n]
 - *<localleader>rg*    go to reference definition [n]
 - *<localleader>rb*    go back to reference label [n]
+- *<localleader>ln*    move to next list item [n]
+- *<localleader>lp*    move to previous list item [n]
+- *<localleader>ll*    move to the current list item [n]
+- *<localleader>llp*   move to parent of the current list item [n]
+- *<localleader>lsn*   move to the next list item sibling [n]
+- *<localleader>ln*    move to the previous list item sibling [n]
+- *<localleader>lcf*   move to the first list item child [n]
+- *<localleader>lcl*   move to the last list item child [n]
+- *<localleader>lcn*   move to the [count] nth list item child [n]
 
 For |<localleader>#|, you can decide what header style to use (always atx, use
 setex, append hashes at the end) by setting the
-|g:pandoc#keyboard#header_style| variable.
+|g:pandoc#keyboard#sections#header_style| variable.
 
-Some of these mappings use |mark-motions|. You can configure what mark to use
-by setting the value of |g:pandoc#keyboard#mark|, in case the default ("r") is
-not suitable or needs to serve a different purpose.
+Some of the reference-related mappings use |mark-motions|. You can configure
+what mark to use by setting the value of |g:pandoc#keyboard#references#mark|,
+in case the default ("r") is not suitable or needs to serve a different
+purpose.
 
 - BIBLIOGRAPHIES                               *vim-pandoc-bibliographies-module*
 
@@ -570,13 +587,23 @@ A description of the available configuration variables follows:
 
   Use bibtool for queries, if available (might help performance).
 
-- *g:pandoc#keyboard#mark*
+- *g:pandoc#keyboard#enabled_submodules*
+  default = ["lists", "references", "styles", "sections"]
+
+  What mapping groups to enable.
+
+- *g:pandoc#keyboard#display_motions*
+  default = 1
+
+  Use display motions when using the soft wrap mode.
+
+- *g:pandoc#keyboard#references#mark*
   default = "r"
 
   What mark to use (i.e, when navigating references, to keep track of original
   position).
 
-- *g:pandoc#keyboard#header_style*
+- *g:pandoc#keyboard#section#header_style*
   default = "a"
 
   What style to use when applying headers. Default is to use atx headers
