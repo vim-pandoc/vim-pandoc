@@ -334,7 +334,7 @@ where they are available):
 - *<localleader>ll*    move to the current list item [n]
 - *<localleader>llp*   move to parent of the current list item [n]
 - *<localleader>lsn*   move to the next list item sibling [n]
-- *<localleader>ln*    move to the previous list item sibling [n]
+- *<localleader>lsp*   move to the previous list item sibling [n]
 - *<localleader>lcf*   move to the first list item child [n]
 - *<localleader>lcl*   move to the last list item child [n]
 - *<localleader>lcn*   move to the [count] nth list item child [n]
