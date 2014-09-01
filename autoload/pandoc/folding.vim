@@ -55,7 +55,7 @@ function! pandoc#folding#Init()
     setlocal foldexpr=pandoc#folding#FoldExpr()
     setlocal foldtext=pandoc#folding#FoldText()
     if g:pandoc#folding#fdc > 0
-        let &foldcolumn = g:pandoc#folding#fdc
+        let &l:foldcolumn = g:pandoc#folding#fdc
     endif
     "}}}
 endfunction
