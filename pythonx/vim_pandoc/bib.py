@@ -173,7 +173,7 @@ def get_json_suggestions(text, query):
     if type(data) != list: return entries
 
     def check(string):
-        return re.search(query, string)
+        return re.search(query, string, re.IGNORECASE)
 
     def test_entry(entry):
         if type(entry) != dict: return False
