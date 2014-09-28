@@ -189,7 +189,9 @@ def get_json_suggestions(text, query):
                         if check(person[u'literal']): return True
 
     for entry in filter(test_entry, data):
-        entries.append({"word": entry["id"], "menu": make_title_ascii(entry["title"])})
+        entries.append({"word": entry.get('id'), 
+                        "menu": make_title_ascii(entry.get("title", "No Title"))
+                        })
 
     return entries
 
