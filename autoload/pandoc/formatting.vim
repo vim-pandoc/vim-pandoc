@@ -73,6 +73,10 @@ function! pandoc#formatting#Init() "{{{1
         setlocal breakindent
     endif
 
+    if has('smartindent')
+        setlocal nosmartindent
+    endif
+
     " Textile uses .. for comments
     if &ft == "textile"
         setlocal commentstring=..%s
