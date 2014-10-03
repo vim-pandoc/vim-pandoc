@@ -12,11 +12,18 @@ function! pandoc#formatting#Init() "{{{1
     endif
     "}}}
     " = {{{3
-    " what program to use equalprg? {{{4
+     " some general settings {{{3
+    " textwidth {{{4
+    if !exists("g:pandoc#formatting#textwidth")
+        let g:pandoc#formatting#textwidth = 79 
+    endif
+    " }}}4
+    " }}}3
+   " what program to use equalprg? {{{4
     if !exists("g:pandoc#formattingequalprg")
         let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
         if g:pandoc#formatting#mode =~ "h"
-            let g:pandoc#formatting#equalprg.= " --columns 79"
+            let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
         else
             let g:pandoc#formatting#equalprg.= " --no-wrap"
         endif
@@ -28,6 +35,7 @@ function! pandoc#formatting#Init() "{{{1
     endif
     " }}}4
     " }}}3
+    "
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
         call pandoc#formatting#UseHardWraps()
@@ -84,10 +92,9 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     silent! unmap j
     silent! unmap k
 
-    " hard wrapping at 79 chars (like in gq default)
-    if &textwidth == 0
-        setlocal textwidth=79
-    endif
+    " textwidth
+    exec "setlocal textwidth=".g:pandoc#formatting#textwidth
+
     " t: wrap on &textwidth
     " n: keep inner indent for list items.
     setlocal formatoptions=tn

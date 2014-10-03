@@ -135,7 +135,11 @@ recommended to leave this module enabled.
 
 The module behavior is configured through the |g:pandoc#formatting#mode|
 variable. For example, giving it the value 'ha' will enable hard breaks, and
-autoformatting. The default is to use soft wraps.
+autoformatting. The default is to use soft wraps. 
+
+If you use the hard wraps mode, you could want to adjust the textwidth value.
+This can be done through the |g:pandoc#formatting#textwidth| variable, or
+setting |textwidth| by hand.
 
 This module also configures the program used for the |=| command, which you
 can use to reformat your document (by default: wraps lines, returns inline
@@ -517,8 +521,14 @@ A description of the available configuration variables follows:
 	a: autoformat
 	s: use soft wraps
 
+- *g:pandoc#formatting#textwidth*
+  default = 79
+
+  Default textwidth, used for hard wraps mode. This is used by the default equalprg
+  setting, so it must be set before it.
+
 - *g:pandoc#formatting#equalprg*
-  default = "pandoc -t markdown --reference-links [-- columns 79|no-wrap]"
+  default = "pandoc -t markdown --reference-links [--columns {g:pandoc#formatting#textwidth}|no-wrap]"
 
   What command to use for equalprg. If set to '', vim's default will be used.
   See |'equalprg'|.
