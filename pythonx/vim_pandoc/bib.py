@@ -162,21 +162,36 @@ def get_json_suggestions(text, query):
     import json
 
     entries = []
+    string_matches = [u'title', u'id']
+    name_matches = [u'author', u'editor']
 
     try:
         data = json.loads(text)
     except:
         return entries
 
-    for entry in data:
-        entry_dict = {}
-        # we make a simple check to see if the item contains bibliographic data
-        if all([entry.has_key(k) for k in ["author", "title", "id"]]):
-            label = str(entry["id"])
-            if re.search(query,  label):
-                entry_dict["word"] = label
-                entry_dict["menu"] = make_title_ascii(entry["title"])
-                entries.append(entry_dict)
+    if type(data) != list: return entries
+
+    def check(string):
+        return re.search(query, string, re.IGNORECASE)
+
+    def test_entry(entry):
+        if type(entry) != dict: return False
+        filter_values = []
+        for string in [entry.get(k) for k in string_matches]:
+            if type(string) == unicode and check(string): return True
+        for names in [entry.get(k) for k in name_matches]:
+            if type(names) == list:
+                for person in names:
+                    if type(person.get(u'family')) == unicode:
+                        if check(person[u'family']): return True
+                    elif type(person.get(u'literal')) == unicode:
+                        if check(person[u'literal']): return True
+
+    for entry in filter(test_entry, data):
+        entries.append({"word": entry.get('id'), 
+                        "menu": make_title_ascii(entry.get("title", "No Title"))
+                        })
 
     return entries
 
