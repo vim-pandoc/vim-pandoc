@@ -7,19 +7,36 @@ function! pandoc#formatting#Init() "{{{1
     " s: use soft wraps
     " h: use hard wraps
     " a: auto format (only used if h is set)
+    " A: smart auto format
     if !exists("g:pandoc#formatting#mode")
         let g:pandoc#formatting#mode = "s"
     endif
-    "}}}
-    " = {{{3
-     " some general settings {{{3
-    " textwidth {{{4
+    "}}}3
+    " Auto-format {{{3
+    " Autoformat blacklist {{{4
+    if !exists("g:pandoc#formatting#smart_autoformat_blacklist")
+        let g:pandoc#formatting#smart_autoformat_blacklist = [
+                    \ 'pandocatx',
+                    \ 'pandoc.+header',
+                    \ 'pandoc.+block',
+                    \ 'pandoc.+table',
+                    \ 'pandoc.+latex',
+                    \ 'tex.*'
+                    \]
+    endif
+    " }}}4
+    " Autoformat on CursorMovedI {{{4
+    if !exists("g:pandoc#formatting#smart_autoformat_on_cursormoved")
+        let g:pandoc#formatting#smart_autoformat_on_cursormoved = 0
+    endif
+    "}}}4
+    "}}}3
+    " Text width {{{3
     if !exists("g:pandoc#formatting#textwidth")
         let g:pandoc#formatting#textwidth = 79 
     endif
-    " }}}4
     " }}}3
-   " what program to use equalprg? {{{4
+    " equalprg {{{3
     if !exists("g:pandoc#formattingequalprg")
         let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
         if g:pandoc#formatting#mode =~ "h"
@@ -28,14 +45,12 @@ function! pandoc#formatting#Init() "{{{1
             let g:pandoc#formatting#equalprg.= " --no-wrap"
         endif
     endif
-    " }}}4
-    " Use a custom indentexpr? {{{4
+    " }}}3
+    " Use a custom indentexpr? {{{3
     if !exists("g:pandoc#formatting#set_indentexpr")
         let g:pandoc#formatting#set_indentexpr = 0
     endif
-    " }}}4
     " }}}3
-    "
     " set up soft or hard wrapping modes "{{{2
     if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
         call pandoc#formatting#UseHardWraps()
@@ -88,6 +103,21 @@ function! pandoc#formatting#Init() "{{{1
     "}}}2
 endfunction
 
+function! pandoc#formatting#AutoFormat()
+    let l:should_enable = 1
+    let l:line = line('.')
+    let l:col = col('.')
+    let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
+    if match(synIDattr(synID(l:line, l:col, 1), 'name'), l:blacklist_re) >= 0
+        let l:should_enable = 0
+    endif
+    if l:should_enable == 1
+        setlocal formatoptions+=a
+    elseif l:should_enable == 0
+        setlocal formatoptions-=a
+    endif
+endfunction
+
 function! pandoc#formatting#UseHardWraps() "{{{1
     " reset settings that might have changed by UseSoftWraps
     setlocal formatoptions&
@@ -113,6 +143,14 @@ function! pandoc#formatting#UseHardWraps() "{{{1
         " paragraphs, and lines ending on non-spaces end paragraphs.
         " we add `w` as a workaround to `a` joining compact lists.
         setlocal formatoptions+=aw
+    elseif stridx(g:pandoc#formatting#mode, 'A') >= 0
+        augroup pandoc_autoformat
+        au InsertEnter <buffer> call pandoc#formatting#AutoFormat()
+        au InsertLeave <buffer> setlocal formatoptions-=a
+        if g:pandoc#formatting#smart_autoformat_on_cursormoved == 1
+            au CursorMovedI <buffer> call pandoc#formatting#AutoFormat()
+        endif
+        augroup END
     endif
 endfunction
 
