@@ -16,7 +16,6 @@ function! pandoc#formatting#Init() "{{{1
     " Autoformat blacklist {{{4
     if !exists("g:pandoc#formatting#smart_autoformat_blacklist")
         let g:pandoc#formatting#smart_autoformat_blacklist = [
-                    \ 'pandocatx',
                     \ 'pandoc.+header',
                     \ 'pandoc.+block',
                     \ 'pandoc.+table',
@@ -103,18 +102,32 @@ function! pandoc#formatting#Init() "{{{1
     "}}}2
 endfunction
 
-function! pandoc#formatting#AutoFormat()
-    let l:should_enable = 1
-    let l:line = line('.')
-    let l:col = col('.')
-    let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
-    if match(synIDattr(synID(l:line, l:col, 1), 'name'), l:blacklist_re) >= 0
-        let l:should_enable = 0
-    endif
-    if l:should_enable == 1
-        setlocal formatoptions+=a
-    elseif l:should_enable == 0
-        setlocal formatoptions-=a
+function! pandoc#formatting#AutoFormat() "{{{1
+    if !exists('b:pandoc_autoformat_enabled') || b:pandoc_autoformat_enabled == 1
+        let l:stack = []
+        let l:should_enable = 1
+        let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
+        let l:stack = synstack(line('.'), col('.'))
+        if len(l:stack) == 0
+            " let's try with the first column in this line
+            let l:stack = synstack(line('.'), 1)
+        endif
+        if len(l:stack) > 0
+            " we check on the base syntax id, so we don't have to pollute the
+            " blacklist with stuff like pandocAtxMark, which is contained
+            if match(synIDattr(l:stack[0], 'name'), l:blacklist_re) >= 0
+                let l:should_enable = 0
+            endif
+        endif
+        if l:should_enable == 1
+            setlocal formatoptions+=a
+            setlocal formatoptions+=t
+        elseif l:should_enable == 0
+            setlocal formatoptions-=a
+            setlocal formatoptions-=t
+        endif
+    elseif &formatoptions != 'tn'
+        setlocal formatoptions=tn
     endif
 endfunction
 
@@ -146,7 +159,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     elseif stridx(g:pandoc#formatting#mode, 'A') >= 0
         augroup pandoc_autoformat
         au InsertEnter <buffer> call pandoc#formatting#AutoFormat()
-        au InsertLeave <buffer> setlocal formatoptions-=a
+        au InsertLeave <buffer> setlocal formatoptions=tn
         if g:pandoc#formatting#smart_autoformat_on_cursormoved == 1
             au CursorMovedI <buffer> call pandoc#formatting#AutoFormat()
         endif
