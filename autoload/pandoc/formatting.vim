@@ -122,12 +122,16 @@ function! pandoc#formatting#AutoFormat() "{{{1
         if l:should_enable == 1
             setlocal formatoptions+=a
             setlocal formatoptions+=t
+            if l:stack != [] && synIDattr(l:stack[0], 'name') == 'pandocBlockQuote'
+                setlocal formatoptions+=c
+            endif
         elseif l:should_enable == 0
             setlocal formatoptions-=a
             setlocal formatoptions-=t
+            setlocal formatoptions-=c
         endif
     elseif &formatoptions != 'tn'
-        setlocal formatoptions=tnroq
+        setlocal formatoptions=tnroqw
     endif
 endfunction
 
@@ -144,7 +148,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
 
     " t: wrap on &textwidth
     " n: keep inner indent for list items.
-    setlocal formatoptions=tnroq
+    setlocal formatoptions=tnroqw
     " will detect numbers, letters, *, +, and - as list headers, according to
     " pandoc syntax.
     " TODO: add support for roman numerals
@@ -159,7 +163,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     elseif stridx(g:pandoc#formatting#mode, 'A') >= 0
         augroup pandoc_autoformat
         au InsertEnter <buffer> call pandoc#formatting#AutoFormat()
-        au InsertLeave <buffer> setlocal formatoptions=tnroq
+        au InsertLeave <buffer> setlocal formatoptions=tnroqw
         if g:pandoc#formatting#smart_autoformat_on_cursormoved == 1
             au CursorMovedI <buffer> call pandoc#formatting#AutoFormat()
         endif
