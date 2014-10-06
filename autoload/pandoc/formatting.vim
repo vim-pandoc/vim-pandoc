@@ -122,13 +122,15 @@ function! pandoc#formatting#AutoFormat() "{{{1
         if l:should_enable == 1
             setlocal formatoptions+=a
             setlocal formatoptions+=t
+            " block quotes are formatted like text comments (hackish, i know), 
+            " so we want to make them break at textwidth
             if l:stack != [] && synIDattr(l:stack[0], 'name') == 'pandocBlockQuote'
                 setlocal formatoptions+=c
             endif
         elseif l:should_enable == 0
             setlocal formatoptions-=a
             setlocal formatoptions-=t
-            setlocal formatoptions-=c
+            setlocal formatoptions-=c "just in case we have added it for a block quote
         endif
     elseif &formatoptions != 'tn'
         setlocal formatoptions=tnroqw

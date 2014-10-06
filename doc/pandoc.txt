@@ -135,13 +135,25 @@ recommended to leave this module enabled.
 
 The module behavior is configured through the |g:pandoc#formatting#mode|
 variable. For example, giving it the value 'ha' will enable hard breaks, and
-autoformatting. The default is to use soft wraps. 
+autoformatting. The default is to use soft wraps.
 
 If you use the hard wraps mode, you could want to adjust the textwidth value.
 This can be done through the |g:pandoc#formatting#textwidth| variable, or
 setting |textwidth| by hand.
 
-This module also configures the program used for the |=| command, which you
+A smart auto-formatting mode is provided, intended to use with the hard
+wrapping mode. When enabled, (using the 'A' flag for
+|g:pandoc#formatting#mode|), the plugin will be aware of what sort of block
+the cursor is in and adjust |formatoptions| accordingly (so, for example,
+headers won't be broken when they go beyond |textwidth|, and no autoformatting
+will be used within codeblocks). Note this functionality requires the
+|vim-pandoc-syntax| plugin to be installed, because it uses highlighting
+information to work. By default, this kind of autoformatting is triggered on
+entering and leaving insert mode, but it can be triggered when the cursor
+moves in insert mode too if desired (it can be cleaner, although it might add
+some lag), by setting |g:pandoc#formatting#smart_autoformat_on_cursormoved|.
+
+The formatting module also configures the program used for the |=| command, which you
 can use to reformat your document (by default: wraps lines, returns inline
 links and footnotes into reference links, etc.). This is configured with the
 |g:pandoc#formatting#equalprg|) variable. Please note that if you pass a
@@ -517,15 +529,22 @@ A description of the available configuration variables follows:
 - *g:pandoc#formatting#mode*
   default = "s"
 
-	h: use hard wraps
-	a: autoformat
-	s: use soft wraps
+        h: use hard wraps
+        a: autoformat
+        A: smart autoformatting
+        s: use soft wraps
 
 - *g:pandoc#formatting#textwidth*
   default = 79
 
   Default textwidth, used for hard wraps mode. This is used by the default equalprg
   setting, so it must be set before it.
+
+- *g:pandoc#formatting#smart_autoformat_on_cursormoved*
+  default = 0
+
+  Trigger smart autoformatting when moving the cursor in insert mode. If
+  enabled, it might cause some lag.
 
 - *g:pandoc#formatting#equalprg*
   default = "pandoc -t markdown --reference-links [--columns {g:pandoc#formatting#textwidth}|no-wrap]"
