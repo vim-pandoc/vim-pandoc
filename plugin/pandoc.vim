@@ -41,6 +41,7 @@ if !exists("g:pandoc#modules#enabled")
                 \"keyboard" ,
                 \"toc",
                 \"chdir",
+                \"spell",
                 \"hypertext"]
 endif
 

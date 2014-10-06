@@ -34,6 +34,7 @@ CONTENTS
     - COMPLETION |vim-pandoc-completion-module|
     - TOC |vim-pandoc-toc-module|
     - CHDIR |vim-pandoc-chdir-module|
+    - SPELL |vim-pandoc-spell-module|
     - HYPERTEXT |vim-pandoc-hypertext-module|
 - CONFIGURATION
     - SETTINGS |vim-pandoc-settings|
@@ -468,6 +469,13 @@ to 0.
 Changes the current window directory to the one the file is in
 ("%:h"). Enabled by default.
 
+- SPELL                                                *vim-pandoc-spell-module*
+
+Sets up spelling for files handled by vim-pandoc. Spelling is on by default,
+but can be changed with the |g:pandoc#spell#enabled| variable. The user can
+also specify what languages to use by default with the
+|g:pandoc#spell#default_langs| variable.
+
 - HYPERTEXT                                        *vim-pandoc-hypertext-module*
 
 Adds some basic hypertext functions. Files and addresses can be opened in
@@ -515,7 +523,7 @@ A description of the available configuration variables follows:
 - *g:pandoc#modules#enabled* 
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "metadata", "menu", "executors", "keyboard", "toc", "chdir", "hypertext"]
+  "metadata", "menu", "executors", "keyboard", "toc", "chdir", "spell", "hypertext"]
 
   A list of the modules to enable on the files determined by
   |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
@@ -724,6 +732,17 @@ A description of the available configuration variables follows:
   Must the TOC window close after selecting a location? This also controls the
   behavior of the <CR> key. If '1', <CR> navigates and closes the TOC, <C-CR>
   simply navigates. If '0', this behavior is reversed.
+
+- *g:pandoc#spell#enabled*
+  default = 1
+
+  Enable spelling for files handled by vim-pandoc.
+
+- *g:pandoc#spell#default_langs*
+  default = []
+
+  What languages to use for spelling by default for files handled by
+  vim-pandoc.
 
 - *g:pandoc#hypertext#open_editable_alternates*
   default = 1
