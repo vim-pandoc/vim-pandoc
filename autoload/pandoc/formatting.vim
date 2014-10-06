@@ -20,7 +20,8 @@ function! pandoc#formatting#Init() "{{{1
                     \ 'pandoc.+block',
                     \ 'pandoc.+table',
                     \ 'pandoc.+latex',
-                    \ 'tex.*'
+                    \ 'tex.*',
+                    \ 'yaml.*'
                     \]
     endif
     " }}}4
