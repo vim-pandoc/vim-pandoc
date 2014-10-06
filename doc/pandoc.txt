@@ -626,6 +626,11 @@ A description of the available configuration variables follows:
 
   Use display motions when using the soft wrap mode.
 
+- *g:pandoc#keyboard#wrap_cursor*
+  default = 0
+
+  Wrap the cursor around line boundaries (see |onemore|) 
+
 - *g:pandoc#keyboard#references#mark*
   default = "r"
 

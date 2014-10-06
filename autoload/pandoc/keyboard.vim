@@ -11,6 +11,10 @@ function! pandoc#keyboard#Init()
     if !exists("g:pandoc#keyboard#display_motions")
         let g:pandoc#keyboard#display_motions = 1
     endif
+    " Allow movement around line boundaries {{{3
+    if !exists("g:pandoc#keyboard#wrap_cursor")
+        let g:pandoc#keyboard#wrap_cursor = 0
+    endif
     " Use default mappings? {{{3
     if !exists("g:pandoc#keyboard#use_default_mappings")
         let g:pandoc#keyboard#use_default_mappings = 1
@@ -27,6 +31,16 @@ function! pandoc#keyboard#Init()
             vnoremap <buffer> k gk
         endif
     endif "}}}2
+
+    " Onemore: {{{2
+    if g:pandoc#keyboard#wrap_cursor == 1
+        set whichwrap+=<,>,b,s,h,l,[,]
+        augroup pandoc_wrap_cursor
+            au BufEnter <buffer> set virtualedit+=onemore
+            au BufLeave <buffer> set virtualedit-=onemore
+        augroup END
+    endif "}}}2
+    "
   
     " Submodules: {{{2
     for module in g:pandoc#keyboard#enabled_submodules
