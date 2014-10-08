@@ -7,9 +7,9 @@ function! pandoc#spell#Init()
     endif
 
     if g:pandoc#spell#enabled == 1
-        set spell
+        setlocal spell
     endif
     if g:pandoc#spell#default_langs != []
-        exe "set spelllang=".join(g:pandoc#spell#default_langs, ',')
+        exe "setlocal spelllang=".join(g:pandoc#spell#default_langs, ',')
     endif
 endfunction
