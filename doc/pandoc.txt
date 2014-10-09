@@ -645,7 +645,7 @@ A description of the available configuration variables follows:
   What mark to use (i.e, when navigating references, to keep track of original
   position).
 
-- *g:pandoc#keyboard#section#header_style*
+- *g:pandoc#keyboard#sections#header_style*
   default = "a"
 
   What style to use when applying headers. Default is to use atx headers
