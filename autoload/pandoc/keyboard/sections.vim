@@ -73,10 +73,11 @@ function! pandoc#keyboard#sections#ApplyHeader(level) "{{{3
     call setline(line("."), text)
    
     if (g:pandoc#keyboard#sections#header_style =~ "s") == 1
+        let l:len = strlen(substitute(text, '.', 'x', 'g'))
         if a:level == 1
-            call append(line("."), repeat("=", len(text)))
+            call append(line("."), repeat("=", l:len))
         elseif a:level == 2
-            call append(line("."), repeat("-", len(text)))
+            call append(line("."), repeat("-", l:len))
         endif
     endif
 endfunction
