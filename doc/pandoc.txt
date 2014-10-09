@@ -180,14 +180,18 @@ determine the level. So
     #### this is level 4
     # this is level 1
 
-The alternative mode, "relative", counts the number of parents the header has,
-so
+The "relative" mode counts the number of parents the header has, so
 
     ### this is level 1
     #### this is level 2
     ###### this is level 3
     #### this is level 2
     # this is level 1
+
+The "stacked" mode counts all headers as first level, and it can be used to
+view all the headers at once.
+
+The mode can be changed on the fly using the *:PandocFolding* command.
 
 Besides this, some extensions are provided:
 
@@ -685,6 +689,8 @@ A description of the available configuration variables follows:
   the level of "## header" is 2 using the default method, but 1 using
   relative, and the level of "#### header" is 4 using the default method, but
   2 using relative.
+
+  'stacked' takes all headers as first level.
 
 - *g:pandoc#folding#fold_yaml*
   default = 0

@@ -58,6 +58,18 @@ function! pandoc#folding#Init()
         let &l:foldcolumn = g:pandoc#folding#fdc
     endif
     "}}}
+    " set up a command to change the folding mode on demand {{{2
+    command! -buffer -nargs=1 -complete=custom,pandoc#folding#ModeCmdComplete PandocFolding call pandoc#folding#ModeCmd(<f-args>) 
+    " }}}2
+endfunction
+
+" Change folding mode on demand {{{1
+function! pandoc#folding#ModeCmdComplete(...)
+    return "syntax\nrelative\nstacked"
+endfunction
+function! pandoc#folding#ModeCmd(mode)
+    exe "let g:pandoc#folding#mode = '".a:mode."'"
+    normal! zx
 endfunction
 
 " Main foldexpr function, includes support for common stuff. {{{1
@@ -172,6 +184,8 @@ function! pandoc#folding#MarkdownLevelSA()
         if synIDattr(synID(v:lnum, 1, 1), "name") =~ '^pandoc\(DelimitedCodeBlock$\)\@!'
             if g:pandoc#folding#mode == 'relative'
                 return ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+            elseif g:pandoc#folding#mode == 'stacked'
+                return ">1"
             else
                 return ">". len(matchstr(vline, '^#\{1,6}'))
             endif
@@ -186,6 +200,8 @@ function! pandoc#folding#MarkdownLevelSA()
                     \ synIDattr(synID(v:lnum + 1, 1, 1), "name") == "pandocSetexHeader"
             if g:pandoc#folding#mode == 'relative'
                 return  ">". len(markdown#headers#CurrentHeaderAncestors(v:lnum))
+            elseif g:pandoc#folding#mode == 'stacked'
+                return ">1"
             else
                 return ">2"
             endif
@@ -210,11 +226,19 @@ endfunction
 " Basic foldexpr {{{2
 function! pandoc#folding#MarkdownLevelBasic()
     if getline(v:lnum) =~ '^#\{1,6}'
-        return ">". len(matchstr(getline(v:lnum), '^#\{1,6}'))
+        if g:pandoc#folding#mode == 'stacked'
+            return ">1"
+        else
+            return ">". len(matchstr(getline(v:lnum), '^#\{1,6}'))
+        endif
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^=\+$'
         return ">1"
     elseif getline(v:lnum) =~ '^[^-=].\+$' && getline(v:lnum+1) =~ '^-\+$'
-        return ">2"
+        if g:pandoc#folding#mode == 'stacked'
+            return ">1"
+        else
+            return ">2"
+        endif
     elseif getline(v:lnum) =~ '^<!--.*fold-begin -->'
         return "a1"
     elseif getline(v:lnum) =~ '^<!--.*fold-end -->'
@@ -244,7 +268,11 @@ endfunction
 function! pandoc#folding#TextileLevel()
     let vline = getline(v:lnum)
     if vline =~ '^h[1-6]\.'
-        return ">" . matchstr(getline(v:lnum), 'h\@1<=[1-6]\.\=')
+        if g:pandoc#folding#mode == 'stacked'
+            return ">"
+        else
+            return ">" . matchstr(getline(v:lnum), 'h\@1<=[1-6]\.\=')
+        endif
     elseif vline =~ '^.. .*fold-begin'
         return "a1"
     elseif vline =~ '^.. .*fold end'
