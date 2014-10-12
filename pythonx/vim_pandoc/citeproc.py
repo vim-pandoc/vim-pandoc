@@ -39,8 +39,8 @@ class CSLItem:
             return variable_contents.split()
     
         def number(variable_contents):
-            # Per 
-            return [variable_contents]
+            # Returns variable_contents as an array.
+            return [variable_contents.to_s]
     
         def name(variable_contents):
             # Currently a placeholder. Will parse 'name' CSL variables and return an array of
@@ -127,7 +127,7 @@ class CSLItem:
                 "original-author": name,
                 "recipient": name,
                 "reviewed-author": name,
-                "translator": name,
+                "translator": name
                 }
 
         variable_contents = self.data.get(variable_name, False)
@@ -147,7 +147,7 @@ class CSLItem:
 
         matched = False
         for variable in _significant_tags:
-            matched = matched or query.match(" ".join(self.as_array(variable)))
+            matched = matched or query.search(" ".join(self.as_array(variable)))
 
         if matched:
             return 1
