@@ -36,16 +36,33 @@ class CSLItem:
     def as_array(self, variable_name):
         def plain(variable_contents):
             # Takes the contents of a 'plain' variable and splits it into an array.
-            return variable_contents.split()
+            # nb. this must be able to cope with integer input as well as strings.
+            return unicode(variable_contents).split()
     
         def number(variable_contents):
             # Returns variable_contents as an array.
-            return [variable_contents.to_s]
+            return [unicode(variable_contents)]
     
         def name(variable_contents):
-            # Currently a placeholder. Will parse 'name' CSL variables and return an array of
-            # strings for matches.
-            return []
+            # Parses "name" CSL Variables and returns an array of names. Doesn't (yet)
+            # seperate multiple given names. Not sure if this is necessary.
+            parses = {"family": True,
+                      "given": True,
+                      "dropping-particle": False,
+                      "non-dropping-particle": False,
+                      "suffix": False,
+                      "comma-suffix": False,
+                      "static-ordering": False,
+                      "literal": True,
+                      "parse-names": False}
+            array_of_names = []
+
+            for author in variable_contents:
+                for key in author:
+                    if parses[key]:
+                        array_of_names.append(author[key])
+
+            return array_of_names
     
         def date(variable_contents):
             # Currently a placeholder. Will parse 'date' CSL variables and return an array of
