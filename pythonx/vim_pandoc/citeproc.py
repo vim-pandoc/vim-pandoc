@@ -44,23 +44,33 @@ class CSLItem:
             return [unicode(variable_contents)]
     
         def name(variable_contents):
-            # Parses "name" CSL Variables and returns an array of names. Doesn't (yet)
-            # seperate multiple given names. Not sure if this is necessary.
-            parses = {"family": True,
-                      "given": True,
-                      "dropping-particle": False,
-                      "non-dropping-particle": False,
-                      "suffix": False,
-                      "comma-suffix": False,
-                      "static-ordering": False,
-                      "literal": True,
-                      "parse-names": False}
+            # Parses "name" CSL Variables and returns an array of names.
+
+            def surname(author):
+                # Concat dropping particle and non-dropping particle with family name.
+                return [(author.get("dropping-particle", "") + 
+                         " " +
+                         author.get("non-dropping-particle", "") + 
+                         " " +
+                         author.get("family", ""))]
+
+            def given_names(author):
+                # Return given variable split at spaces.
+                return author.get("given", "").split()
+
+            def literal_name(author):
+                # It seems likely there is some particular reason for the author being
+                # a literal, so don't try and do clever stuff like splitting into tokens...
+                return [author.get("literal", "")]
+
             array_of_names = []
 
             for author in variable_contents:
-                for key in author:
-                    if parses[key]:
-                        array_of_names.append(author[key])
+                if "literal" in author:
+                    array_of_names.extend(literal_name(author))
+                else:
+                    array_of_names.extend(surname(author))
+                    array_of_names.extend(given_names(author))
 
             return array_of_names
     
