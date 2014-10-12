@@ -224,7 +224,11 @@ class SourceCollator():
         if query != None:
             self.query = CiteprocQuery(query)
 
-    def find_bibfiles(self, file_name = "", sources = "bl", local_bib_extensions = ["bib", "bibtex", "ris"], bibliography_directories = []):
+    def find_bibfiles(self, file_name = "", 
+                      sources = "bl",
+                      local_bib_extensions = ["bib", "bibtex", "ris"],
+                      bibliography_directories = []):
+
         bib_extensions = ["bib",
                           "bibtex",
                           "ris",
