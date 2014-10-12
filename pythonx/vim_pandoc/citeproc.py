@@ -164,7 +164,8 @@ class CSLItem:
 
         matched = False
         for variable in _significant_tags:
-            matched = matched or query.search(" ".join(self.as_array(variable)))
+            for token in self.as_array(variable):
+                matched = matched or query.search(token)
 
         if matched:
             return 1
