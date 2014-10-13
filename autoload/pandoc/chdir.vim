@@ -7,5 +7,7 @@ function! pandoc#chdir#Init()
         return
     catch /E344/
         return
+    catch /E472/ "might occur when using tpope's fugitive
+        return
     endtry
 endfunction
