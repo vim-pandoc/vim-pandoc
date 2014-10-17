@@ -7,6 +7,7 @@ import json
 from glob import glob
 import re
 
+# Filetypes that citeproc.py will attempt to parse.
 _bib_extensions = ["bib",\
                    "bibtex",\
                    "ris",\
@@ -18,12 +19,14 @@ _bib_extensions = ["bib",\
                    "copac",\
                    "xml"]
 
-_significant_tags = ["id",\
-                     "author",\
-                     "issued",\
-                     "title",\
-                     "publisher",\
-                     "abstract"]
+# Tags that citeproc.py will search in, together with scaling
+# factors for relative importance. These are currently non-functional.
+_significant_tags = {"id": 0.7,
+                     "author": 1.0,
+                     "issued": 1.0,
+                     "title": 1.0,
+                     "publisher": 1.0,
+                     "abstract": 0.5}
 class CSLItem:
     # This class implements various helper methods for CSL-JSON formatted bibliography
     # entries.
