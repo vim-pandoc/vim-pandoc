@@ -87,7 +87,43 @@ class CSLItem:
         def date(variable_contents):
             # Currently a placeholder. Will parse 'date' CSL variables and return an array of
             # strings for matches.
-            return []
+            def date_parse(raw_date_array):
+                # Presently, this function returns the date in yyyy-mm-dd format. In future, it
+                # will provide a variety of alternative forms.
+                date = [unicode(x) for x in raw_date_array]
+                return ["-".join(date)]
+            def date_parts(date_parts_contents):
+                # Call date_parts for each element.
+                response = []
+                for date in date_parts_contents:
+                    response.extend(date_parse(date))
+                return response
+            def season(season_type):
+                # Not actually clear from the spec what is meant to go in here. Zotero doesn't
+                # 'do' seasons, and I can't work it out from the pandoc-citeproc source. Will
+                # try and make this work when I have useful internet
+                season_lookup = {1: "spring",
+                                 2: "summer",
+                                 3: "autumn",
+                                 4: "winter"}
+                return []
+            def circa(circa_boolean):
+                return []
+            def literal(date_string):
+                return [date_string]
+
+            date_function_lookup = {"date-parts": date_parts,
+                                    "season": season,
+                                    "circa": circa,
+                                    "literal": literal,
+                                    "raw": literal}
+
+            response = []
+
+            for element in variable_contents:
+                response.extend(date_function_lookup[element](variable_contents[element]))
+
+            return response
     
         variable_type = {
                 "abstract": plain,
