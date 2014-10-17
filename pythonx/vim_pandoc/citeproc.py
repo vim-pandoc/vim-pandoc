@@ -251,6 +251,12 @@ class CiteprocQuery:
             matched = matched and entry.matches(query)
         return matched
 
+    def easy_matches(self, entry):
+        if self.match(entry) == 0:
+            return False
+        else:
+            return True
+
     def match(self, entry):
         # Returns a number scaled between 0 and 1. Exact value isn't particularly
         # important, so using floats.
