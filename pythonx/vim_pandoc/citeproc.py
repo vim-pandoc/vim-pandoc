@@ -32,9 +32,16 @@ class CSLItem:
     # entries.
     def __init__(self, entry):
         self.data = entry
+        self.as_array_buffer = {}
 
     def citekey(self):
         return self.data["id"]
+
+    def buffered_as_array(self, variable_name):
+        if variable_name not in self.as_array_buffer:
+            self.as_array_buffer[variable_name] = as_array(variable_name)
+        
+        return self.as_array_buffer[variable_name]
 
     def as_array(self, variable_name):
         def plain(variable_contents):
