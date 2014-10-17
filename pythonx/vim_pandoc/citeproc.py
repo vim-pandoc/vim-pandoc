@@ -373,10 +373,12 @@ class SourceCollator():
         data = []
         for bib in self.find_bibfiles():
             for item in CiteprocSource(bib):
-                if self.query.matches(item) and item.data not in data:
-                    data.append(item.data)
+                if self.query.easy_matches(item) and item not in data:
+                    data.append(item)
 
-        return data
+        data.sort(key=self.query.match)
+
+        return [item.data for item in data]
 
 
 if __name__ == "__main__":
