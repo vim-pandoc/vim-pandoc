@@ -7,6 +7,7 @@ import json
 from glob import glob
 import re
 
+# Filetypes that citeproc.py will attempt to parse.
 _bib_extensions = ["bib",\
                    "bibtex",\
                    "ris",\
@@ -18,43 +19,366 @@ _bib_extensions = ["bib",\
                    "copac",\
                    "xml"]
 
-_significant_tags = ["id",\
-                     "author",\
-                     "issued",\
-                     "title",\
-                     "publisher",\
-                     "abstract"]
+# Tags that citeproc.py will search in, together with scaling
+# factors for relative importance. These are currently non-functional.
+_significant_tags = {"id": 0.7,
+                     "author": 1.0,
+                     "issued": 1.0,
+                     "title": 1.0,
+                     "publisher": 1.0,
+                     "abstract": 0.5}
+class CSLItem:
+    # This class implements various helper methods for CSL-JSON formatted bibliography
+    # entries.
+    def __init__(self, entry):
+        self.data = entry
+        self.as_array_buffer = {}
 
-class CiteprocSource():
+    def citekey(self):
+        return self.data["id"]
+
+    def buffered_as_array(self, variable_name):
+        if variable_name not in self.as_array_buffer:
+            self.as_array_buffer[variable_name] = as_array(variable_name)
+        
+        return self.as_array_buffer[variable_name]
+
+    def as_array(self, variable_name):
+        def plain(variable_contents):
+            # Takes the contents of a 'plain' variable and splits it into an array.
+            # nb. this must be able to cope with integer input as well as strings.
+            return unicode(variable_contents).split()
+    
+        def number(variable_contents):
+            # Returns variable_contents as an array.
+            return [unicode(variable_contents)]
+    
+        def name(variable_contents):
+            # Parses "name" CSL Variables and returns an array of names.
+
+            def surname(author):
+                # Concat dropping particle and non-dropping particle with family name.
+                return [(author.get("dropping-particle", "") + 
+                         " " +
+                         author.get("non-dropping-particle", "") + 
+                         " " +
+                         author.get("family", ""))]
+
+            def given_names(author):
+                # Return given variable split at spaces.
+                return author.get("given", "").split()
+
+            def literal_name(author):
+                # It seems likely there is some particular reason for the author being
+                # a literal, so don't try and do clever stuff like splitting into tokens...
+                return [author.get("literal", "")]
+
+            array_of_names = []
+
+            for author in variable_contents:
+                if "literal" in author:
+                    array_of_names.extend(literal_name(author))
+                else:
+                    array_of_names.extend(surname(author))
+                    array_of_names.extend(given_names(author))
+
+            return array_of_names
+    
+        def date(variable_contents):
+            # Currently a placeholder. Will parse 'date' CSL variables and return an array of
+            # strings for matches.
+            def date_parse(raw_date_array):
+                # Presently, this function returns the date in yyyy-mm-dd format. In future, it
+                # will provide a variety of alternative forms.
+                date = [unicode(x) for x in raw_date_array]
+                return ["-".join(date)]
+            def date_parts(date_parts_contents):
+                # Call date_parts for each element.
+                response = []
+                for date in date_parts_contents:
+                    response.extend(date_parse(date))
+                return response
+            def season(season_type):
+                # Not actually clear from the spec what is meant to go in here. Zotero doesn't
+                # 'do' seasons, and I can't work it out from the pandoc-citeproc source. Will
+                # try and make this work when I have useful internet
+                season_lookup = {1: "spring",
+                                 2: "summer",
+                                 3: "autumn",
+                                 4: "winter"}
+                return []
+            def circa(circa_boolean):
+                return []
+            def literal(date_string):
+                return [date_string]
+
+            date_function_lookup = {"date-parts": date_parts,
+                                    "season": season,
+                                    "circa": circa,
+                                    "literal": literal,
+                                    "raw": literal}
+
+            response = []
+
+            for element in variable_contents:
+                response.extend(date_function_lookup[element](variable_contents[element]))
+
+            return response
+    
+        variable_type = {
+                "abstract": plain,
+                "annote": plain,
+                "archive": plain,
+                "archive_location": plain,
+                "archive-place": plain,
+                "authority": plain,
+                "call-number": plain,
+                "citation-label": plain,
+                "citation-number": plain,
+                "collection-title": plain,
+                "container-title": plain,
+                "container-title-short": plain,
+                "dimensions": plain,
+                "doi": plain,
+                "event": plain,
+                "event-place": plain,
+                "first-reference-note-number": plain,
+                "genre": plain,
+                "isbn": plain,
+                "issn": plain,
+                "jurisdiction": plain,
+                "keyword": plain,
+                "locator": plain,
+                "medium": plain,
+                "note": plain,
+                "original-publisher": plain,
+                "original-publisher-place": plain,
+                "original-title": plain,
+                "page": plain,
+                "page-first": plain,
+                "pmcid": plain,
+                "pmid": plain,
+                "publisher": plain,
+                "publisher-place": plain,
+                "references": plain,
+                "reviewed-title": plain,
+                "scale": plain,
+                "section": plain,
+                "source": plain,
+                "status": plain,
+                "title": plain,
+                "title-short": plain,
+                "url": plain,
+                "version": plain,
+                "year-suffix": plain,
+    
+                "chapter-number": number,
+                "collection-number": number,
+                "edition": number,
+                "issue": number,
+                "number": number,
+                "number-of-pages": number,
+                "number-of-volumes": number,
+                "volume": number,
+    
+                "accessed": date,
+                "container": date,
+                "event-date": date,
+                "issued": date,
+                "original-date": date,
+                "submitted": date,
+    
+                "author": name,
+                "collection-editor": name,
+                "composer": name,
+                "container-author": name,
+                "director": name,
+                "editor": name,
+                "editorial-director": name,
+                "illustrator": name,
+                "interviewer": name,
+                "original-author": name,
+                "recipient": name,
+                "reviewed-author": name,
+                "translator": name
+                }
+
+        variable_contents = self.data.get(variable_name, False)
+
+        if variable_contents:
+            return variable_type.get(variable_name, plain)(variable_contents)
+        else:
+            return []
+
+    def match(self, query):
+        # Matching engine. Returns 1 if match found, 0 otherwise. 
+        # Expects query to be a compiled regexp.
+        
+        # Very simple, just searches for substrings. Could be updated
+        # to provide a 'matches' value for ranking? Using numbers here
+        # so as to permit this future application.
+
+        matched = False
+        for variable in _significant_tags:
+            for token in self.as_array(variable):
+                matched = matched or query.search(token)
+
+        if matched:
+            return 1
+        else:
+            return 0
+
+    def matches(self, query):
+        # Provides a boolean match response to query.
+        # Expects query to be a compiled regexp.
+        if self.match(query) == 0:
+            return False
+        else:
+            return True
+
+    def formatted(self):
+        # Returns formatted Name/Date/Title string. Should be configurable somehow...
+        False
+
+class CiteprocQuery:
+    def __init__(self, raw_query):
+        query_array = raw_query
+        self.queries = [re.compile(query, re.I) for query in query_array]
+
+    def matches(self, entry):
+        matched = True
+        for query in self.queries:
+            matched = matched and entry.matches(query)
+        return matched
+
+    def easy_matches(self, entry):
+        if self.match(entry) == 0:
+            return False
+        else:
+            return True
+
+    def match(self, entry):
+        # Returns a number scaled between 0 and 1. Exact value isn't particularly
+        # important, so using floats.
+        match_factor = float(0)
+        scale_factor = float(1)/len(self.queries)
+        for query in self.queries:
+            match_factor += entry.match(query)
+
+        match_factor *= scale_factor
+        return match_factor
+
+class CiteprocSource:
     def __init__(self, bib):
-        self.data = json.loads(check_output(["pandoc-citeproc", "-j", bib]))
+        try:
+            raw_bib = json.loads(check_output(["pandoc-citeproc", "-j", bib]))
+        except:
+            raw_bib = []
+        self.data = [CSLItem(entry) for entry in raw_bib]
+
+    def __iter__(self):
+        for a in self.data:
+            yield a
 
 class SourceCollator():
     def __init__(self, query=None):
         self.path = os.path.abspath(os.curdir)
         if query != None:
-            self.query = '|'.join(query)
+            self.query = CiteprocQuery(query)
 
-    def find_bibfiles(self):
-        return [f for f in glob(os.path.join(self.path, "*.*")) if f.split(".")[-1] in _bib_extensions]
+    def find_bibfiles(self, file_name = "", 
+                      sources = "bl",
+                      local_bib_extensions = ["bib", "bibtex", "ris"],
+                      bibliography_directories = []):
+
+        bib_extensions = ["bib",
+                          "bibtex",
+                          "ris",
+                          "json", 
+                          "enl", 
+                          "wos", 
+                          "medline", 
+                          "copac", 
+                          "xml"]
+
+        def b_search():
+            # Search for bibiographies with the same name as the current file in the
+            # current dir.
+    
+            if file_name in (None, ""): return []
+    
+            file_name_prefix = os.path.splitext(file_name)[0]
+            search_paths = [file_name_prefix + "." + f for f in local_bib_extensions]
+    
+            bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
+            return bibfiles
+    
+        def c_search():
+            # Search for any other bibliographies in the current dir. N.B. this does
+            # not currently stop bibliographies picked up in b_search() from being found.
+            # Is this an issue?
+    
+            relative_bibfiles = [glob("*." + f) for f in local_bib_extensions]
+            bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
+            return bibfiles
+    
+        def l_search():
+            # Search for bibliographies in the pandoc data dirs.
+    
+            if os.path.exists(os.path.expandvars("$HOME/.pandoc/")):
+                b = os.path.expandvars("$HOME/.pandoc/")
+            elif os.path.exists(os.path.expandvars("%APPDATA%/pandoc/")):
+                b = os.path.expandvars("%APPDATA%/pandoc/")
+            else:
+                return []
+            
+            search_paths = [b + "default." + f for f in bib_extensions]
+            bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
+            return bibfiles
+    
+        def t_search():
+            # Search for bibliographies in the texmf data dirs.
+    
+            #if vim.eval("executable('kpsewhich')") == '0': return []
+    
+            texmf = check_output(["kpsewhich", "-var-value", "TEXMFHOME"])
+            
+            if os.path.exists(texmf):
+                search_paths = [texmf + "/*." + f for f in bib_extensions]
+                relative_bibfiles = [glob(f) for f in search_paths]
+                bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
+                return bibfiles
+    
+            return []
+    
+        def g_search():
+            # Search for bibliographies in the directories defined in pandoc#biblio#bibs
+    
+            return [f for f in bibliography_directories]
+
+        search_methods = {"b": b_search,
+                          "c": c_search,
+                          "l": l_search,
+                          "t": t_search,
+                          "g": g_search}
+    
+    
+        bibfiles = []
+        for f in sources:
+            bibfiles.extend(search_methods.get(f, list)())
+    
+        return bibfiles
 
     def collate(self):
         data = []
         for bib in self.find_bibfiles():
-            bib_data = CiteprocSource(bib).data
-            for item in bib_data:
-                for i in filter(lambda i: i in _significant_tags, item.keys()):
-                    if type(item[i]) in (str, unicode):
-                        if self.query != '' and re.search(self.query, item[i], re.IGNORECASE) and \
-                                item not in data:
-                            data.append(item)
-                    elif type(item[i]) == list:
-                        for x in item[i]:
-                            for y in x:
-                                if self.query != '' and re.search(self.query, x[y], re.IGNORECASE) and \
-                                        item not in data:
-                                    data.append(item)
-        return data
+            for item in CiteprocSource(bib):
+                if self.query.easy_matches(item) and item not in data:
+                    data.append(item)
+
+        data.sort(key=self.query.match)
+
+        return [item.data for item in data]
 
 
 if __name__ == "__main__":
