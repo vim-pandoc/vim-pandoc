@@ -6,6 +6,7 @@ from subprocess import check_output
 import json
 from glob import glob
 import re
+from vim_pandoc.bib.collator import SourceCollator
 
 # Filetypes that citeproc.py will attempt to parse.
 _bib_extensions = ["bib",\
@@ -40,7 +41,7 @@ class CSLItem:
     def buffered_as_array(self, variable_name):
         if variable_name not in self.as_array_buffer:
             self.as_array_buffer[variable_name] = as_array(variable_name)
-        
+
         return self.as_array_buffer[variable_name]
 
     def as_array(self, variable_name):
@@ -48,19 +49,19 @@ class CSLItem:
             # Takes the contents of a 'plain' variable and splits it into an array.
             # nb. this must be able to cope with integer input as well as strings.
             return unicode(variable_contents).split()
-    
+
         def number(variable_contents):
             # Returns variable_contents as an array.
             return [unicode(variable_contents)]
-    
+
         def name(variable_contents):
             # Parses "name" CSL Variables and returns an array of names.
 
             def surname(author):
                 # Concat dropping particle and non-dropping particle with family name.
-                return [(author.get("dropping-particle", "") + 
+                return [(author.get("dropping-particle", "") +
                          " " +
-                         author.get("non-dropping-particle", "") + 
+                         author.get("non-dropping-particle", "") +
                          " " +
                          author.get("family", ""))]
 
@@ -83,7 +84,7 @@ class CSLItem:
                     array_of_names.extend(given_names(author))
 
             return array_of_names
-    
+
         def date(variable_contents):
             # Currently a placeholder. Will parse 'date' CSL variables and return an array of
             # strings for matches.
@@ -124,7 +125,7 @@ class CSLItem:
                 response.extend(date_function_lookup[element](variable_contents[element]))
 
             return response
-    
+
         variable_type = {
                 "abstract": plain,
                 "annote": plain,
@@ -171,7 +172,7 @@ class CSLItem:
                 "url": plain,
                 "version": plain,
                 "year-suffix": plain,
-    
+
                 "chapter-number": number,
                 "collection-number": number,
                 "edition": number,
@@ -180,14 +181,14 @@ class CSLItem:
                 "number-of-pages": number,
                 "number-of-volumes": number,
                 "volume": number,
-    
+
                 "accessed": date,
                 "container": date,
                 "event-date": date,
                 "issued": date,
                 "original-date": date,
                 "submitted": date,
-    
+
                 "author": name,
                 "collection-editor": name,
                 "composer": name,
@@ -211,9 +212,9 @@ class CSLItem:
             return []
 
     def match(self, query):
-        # Matching engine. Returns 1 if match found, 0 otherwise. 
+        # Matching engine. Returns 1 if match found, 0 otherwise.
         # Expects query to be a compiled regexp.
-        
+
         # Very simple, just searches for substrings. Could be updated
         # to provide a 'matches' value for ranking? Using numbers here
         # so as to permit this future application.
@@ -280,107 +281,19 @@ class CiteprocSource:
         for a in self.data:
             yield a
 
-class SourceCollator():
-    def __init__(self, query=None):
-        self.path = os.path.abspath(os.curdir)
-        if query != None:
-            self.query = CiteprocQuery(query)
-
-    def find_bibfiles(self, file_name = "", 
-                      sources = "bl",
-                      local_bib_extensions = ["bib", "bibtex", "ris"],
-                      bibliography_directories = []):
-
-        bib_extensions = ["bib",
-                          "bibtex",
-                          "ris",
-                          "json", 
-                          "enl", 
-                          "wos", 
-                          "medline", 
-                          "copac", 
-                          "xml"]
-
-        def b_search():
-            # Search for bibiographies with the same name as the current file in the
-            # current dir.
-    
-            if file_name in (None, ""): return []
-    
-            file_name_prefix = os.path.splitext(file_name)[0]
-            search_paths = [file_name_prefix + "." + f for f in local_bib_extensions]
-    
-            bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
-            return bibfiles
-    
-        def c_search():
-            # Search for any other bibliographies in the current dir. N.B. this does
-            # not currently stop bibliographies picked up in b_search() from being found.
-            # Is this an issue?
-    
-            relative_bibfiles = [glob("*." + f) for f in local_bib_extensions]
-            bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
-            return bibfiles
-    
-        def l_search():
-            # Search for bibliographies in the pandoc data dirs.
-    
-            if os.path.exists(os.path.expandvars("$HOME/.pandoc/")):
-                b = os.path.expandvars("$HOME/.pandoc/")
-            elif os.path.exists(os.path.expandvars("%APPDATA%/pandoc/")):
-                b = os.path.expandvars("%APPDATA%/pandoc/")
-            else:
-                return []
-            
-            search_paths = [b + "default." + f for f in bib_extensions]
-            bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
-            return bibfiles
-    
-        def t_search():
-            # Search for bibliographies in the texmf data dirs.
-    
-            #if vim.eval("executable('kpsewhich')") == '0': return []
-    
-            texmf = check_output(["kpsewhich", "-var-value", "TEXMFHOME"])
-            
-            if os.path.exists(texmf):
-                search_paths = [texmf + "/*." + f for f in bib_extensions]
-                relative_bibfiles = [glob(f) for f in search_paths]
-                bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
-                return bibfiles
-    
-            return []
-    
-        def g_search():
-            # Search for bibliographies in the directories defined in pandoc#biblio#bibs
-    
-            return [f for f in bibliography_directories]
-
-        search_methods = {"b": b_search,
-                          "c": c_search,
-                          "l": l_search,
-                          "t": t_search,
-                          "g": g_search}
-    
-    
-        bibfiles = []
-        for f in sources:
-            bibfiles.extend(search_methods.get(f, list)())
-    
-        return bibfiles
-
+class CiteprocCollator(SourceCollator):
     def collate(self):
         data = []
+        if self.query != None:
+            query = CiteprocQuery(self.query)
+        else:
+            return data
         for bib in self.find_bibfiles():
             for item in CiteprocSource(bib):
-                if self.query.easy_matches(item) and item not in data:
+                if query.easy_matches(item) and item not in data:
                     data.append(item)
 
         data.sort(key=self.query.match)
 
         return [item.data for item in data]
 
-
-if __name__ == "__main__":
-    collator = SourceCollator(sys.argv[1:])
-    print(json.dumps(list(collator.collate())))

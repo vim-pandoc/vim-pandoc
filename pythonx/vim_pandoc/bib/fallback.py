@@ -5,6 +5,7 @@ import os.path
 import operator
 from glob import glob
 import subprocess as sp
+from vim_pandoc.bib.collator import SourceCollator
 
 def make_title_ascii(title):
     import unicodedata
@@ -21,46 +22,6 @@ except:
     local_bib_extensions = []
 
 bib_extensions = ["bib", "bibtex", "ris", "mods", "json", "enl", "wos", "medline", "copac", "xml"]
-
-def find_bibfiles():
-    sources = vim.vars["pandoc#biblio#sources"]
-    bibfiles = []
-    if "b" in sources and vim.current.buffer.name not in (None, ""):
-        file_name, ext = os.path.splitext(vim.current.buffer.name)
-        # we check for files named after the current file in the current dir
-        bibfiles.extend([os.path.abspath(f) for f in glob(file_name + ".*") if os.path.splitext(f)[1] in local_bib_extensions])
-
-    # we search for any bibliography in the current dir
-    if "c" in sources:
-        bibfiles.extend([os.path.abspath(f) for f in glob("*.*") if f.split(".")[-1] in local_bib_extensions])
-
-    # we search in pandoc's local data dir
-    if "l" in sources:
-        b = ""
-        if os.path.exists(os.path.expandvars("$HOME/.pandoc/")):
-            b = os.path.expandvars("$HOME/.pandoc/")
-        elif os.path.exists(os.path.expandvars("%APPDATA%/pandoc/")):
-            b = os.path.expandvars("%APPDATA%/pandoc/")
-        if b != "":
-            bibfiles.extend([os.path.abspath(f) for f in glob(b + "default.*") if f.split(".")[-1] in bib_extensions])
-
-    # we search for bibliographies in texmf
-    if "t" in sources and vim.eval("executable('kpsewhich')") != '0':
-        texmf = sp.Popen(["kpsewhich", "-var-value", "TEXMFHOME"], stdout=sp.PIPE, stderr=sp.PIPE).\
-                    communicate()[0].strip()
-        if os.path.exists(texmf):
-            bibfiles.extend([os.path.abspath(f) for f in glob(texmf + "/*") if f.split(".")[-1] in bib_extensions])
-
-    # we append the items in g:pandoc#biblio#bibs, if set
-    if "g" in sources:
-        bibfiles.extend(vim.vars["pandoc#biblio#bibs"])
-
-    # we check if the items in bibfiles are readable and not directories
-    if bibfiles != []:
-        bibfiles = list(set(filter(lambda f : os.access(f, os.R_OK) and not os.path.isdir(f), bibfiles)))
-
-    return bibfiles
-
 
 # SUGGESTIONS
 
@@ -133,31 +94,6 @@ def get_ris_suggestions(text, query):
 
     return entries
 
-def get_mods_suggestions(text, query):
-    import xml.etree.ElementTree as etree
-    entries = []
-
-    bib_data = etree.fromstring(text)
-    if bib_data.tag == "mods":
-        entry_dict = {}
-        entry_id = bib_data.get("ID")
-        if re.match(query, str(entry_id)):
-            entry_dict["word"] = entry_id
-            title = " ".join([s.strip() for s in bib_data.find("titleInfo").find("title").text.split("\n")])
-            entry_dict["menu"] = make_title_ascii(title)
-            entries.append(entry_dict)
-    elif bib_data.tag == "modsCollection":
-        for mod in bib_data.findall("mods"):
-            entry_dict = {}
-            entry_id = mod.get("ID")
-            if re.match(query, str(entry_id)):
-                entry_dict["word"] = entry_id
-                title = " ".join([s.strip() for s in bib_data.find("titleInfo").find("title").text.split("\n")])
-                entry_dict["menu"] = make_title_ascii(title)
-                entries.append(entry_dict)
-
-    return entries
-
 def get_json_suggestions(text, query):
     import json
 
@@ -189,41 +125,37 @@ def get_json_suggestions(text, query):
                         if check(person[u'literal']): return True
 
     for entry in filter(test_entry, data):
-        entries.append({"word": entry.get('id'), 
+        entries.append({"word": entry.get('id'),
                         "menu": make_title_ascii(entry.get("title", "No Title"))
                         })
 
     return entries
 
-def get_suggestions():
-    bibs = vim.eval("b:pandoc_biblio_bibs")
-    if len(bibs) < 1:
-       bibs = find_bibfiles()
-    query = vim.eval("a:partkey")
+class FallbackCollator(SourceCollator):
+    def collate(self):
+        data = []
+        for bib in self.find_bibfiles():
+            bib_type = os.path.basename(bib).split(".")[-1].lower()
+            if bib_type not in ("ris", "json", "bib", "bibtex"):
+                break
 
-    matches = []
+            with open(bib) as f:
+                text = f.read()
 
-    for bib in bibs:
-        bib_type = os.path.basename(bib).split(".")[-1].lower()
-        with open(bib) as f:
-            text = f.read()
+            ids = []
+            if bib_type == "ris":
+                ids = get_ris_suggestions(text, self.query)
+            elif bib_type == "json":
+                ids = get_json_suggestions(text, self.query)
+            elif bib_type in ("bib", "bibtex"):
+                if self.extra_args["use_bibtool"] == 1 \
+                        and vim.eval("executable('bibtool')") == '1':
+                    ids = get_bibtex_suggestions(bib, self.query, True, bib)
+                else:
+                    ids = get_bibtex_suggestions(text, self.query)
 
-        ids = []
-        if bib_type == "mods":
-            ids = get_mods_suggestions(text, query)
-        elif bib_type == "ris":
-            ids = get_ris_suggestions(text, query)
-        elif bib_type == "json":
-            ids = get_json_suggestions(text, query)
-        elif bib_type in ("bib", "bibtex"):
-            if vim.vars["pandoc#biblio#use_bibtool"] == 1 and vim.eval("executable('bibtool')") == '1':
-                ids = get_bibtex_suggestions(bib, query, True, bib)
-            else:
-                ids = get_bibtex_suggestions(text, query)
+            data.extend(ids)
 
-        matches.extend(ids)
-
-    if len(matches) > 0:
-        matches = sorted(matches, key=operator.itemgetter("word"))
-    return matches
-
+        if len(data) > 0:
+            data = sorted(data, key=operator.itemgetter("word"))
+        return data

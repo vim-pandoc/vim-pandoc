@@ -1,13 +1,24 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-" set the correct omnifunc completion
-function! pandoc#completion#Init()
+function! pandoc#completion#Init() "{{{1
+    " set up defaults:
+    if !exists('g:pandoc#completion#bib#mode')
+        "if executable('pandoc-citeproc') 
+        "    let g:pandoc#completion#bib#mode = 'citeproc'
+        "else
+        "    let g:pandoc#completion#bib#mode = 'fallback'
+        "endif
+        " TODO: For now, we use the fallback mode
+        let g:pandoc#completion#bib#mode = 'fallback'
+    endif
+
+    " set the correct omnifunc completion
     if has("python")
         setlocal omnifunc=pandoc#completion#Complete
     endif
 endfunction
 
-function! pandoc#completion#Complete(findstart, base)
+function! pandoc#completion#Complete(findstart, base) "{{{1
     if has("python")
         if a:findstart
             " return the starting position of the word
