@@ -3,13 +3,11 @@
 function! pandoc#completion#Init() "{{{1
     " set up defaults:
     if !exists('g:pandoc#completion#bib#mode')
-        "if executable('pandoc-citeproc') 
-        "    let g:pandoc#completion#bib#mode = 'citeproc'
-        "else
-        "    let g:pandoc#completion#bib#mode = 'fallback'
-        "endif
-        " TODO: For now, we use the fallback mode
-        let g:pandoc#completion#bib#mode = 'fallback'
+        if executable('pandoc-citeproc') 
+            let g:pandoc#completion#bib#mode = 'citeproc'
+        else
+            let g:pandoc#completion#bib#mode = 'fallback'
+        endif
     endif
 
     " set the correct omnifunc completion
