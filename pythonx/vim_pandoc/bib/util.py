@@ -5,3 +5,29 @@ def make_title_ascii(title):
     else :
         title = str(title)
     return title
+
+def dict_to_info(data):
+    def sort_keys(key):
+        if key[0] == "id":
+            return 1
+        elif key[0] == "author":
+            return 2
+        elif key[0] == "title":
+            return 3
+        elif key[0] == "issued":
+            return 4
+        elif key[0] == "abstract":
+            return 5
+        else:
+            return -1
+
+    from citeproc import CSLItem
+    item = CSLItem(data)
+    lines = []
+    for i in data:
+        if i in ("id", "author", "title", "issued", "abstract"):
+            lines.append((i, " ".join(item.as_array(i)).strip()))
+
+    lines.sort(key=sort_keys)
+
+    return "\n".join([l[0] + ":" + "\t" * 2 +  l[1] for l in lines])

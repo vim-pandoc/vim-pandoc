@@ -9,6 +9,9 @@ function! pandoc#completion#Init() "{{{1
             let g:pandoc#completion#bib#mode = 'fallback'
         endif
     endif
+    if !exists('g:pandoc#completion#bib#use_preview')
+        let g:pandoc#completion#bib#use_preview = 0
+    endif
 
     " set the correct omnifunc completion
     if has("python")
