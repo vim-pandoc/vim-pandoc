@@ -25,12 +25,12 @@ _bib_extensions = ["bib",\
 
 # Tags that citeproc.py will search in, together with scaling
 # factors for relative importance. These are currently non-functional.
-_significant_tags = {"id": 0.7,
+_significant_tags = {"id": 0.5,
                      "author": 1.0,
                      "issued": 1.0,
                      "title": 1.0,
                      "publisher": 1.0,
-                     "abstract": 0.5}
+                     "abstract": 0.1}
 class CSLItem:
     # This class implements various helper methods for CSL-JSON formatted bibliography
     # entries.
@@ -226,6 +226,8 @@ class CSLItem:
         for variable in _significant_tags:
             for token in self.as_array(variable):
                 matched = matched or query.search(token)
+                if matched:
+                    break
 
         if matched:
             return 1
@@ -239,6 +241,20 @@ class CSLItem:
             return False
         else:
             return True
+
+    def relevance(self, query):
+        # Returns the relevance of an item for a query
+        query = re.compile(query, re.I)
+        relevance = float(0.0)
+        tags_matched = []
+        for tag in _significant_tags:
+            for token in self.as_array(tag):
+                if query.search(token):
+                    tags_matched.append(tag)
+                    break
+        if tags_matched != []:
+            relevance = sum([_significant_tags[t] for t in tags_matched])
+        return relevance
 
     def formatted(self):
         # Returns formatted Name/Date/Title string. Should be configurable somehow...
@@ -297,7 +313,7 @@ class CiteprocCollator(SourceCollator):
                 if item.matches(re.compile(self.query, re.I)) and item not in data:
                     data.append(item)
 
-        #data.sort(key=query.match)
+        data.sort(key=lambda i: i.relevance(self.query), reverse=True)
 
         return [item.data for item in data]
 
