@@ -6,7 +6,10 @@ from subprocess import check_output
 import json
 from glob import glob
 import re
-from vim_pandoc.bib.collator import SourceCollator
+try:
+    from vim_pandoc.bib.collator import SourceCollator
+except:
+    from collator import SourceCollator
 
 # Filetypes that citeproc.py will attempt to parse.
 _bib_extensions = ["bib",\
@@ -284,16 +287,17 @@ class CiteprocSource:
 class CiteprocCollator(SourceCollator):
     def collate(self):
         data = []
-        if self.query != None:
-            query = CiteprocQuery(self.query)
-        else:
-            return data
+        #if self.query != None:
+        #query = CiteprocQuery(self.query)
+        #else:
+        #   return data
+
         for bib in self.find_bibfiles():
             for item in CiteprocSource(bib):
-                if query.easy_matches(item) and item not in data:
+                if item.matches(re.compile(self.query, re.I)) and item not in data:
                     data.append(item)
 
-        data.sort(key=self.query.match)
+        #data.sort(key=query.match)
 
         return [item.data for item in data]
 

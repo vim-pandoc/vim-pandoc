@@ -1,5 +1,6 @@
 import vim
 
+from vim_pandoc.bib.util import make_title_ascii
 from vim_pandoc.bib.collator import SourceCollator
 from vim_pandoc.bib.citeproc import CiteprocCollator
 from vim_pandoc.bib.fallback import FallbackCollator
@@ -21,7 +22,7 @@ class VimCompleter(object):
         like what vim completion functions use.
 
         """
-        return {}
+        return [{"word": item['id'], "menu": make_title_ascii(item['title'])} for item in data]
 
     def get_suggestions(self, query):
         """

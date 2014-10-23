@@ -6,15 +6,7 @@ import operator
 from glob import glob
 import subprocess as sp
 from vim_pandoc.bib.collator import SourceCollator
-
-def make_title_ascii(title):
-    import unicodedata
-    if type(title) != str :
-        title = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore')
-    else :
-        title = str(title)
-    return title
-
+from vim_pandoc.bib.util import make_title_ascii
 
 try:
     local_bib_extensions = vim.vars["pandoc#biblio#bib_extensions"]
