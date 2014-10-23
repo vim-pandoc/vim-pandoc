@@ -10,12 +10,22 @@ function! pandoc#completion#Init() "{{{1
         endif
     endif
     if !exists('g:pandoc#completion#bib#use_preview')
-        let g:pandoc#completion#bib#use_preview = 0
+        let g:pandoc#completion#bib#use_preview = 1
     endif
 
     " set the correct omnifunc completion
     if has("python")
         setlocal omnifunc=pandoc#completion#Complete
+    endif
+    if g:pandoc#completion#bib#use_preview == 1
+        " handle completeopt, so the preview is enabled
+        if stridx(&cot, "preview") > -1
+            let b:pandoc_old_cot = &cot
+            let &cot = &cot.",preview"
+            au! BufLeave <buffer> let &cot = b:pandoc_old_cot
+        endif
+        " close the preview window when the completion has been inserted
+        au! CompleteDone <buffer> pclose
     endif
 endfunction
 
