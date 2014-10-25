@@ -260,34 +260,6 @@ class CSLItem:
         # Returns formatted Name/Date/Title string. Should be configurable somehow...
         False
 
-class CiteprocQuery:
-    def __init__(self, raw_query):
-        query_array = raw_query
-        self.queries = [re.compile(query, re.I) for query in query_array]
-
-    def matches(self, entry):
-        matched = True
-        for query in self.queries:
-            matched = matched and entry.matches(query)
-        return matched
-
-    def easy_matches(self, entry):
-        if self.match(entry) == 0:
-            return False
-        else:
-            return True
-
-    def match(self, entry):
-        # Returns a number scaled between 0 and 1. Exact value isn't particularly
-        # important, so using floats.
-        match_factor = float(0)
-        scale_factor = float(1)/len(self.queries)
-        for query in self.queries:
-            match_factor += entry.match(query)
-
-        match_factor *= scale_factor
-        return match_factor
-
 class CiteprocSource:
     def __init__(self, bib):
         try:
@@ -303,10 +275,6 @@ class CiteprocSource:
 class CiteprocCollator(SourceCollator):
     def collate(self):
         data = []
-        #if self.query != None:
-        #query = CiteprocQuery(self.query)
-        #else:
-        #   return data
 
         for bib in self.find_bibfiles():
             for item in CiteprocSource(bib):
