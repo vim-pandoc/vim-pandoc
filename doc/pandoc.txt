@@ -350,6 +350,8 @@ where they are available):
 - *<localleader>nr*    insert a ref definition after this paragraph [n]
 - *<localleader>rg*    go to reference definition [n]
 - *<localleader>rb*    go back to reference label [n]
+- *<localleader>gl*    go to current link
+- *<localleader>gl*    go back from link(junt for internal header links)
 - *<localleader>ln*    move to next list item [n]
 - *<localleader>lp*    move to previous list item [n]
 - *<localleader>ll*    move to the current list item [n]
@@ -484,7 +486,7 @@ also specify what languages to use by default with the
 
 Adds some basic hypertext functions. Files and addresses can be opened in
 system defined applications by pressing `gx`, or within vim, if possible, by
-pressing `gf`. 
+pressing `gf`.
 
 Let's suppose you are editing the file "notes.md" with the contents:
 
@@ -495,10 +497,20 @@ and the files "important.md" and "another.md" are available. Pressing `gf`
 over "important.html" will open "important.md" within the current vim instance
 (this behavior of opening alternate files can be disabled by setting
 |g:pandoc#hypertext#open_editable_alternates| to 0). `gx` would open
-"important.html" in the browser, if the file existed. 
+"important.html" in the browser, if the file existed.
 
 See ||g:pandoc#hypertext#open_cmd| and |g:pandoc#hypertext#preferred_alternate| for
 info on how to configure this modules's behavior.
+
+There's an addition keyboard shortcut for following the link at cursor,
+support `automatic link`, `inline link`, `reference link` and `images`. When
+you press the shortcut, it will try to get the link address at cursor, and
+then open it by VIM or system application. If the link address starts with a
+`#`, then it will be treated as an header ID, and then will try to move the
+cursor to specified header.
+After moving, you can use |<localleader>gb| to move back to that link.
+
+See |vim-pandoc-keyboard-module| ro detail.
 
 SETTINGS                                                   *vim-pandoc-settings*
 
@@ -629,7 +641,7 @@ A description of the available configuration variables follows:
   Use bibtool for queries, if available (might help performance).
 
 - *g:pandoc#keyboard#enabled_submodules*
-  default = ["lists", "references", "styles", "sections"]
+  default = ["lists", "references", "styles", "sections", "links"]
 
   What mapping groups to enable.
 
@@ -769,6 +781,16 @@ A description of the available configuration variables follows:
   default = "botright vsplit"
 
   How to open files within vim.
+- *g:pandoc#hypertext#create_if_alternates_no_exists*
+  default = 0
+
+  When open the link at cursor, and it could have alternate files, but not
+  exist, set this to `1` to automaticly create the alternate file with the
+  extention of |g:pandoc#hypertext#preferred_alternate|.
+
+  To use this, the value of |g:pandoc#hypertext#open_editable_alternates|
+  should be 1.
+
 
 - *g:pandoc#hypertext#use_default_mappings*
   default = 1

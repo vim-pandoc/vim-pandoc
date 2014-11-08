@@ -369,25 +369,49 @@ function! markdown#headers#ID(...) "{{{1
 
     let cheader_lnum = markdown#headers#CurrentHeader(search_from[1])
     let cheader = getline(cheader_lnum)
-    let header_metadata = matchstr(cheader, "{.*}")
+    call cursor(origin_pos[1], origin_pos[2])
+
+    return markdown#headers#GetAutomaticID(cheader)
+endfunction
+
+" GetAutomaticID(header)
+" see http://johnmacfarlane.net/pandoc/README.html#extension-auto_identifiers
+function! markdown#headers#GetAutomaticID(header) " {{{1
+    let header_metadata = matchstr(a:header, "{.*}")
     if header_metadata != ""
         let header_id = matchstr(header_metadata, '#[[:alnum:]-]*')[1:]
     endif
     if !exists("header_id") || header_id == ""
-        let text = substitute(cheader, '\[\(.\{-}\)\]\[.*\]', '\=submatch(1)', '') " remove links
+        let text = substitute(a:header, '\[\(.\{-}\)\]\[.*\]', '\1', '') " remove links
         let text = substitute(text, '\s{.*}', '', '') " remove attributes
         let text = substitute(text, '[[:punct:]]', '', 'g') " remove formatting and punctuation
-        let text = substitute(text, '.\{-}[[:alpha:]]\@=', '', '') " remove everything before the first letter
+        let text = substitute(text, '.\{-}[[:alpha:]\u20AC-\uFFFF]\@=', '', '') " remove everything before the first letter
         let text = substitute(text, '\s', '-', 'g') " replace spaces with dashes
         let text = tolower(text) " turn lowercase
-        if !exists("header_id") || header_id == ""
-            if match(text, "[[:alpha:]]") > -1
-                let header_id = text
-            else
-                let header_id = "section"
-            endif
+
+        if match(text, "[[:alpha:]\u20AC-\uFFFF]") > -1
+            let header_id = text
+        else
+            let header_id = "section"
         endif
     endif
-    call cursor(origin_pos[1], origin_pos[2])
+
     return header_id
 endfunction
+
+" GetAllIDs()
+" get all the header indentifiers and it's position, both specified and automatic generated
+function! markdown#headers#GetAllIDs() " {{{1
+    let header_pos = {}
+    " update the location list
+    call pandoc#toc#Update()
+
+    let headers = getloclist(0)
+
+    for header in headers
+        let header_pos[markdown#headers#GetAutomaticID(header.text)] = header.lnum
+    endfor
+
+    return header_pos
+endfunction
+
