@@ -781,7 +781,7 @@ A description of the available configuration variables follows:
   default = "botright vsplit"
 
   How to open files within vim.
-- *g:pandoc#hypertext#create_if_alternates_no_exists*
+- *g:pandoc#hypertext#create_if_no_alternates_exists*
   default = 0
 
   When open the link at cursor, and it could have alternate files, but not

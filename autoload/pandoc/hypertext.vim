@@ -4,8 +4,8 @@ function! pandoc#hypertext#Init()
     if !exists("g:pandoc#hypertext#open_editable_alternates")
         let g:pandoc#hypertext#open_editable_alternates = 1
     endif
-    if !exists("g:pandoc#hypertext#create_if_alternates_no_exists")
-        let g:pandoc#hypertext#create_if_alternates_no_exists = 0
+    if !exists("g:pandoc#hypertext#create_if_no_alternates_exists")
+        let g:pandoc#hypertext#create_if_no_alternates_exists = 0
     endif
     if !exists("g:pandoc#hypertext#open_cmd")
         let g:pandoc#hypertext#open_cmd = "botright vsplit"
@@ -17,20 +17,28 @@ function! pandoc#hypertext#Init()
         let g:pandoc#hypertext#use_default_mappings = 1
     endif
 
-    if !exists("g:pandoc#hypertext#automatic_link")
-        let g:pandoc#hypertext#automatic_link = '\v\<([^>]+)\>'
+    if exists('g:pandoc#hypertext#automatic_link_regex')
+        let s:automatic_link_regex = g:pandoc#hypertext#automatic_link_regex
+    else
+        let s:automatic_link_regex = '\v\<([^>]+)\>'
     endif
-    if !exists("g:pandoc#hypertext#inline_link")
-        let g:pandoc#hypertext#inline_link = '\v!?\[[^]]+\]\(([^) \t]+).*\)'
+
+    if exists('g:pandoc#hypertext#inline_link_regex')
+        let s:inline_link_regex = g:pandoc#hypertext#inline_link_regex
+    else
+        let s:inline_link_regex = '\v!?\[[^]]+\]\(([^) \t]+).*\)'
     endif
-    if !exists("g:pandoc#hypertext#reference_link")
-        let g:pandoc#hypertext#reference_link = '\v!?\[[^]]+\]\[([^]]*)\]'
+
+    if exists('g:pandoc#hypertext#reference_link_regex')
+        let s:reference_link_regex = g:pandoc#hypertext#reference_link_regex
+    else
+        let s:reference_link_regex = '\v!?\[[^]]+\]\[([^]]*)\]'
     endif
-    if !exists("g:pandoc#hypertext#referenced_link")
-        let g:pandoc#hypertext#referenced_link = '\v\[[^]]+\]:\s*([^\t ]+)'
-    endif
-    if !exists("g:pandoc#hypertext#header_id ")
-        let g:pandoc#hypertext#header_id = '\v\{#([^}]+)\}'
+
+    if exists('g:pandoc#hypertext#referenced_link_regex')
+        let s:referenced_link_regex = g:pandoc#hypertext#referenced_link_regex
+    else
+        let s:referenced_link_regex = '\v\[[^]]+\]:\s*([^\t ]+)'
     endif
 
 
@@ -88,7 +96,7 @@ endfunction
 " MatchstrAtCursor(pattern)
 " Returns part of the line that matches pattern at cursor
 " Copyed from vimwiki plugin: autoload/base.vim
-func! s:MatchstrAtCursor(pattern) " {{{1
+function! s:MatchstrAtCursor(pattern) " {{{1
     let col = col('.') - 1
     let line = getline('.')
     let ebeg = -1
@@ -112,7 +120,7 @@ endfunc " }}}1
 
 " GetLinkAtCursor(pat)
 " get the specified type of link at cursor
-func! s:GetLinkAtCursor(pat) " {{{1
+function! s:GetLinkAtCursor(pat) " {{{1
     let matched_str = s:MatchstrAtCursor(a:pat)
     let url = substitute(matched_str, a:pat, '\1', 'g')
     let indices = [1, 4]
@@ -129,27 +137,27 @@ func! s:GetLinkAtCursor(pat) " {{{1
     return url
 endfunc " }}}1
 
-func! s:GetReferenceUrl(ref)
+function! s:GetReferenceUrl(ref)
     let pattern = '\v\c\s*\['.a:ref.'\]:\s*([^ ]+)'
     let linenum = search(pattern, 'nw')
     return substitute(getline(linenum), pattern, '\1', 'g')
-endfunc
+endfunction
 
 
 " GetLinkAddress
 " get the link at cursor
-func! pandoc#hypertext#GetLinkAddress()
-    let link = s:GetLinkAtCursor(g:pandoc#hypertext#automatic_link)
+function! pandoc#hypertext#GetLinkAddress()
+    let link = s:GetLinkAtCursor(s:automatic_link_regex)
 
     " get link at cursor
     if link == ""
-        let link = s:GetLinkAtCursor(g:pandoc#hypertext#inline_link)
+        let link = s:GetLinkAtCursor(s:inline_link_regex)
 
         if link == ""
-            let link = s:GetLinkAtCursor(g:pandoc#hypertext#reference_link)
+            let link = s:GetLinkAtCursor(s:reference_link_regex)
 
             if link == ""
-                let link = s:GetLinkAtCursor(g:pandoc#hypertext#referenced_link)
+                let link = s:GetLinkAtCursor(s:referenced_link_regex)
             else
                 " find the reference link
                 let link = s:GetReferenceUrl(link)
@@ -158,7 +166,7 @@ func! pandoc#hypertext#GetLinkAddress()
     endif
 
     return link
-endfunc
+endfunction
 
 
 function! pandoc#hypertext#OpenLocal(...)
@@ -185,7 +193,7 @@ function! pandoc#hypertext#OpenLocal(...)
                 let addr = alt_addrs[pos]
             else
                 " check weather to create the alternate file
-                if g:pandoc#hypertext#create_if_alternates_no_exists == 1
+                if g:pandoc#hypertext#create_if_no_alternates_exists == 1
                     let dir = fnamemodify(addr, ":p:h")
 
                     if !isdirectory(dir)
@@ -224,12 +232,12 @@ function! pandoc#hypertext#OpenSystem(...)
     endif
 endfunction
 
-func! pandoc#hypertext#GotoSavedCursor()
+function! pandoc#hypertext#GotoSavedCursor()
     if exists('b:save_cursor')
         call setpos('.', b:save_cursor)
         unlet b:save_cursor
     endif
-endfunc
+endfunction
 
 function! pandoc#hypertext#OpenLink()
     let url = pandoc#hypertext#GetLinkAddress()
