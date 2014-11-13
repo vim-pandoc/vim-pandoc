@@ -51,7 +51,7 @@ class CSLItem:
         def plain(variable_contents):
             # Takes the contents of a 'plain' variable and splits it into an array.
             # nb. this must be able to cope with integer input as well as strings.
-            return unicode(variable_contents).split()
+            return unicode(variable_contents).split('\n')
 
         def number(variable_contents):
             # Returns variable_contents as an array.
@@ -70,7 +70,7 @@ class CSLItem:
 
             def given_names(author):
                 # Return given variable split at spaces.
-                return author.get("given", "").split()
+                return author.get("given", "")
 
             def literal_name(author):
                 # It seems likely there is some particular reason for the author being

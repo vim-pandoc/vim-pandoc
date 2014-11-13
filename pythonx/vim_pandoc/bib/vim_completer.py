@@ -34,6 +34,8 @@ class VimCompleter(object):
         """
         Returns a dict with the suggestions available for the given query.
         """
+        query = query.strip() # spaces around the query shouldn't be significant
+
         mode = vim.eval("g:pandoc#completion#bib#mode")
         args = { "fname" : vim.current.buffer.name,
                  "query": query,

@@ -22,7 +22,8 @@ function! pandoc#completion#Init() "{{{1
         if stridx(&cot, "preview") > -1
             let b:pandoc_old_cot = &cot
             let &cot = &cot.",preview"
-            au! BufLeave <buffer> let &cot = b:pandoc_old_cot
+            au! BufEnter,WinEnter <buffer> let &cot = b:pandoc_old_cot.".preview"
+            au! BufLeave,WinLeave <buffer> let &cot = b:pandoc_old_cot
         endif
         " close the preview window when the completion has been inserted
         au! CompleteDone <buffer> pclose
@@ -30,30 +31,17 @@ function! pandoc#completion#Init() "{{{1
 endfunction
 
 function! pandoc#completion#Complete(findstart, base) "{{{1
-    if has("python")
+    if has("python") && index(g:pandoc#modules#enabled, "bibliographies") >= 0 
         if a:findstart
-            " return the starting position of the word
-            let line = getline('.')
-            let pos = col('.') - 1
-            while pos > 0 && line[pos - 1] !~ '\\\|{\|\[\|<\|\s\|@\|\^'
-                let pos -= 1
-            endwhile
-
-            let line_start = line[:pos-1]
-            if line_start =~ '.*@$'
-                let s:completion_type = 'bib'
-            else
-                let s:completion_type = ''
+            let l:line = getline('.')
+            if l:line[:col('.')-1] =~ '@'
+                let l:pos = searchpos('@', 'Wncb')
+                if l:pos != [0,0]
+                    return l:pos[1]
+                endif
             endif
-            return pos
         else
-            "return suggestions in an array
-            let suggestions = []
-            if index(g:pandoc#modules#enabled, "bibliographies") >= 0 &&
-                        \ s:completion_type == 'bib'
-                " suggest BibTeX entries
-                let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
-            endif
+            let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
             return suggestions
         endif
     endif

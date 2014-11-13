@@ -46,6 +46,11 @@ endfunction
 function! pandoc#bibliographies#GetSuggestions(partkey)
     if has("python")
         python import vim_pandoc.bib.vim_completer
-        return pyeval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval("a:partkey"))')
+        let l:sugs = pyeval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval("a:partkey"))')
+        if len(l:sugs) > 0
+            return l:sugs
+        else
+            return []
+        endif
     endif
 endfunction
