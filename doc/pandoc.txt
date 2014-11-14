@@ -154,10 +154,11 @@ entering and leaving insert mode, but it can be triggered when the cursor
 moves in insert mode too if desired (it can be cleaner, although it might add
 some lag), by setting |g:pandoc#formatting#smart_autoformat_on_cursormoved|.
 
-The formatting module also configures the program used for the |=| command, which you
-can use to reformat your document (by default: wraps lines, returns inline
-links and footnotes into reference links, etc.). This is configured with the
-|g:pandoc#formatting#equalprg|) variable. Please note that if you pass a
+The formatting module also configures the program used for the |=| command,
+which you can use to reformat your document (by default: wraps lines, returns
+inline links and footnotes into reference links, etc.). This is configured
+with the |g:pandoc#formatting#equalprg| and
+|g:pandoc#formatting#extra_equalprg| variables. Please note that if you pass a
 whole file through the default filter, it might delete some stuff, like LaTeX
 macro definitions and title blocks. 
 
@@ -562,7 +563,15 @@ A description of the available configuration variables follows:
   default = "pandoc -t markdown --reference-links [--columns {g:pandoc#formatting#textwidth}|no-wrap]"
 
   What command to use for equalprg. If set to '', vim's default will be used.
-  See |'equalprg'|.
+  See |'equalprg'|. 
+  NOTE the default changes depending on whether the formatting mode uses hard
+  or soft wraps. 
+
+- *g:pandoc#formatting#extra_equalprg*
+  default = ""
+
+  Extra arguments to append to the value of equalprg. Useful when the default
+  behavior of |g:pandoc#formatting#equalprg| wants to be preserved.
 
 - *g:pandoc#command#use_message_buffers*
   default = 1

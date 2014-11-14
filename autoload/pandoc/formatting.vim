@@ -47,6 +47,10 @@ function! pandoc#formatting#Init() "{{{1
             let g:pandoc#formatting#equalprg.= " --no-wrap"
         endif
     endif
+    " extend the value of equalprg if needed
+    if !exists("g:pandoc#formatting#extra_equalprg")
+        let g:pandoc#formatting#extra_equalprg = ""
+    endif
     " }}}3
     " Use a custom indentexpr? {{{3
     if !exists("g:pandoc#formatting#set_indentexpr")
@@ -70,7 +74,7 @@ function! pandoc#formatting#Init() "{{{1
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
     if g:pandoc#formatting#equalprg != ''
-        let &l:equalprg=g:pandoc#formatting#equalprg
+        let &l:equalprg=g:pandoc#formatting#equalprg." ".g:pandoc#formatting#extra_equalprg
     endif
 
     " common settings {{{2
