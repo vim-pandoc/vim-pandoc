@@ -19,6 +19,7 @@ function! pandoc#formatting#Init() "{{{1
                     \ 'pandoc.+header',
                     \ 'pandoc.+block',
                     \ 'pandoc.+table',
+                    \ 'pandoctable',
                     \ 'pandoc.+latex',
                     \ 'pandocreferencedefinition',
                     \ 'tex.*',
