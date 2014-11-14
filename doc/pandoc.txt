@@ -153,6 +153,10 @@ information to work. By default, this kind of autoformatting is triggered on
 entering and leaving insert mode, but it can be triggered when the cursor
 moves in insert mode too if desired (it can be cleaner, although it might add
 some lag), by setting |g:pandoc#formatting#smart_autoformat_on_cursormoved|.
+The user can temporarily disable/enable this autoformatting feature on any
+specific buffer by setting the value of *b:pandoc_autoformat_enabled* (which
+can be done using the `pandoc#formatting#{Enable,Disable,Toggle}Autoformat()`
+functions).
 
 The formatting module also configures the program used for the |=| command,
 which you can use to reformat your document (by default: wraps lines, returns

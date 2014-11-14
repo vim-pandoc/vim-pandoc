@@ -112,6 +112,28 @@ function! pandoc#formatting#Init() "{{{1
     "}}}2
 endfunction
 
+" Autoformat switches {{{1
+function! pandoc#formatting#isAutoformatEnabled()
+    if exists("b:pandoc_autoformat_enabled")
+        return b:pandoc_autoformat_enabled
+    else
+        return 1
+    endif
+endfunction
+function! pandoc#formatting#EnableAutoformat()
+    let b:pandoc_autoformat_enabled = 1
+endfunction
+function! pandoc#formatting#DisableAutoformat()
+    let b:pandoc_autoformat_enabled = 0
+endfunction
+function! pandoc#formatting#ToggleAutoformat()
+    if b:pandoc_autoformat_enabled == 1
+        let b:pandoc_autoformat_enabled = 0
+    else
+        let b:pandoc_autoformat_enabled = 1
+    endif
+endfunction
+
 function! pandoc#formatting#AutoFormat(force) "{{{1
     if !exists('b:pandoc_autoformat_enabled') || b:pandoc_autoformat_enabled == 1
         let l:line = line('.')
