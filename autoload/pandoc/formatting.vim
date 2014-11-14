@@ -39,7 +39,7 @@ function! pandoc#formatting#Init() "{{{1
     endif
     " }}}3
     " equalprg {{{3
-    if !exists("g:pandoc#formattingequalprg")
+    if !exists("g:pandoc#formatting#equalprg")
         let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
         if g:pandoc#formatting#mode =~ "h"
             let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
