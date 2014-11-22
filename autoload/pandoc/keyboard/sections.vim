@@ -27,7 +27,7 @@ function! pandoc#keyboard#sections#Init() "{{{1
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-header-child) :call pandoc#keyboard#sections#FirstChildHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-header-child) :call pandoc#keyboard#sections#LastChildHeader()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-header-child) :<C-U>call pandoc#keyboard#sections#GotoNthChildHeader(v:count1)<cr>
-    if g:pandoc#keyboard#use_default_mappings == 1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "sections") == -1
         nmap <buffer> <localleader># <Plug>(pandoc-keyboard-apply-header)
         nmap <buffer> <localleader>hd <Plug>(pandoc-keyboard-remove-header)
         nmap <buffer> <localleader>hn <Plug>(pandoc-keyboard-next-header)

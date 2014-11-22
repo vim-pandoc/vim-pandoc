@@ -19,6 +19,9 @@ function! pandoc#keyboard#Init()
     if !exists("g:pandoc#keyboard#use_default_mappings")
         let g:pandoc#keyboard#use_default_mappings = 1
     endif
+    if !exists("g:pandoc#keyboard#blacklist_submodule_mappings")
+        let g:pandoc#keyboard#blacklist_submodule_mappings = []
+    endif
 
     " Display_Motion: {{{2
     if g:pandoc#keyboard#display_motions == 1

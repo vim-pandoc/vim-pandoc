@@ -8,7 +8,7 @@ function! pandoc#keyboard#styles#Init() "{{{1
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-inclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("inclusive")<cr>'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-exclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("exclusive")<cr>'
     endfor
-    if g:pandoc#keyboard#use_default_mappings == 1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "styles") == -1
         nmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         vmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         nmap <buffer> <localleader>b <Plug>(pandoc-keyboard-toggle-strong)

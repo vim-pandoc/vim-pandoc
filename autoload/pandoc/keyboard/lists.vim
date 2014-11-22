@@ -10,7 +10,7 @@ function! pandoc#keyboard#lists#Init() "{{{1
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-li-child) :call pandoc#keyboard#lists#FirstListItemChild()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-li-child) :call pandoc#keyboard#lists#LastListItemChild()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-li-child) :<C-U>call pandoc#keyboard#lists#GotoNthListItemChild(v:count1)<cr>
-    if g:pandoc#keyboard#use_default_mappings == 1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "lists") == -1
         nmap <buffer> <localleader>ln <Plug>(pandoc-keyboard-next-li)
         nmap <buffer> <localleader>lp <Plug>(pandoc-keyboard-prev-li)
         nmap <buffer> <localleader>ll <Plug>(pandoc-keyboard-cur-li)

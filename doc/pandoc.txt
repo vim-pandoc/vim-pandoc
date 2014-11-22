@@ -324,7 +324,10 @@ you can build your documents from it.
 
 Registers custom mappings for applying text styles, navigating the documents
 and more. To keep things neat, this module loads mappings from submodules.
-|g:pandoc#keyboard#enabled_submodules| determines which of those are enabled. 
+|g:pandoc#keyboard#enabled_submodules| determines which of those are enabled.
+The default mappings can be disabled as a whole setting
+|g:pandoc#keyboard#use_default_mappings| to 0. The mappings for individual
+modules can be disabled using |g:pandoc#keyboard#blacklist_submodule_mappings|.
 
 This is list of the mappings currently implemented (in brackets, the modes
 where they are available):
@@ -685,6 +688,13 @@ A description of the available configuration variables follows:
   default = 1
 
   Use default mappings. Otherwise, the user should provide his own.
+
+- *g:pandoc#keyboard#blacklist_submodule_mappings*
+  default = []
+
+  A list of submodules of the keyboard module whose mappings should be
+  disabled. Allows finer handling of default mappings than
+  |g:pandoc#keyboard#use_default_mappings|.
 
 - *g:pandoc#folding#level*
   default = &foldlevel
