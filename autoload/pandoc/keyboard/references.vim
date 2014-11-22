@@ -14,7 +14,7 @@ function! pandoc#keyboard#references#Init() "{{{1
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-goto) :call pandoc#keyboard#references#GOTO_Ref()<CR>
     " Go back to last point in the text we jumped to a reference from.
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-ref-backfrom) :call pandoc#keyboard#references#BACKFROM_Ref()<CR>
-    if g:pandoc#keyboard#use_default_mappings == 1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "references") == -1
         nmap <buffer> <localleader>nr <Plug>(pandoc-keyboard-ref-insert)
         nmap <buffer> <localleader>rg <Plug>(pandoc-keyboard-ref-goto)
         nmap <buffer> <localleader>rb <Plug>(pandoc-keyboard-ref-backfrom)

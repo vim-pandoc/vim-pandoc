@@ -8,7 +8,7 @@ function! pandoc#keyboard#styles#Init() "{{{1
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-inclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("inclusive")<cr>'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-exclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("exclusive")<cr>'
     endfor
-    if g:pandoc#keyboard#use_default_mappings == 1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "styles") == -1
         nmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         vmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         nmap <buffer> <localleader>b <Plug>(pandoc-keyboard-toggle-strong)
@@ -21,30 +21,30 @@ function! pandoc#keyboard#styles#Init() "{{{1
         vmap <buffer> <localleader>^ <Plug>(pandoc-keyboard-toggle-superscript)
         nmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
         vmap <buffer> <localleader>_ <Plug>(pandoc-keyboard-toggle-subscript)
-        vmap <buffer> <silent> ape <Plug>(pandoc-keyboard-select-emphasis-inclusive)
-        vmap <buffer> <silent> ipe <Plug>(pandoc-keyboard-select-emphasis-exclusive)
-        omap <buffer> ape :normal vape<cr>
-        omap <buffer> ipe :normal vipe<cr>
-        vmap <buffer> <silent> aps <Plug>(pandoc-keyboard-select-strong-inclusive)
-        vmap <buffer> <silent> ips <Plug>(pandoc-keyboard-select-strong-exclusive)
-        omap <buffer> aps :normal vaps<cr>
-        omap <buffer> ips :normal vips<cr>
-        vmap <buffer> <silent> apv <Plug>(pandoc-keyboard-select-verbatim-inclusive)
-        vmap <buffer> <silent> ipv <Plug>(pandoc-keyboard-select-verbatim-exclusive)
-        omap <buffer> apv :normal vapv<cr>
-        omap <buffer> ipv :normal vipv<cr>
-        vmap <buffer> <silent> apk <Plug>(pandoc-keyboard-select-strikeout-inclusive)
-        vmap <buffer> <silent> ipk <Plug>(pandoc-keyboard-select-strikeout-exclusive)
-        omap <buffer> apk :normal vapk<cr>
-        omap <buffer> ipk :normal vipk<cr>
-        vmap <buffer> <silent> apu <Plug>(pandoc-keyboard-select-superscript-inclusive)
-        vmap <buffer> <silent> ipu <Plug>(pandoc-keyboard-select-superscript-exclusive)
-        omap <buffer> apu :normal vapu<cr>
-        omap <buffer> ipu :normal vipu<cr>
-        vmap <buffer> <silent> apt <Plug>(pandoc-keyboard-select-subscript-inclusive)
-        vmap <buffer> <silent> ipt <Plug>(pandoc-keyboard-select-subscript-exclusive)
-        omap <buffer> apt :normal vapl<cr>
-        omap <buffer> ipt :normal vipl<cr>
+        vmap <buffer> <silent> aPe <Plug>(pandoc-keyboard-select-emphasis-inclusive)
+        vmap <buffer> <silent> iPe <Plug>(pandoc-keyboard-select-emphasis-exclusive)
+        omap <buffer> aPe :normal vaPe<cr>
+        omap <buffer> iPe :normal viPe<cr>
+        vmap <buffer> <silent> aPs <Plug>(pandoc-keyboard-select-strong-inclusive)
+        vmap <buffer> <silent> iPs <Plug>(pandoc-keyboard-select-strong-exclusive)
+        omap <buffer> aPs :normal vaPs<cr>
+        omap <buffer> iPs :normal viPs<cr>
+        vmap <buffer> <silent> aPv <Plug>(pandoc-keyboard-select-verbatim-inclusive)
+        vmap <buffer> <silent> iPv <Plug>(pandoc-keyboard-select-verbatim-exclusive)
+        omap <buffer> aPv :normal vaPv<cr>
+        omap <buffer> iPv :normal viPv<cr>
+        vmap <buffer> <silent> aPk <Plug>(pandoc-keyboard-select-strikeout-inclusive)
+        vmap <buffer> <silent> iPk <Plug>(pandoc-keyboard-select-strikeout-exclusive)
+        omap <buffer> aPk :normal vaPk<cr>
+        omap <buffer> iPk :normal viPk<cr>
+        vmap <buffer> <silent> aPu <Plug>(pandoc-keyboard-select-superscript-inclusive)
+        vmap <buffer> <silent> iPu <Plug>(pandoc-keyboard-select-superscript-exclusive)
+        omap <buffer> aPu :normal vaPu<cr>
+        omap <buffer> iPu :normal viPu<cr>
+        vmap <buffer> <silent> aPt <Plug>(pandoc-keyboard-select-subscript-inclusive)
+        vmap <buffer> <silent> iPt <Plug>(pandoc-keyboard-select-subscript-exclusive)
+        omap <buffer> aPt :normal vaPl<cr>
+        omap <buffer> iPt :normal viPl<cr>
     endif
 endfunction 
 

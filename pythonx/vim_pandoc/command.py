@@ -189,6 +189,9 @@ class PandocCommand(object):
                     pid = Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
                 except:
                     vim.command('echoe "vim-pandoc: could not execute pandoc asynchronously"')
+            elif vim.eval("has('nvim')") == '1':
+                vim.command("au JobActivity pandoc python pandoc.on_done("+str(should_open)+", '0')")
+                vim.command('call jobstart("pandoc", "pandoc", ' + str(shlex.split(self._run_command)[1:]) + ')')
             else:
                 try:
                     com = Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp)
@@ -270,5 +273,10 @@ class PandocCommand(object):
                 vim.command("echohl Statement")
                 vim.command("echom 'vim-pandoc:ran successfully.'")
                 vim.command("echohl None")
+
+            # clean up JobActivity callback if set
+            if vim.eval('exists("#JobActivity#pandoc")') == '1':
+                vim.command("au! JobActivity pandoc")
+
 
 pandoc = PandocCommand()

@@ -19,6 +19,7 @@ function! pandoc#formatting#Init() "{{{1
                     \ 'pandoc.+header',
                     \ 'pandoc.+block',
                     \ 'pandoc.+table',
+                    \ 'pandoctable',
                     \ 'pandoc.+latex',
                     \ 'pandocreferencedefinition',
                     \ 'tex.*',
@@ -39,13 +40,17 @@ function! pandoc#formatting#Init() "{{{1
     endif
     " }}}3
     " equalprg {{{3
-    if !exists("g:pandoc#formattingequalprg")
+    if !exists("g:pandoc#formatting#equalprg")
         let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
         if g:pandoc#formatting#mode =~ "h"
             let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
         else
             let g:pandoc#formatting#equalprg.= " --no-wrap"
         endif
+    endif
+    " extend the value of equalprg if needed
+    if !exists("g:pandoc#formatting#extra_equalprg")
+        let g:pandoc#formatting#extra_equalprg = ""
     endif
     " }}}3
     " Use a custom indentexpr? {{{3
@@ -70,7 +75,7 @@ function! pandoc#formatting#Init() "{{{1
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
     if g:pandoc#formatting#equalprg != ''
-        let &l:equalprg=g:pandoc#formatting#equalprg
+        let &l:equalprg=g:pandoc#formatting#equalprg." ".g:pandoc#formatting#extra_equalprg
     endif
 
     " common settings {{{2
@@ -102,38 +107,67 @@ function! pandoc#formatting#Init() "{{{1
         setlocal commentstring=<!--%s-->
         setlocal comments=s:<!--,m:\ \ \ \ ,e:-->,:\|,n:>
     endif
+
+    let s:last_autoformat_lnum = 0
     "}}}2
 endfunction
 
-function! pandoc#formatting#AutoFormat() "{{{1
+" Autoformat switches {{{1
+function! pandoc#formatting#isAutoformatEnabled()
+    if exists("b:pandoc_autoformat_enabled")
+        return b:pandoc_autoformat_enabled
+    else
+        return 1
+    endif
+endfunction
+function! pandoc#formatting#EnableAutoformat()
+    let b:pandoc_autoformat_enabled = 1
+endfunction
+function! pandoc#formatting#DisableAutoformat()
+    let b:pandoc_autoformat_enabled = 0
+endfunction
+function! pandoc#formatting#ToggleAutoformat()
+    if b:pandoc_autoformat_enabled == 1
+        let b:pandoc_autoformat_enabled = 0
+    else
+        let b:pandoc_autoformat_enabled = 1
+    endif
+endfunction
+
+function! pandoc#formatting#AutoFormat(force) "{{{1
     if !exists('b:pandoc_autoformat_enabled') || b:pandoc_autoformat_enabled == 1
-        let l:stack = []
-        let l:should_enable = 1
-        let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
-        let l:stack = synstack(line('.'), col('.'))
-        if len(l:stack) == 0
-            " let's try with the first column in this line
-            let l:stack = synstack(line('.'), 1)
-        endif
-        if len(l:stack) > 0
-            " we check on the base syntax id, so we don't have to pollute the
-            " blacklist with stuff like pandocAtxMark, which is contained
-            if match(synIDattr(l:stack[0], 'name'), l:blacklist_re) >= 0
-                let l:should_enable = 0
+        let l:line = line('.')
+        if a:force == 1 || l:line != s:last_autoformat_lnum
+            let s:last_autoformat_lnum = l:line
+            let l:stack = []
+            let l:should_enable = 1
+            let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
+            let l:stack = synstack(l:line, col('.'))
+            if len(l:stack) == 0
+                " let's try with the first column in this line
+                let l:stack = synstack(l:line, 1)
             endif
-        endif
-        if l:should_enable == 1
-            setlocal formatoptions+=a
-            setlocal formatoptions+=t
-            " block quotes are formatted like text comments (hackish, i know), 
-            " so we want to make them break at textwidth
-            if l:stack != [] && synIDattr(l:stack[0], 'name') == 'pandocBlockQuote'
-                setlocal formatoptions+=c
+            if len(l:stack) > 0
+                let l:synName = synIDattr(l:stack[0], 'name')
+                " we check on the base syntax id, so we don't have to pollute the
+                " blacklist with stuff like pandocAtxMark, which is contained
+                if match(l:synName, l:blacklist_re) >= 0
+                    let l:should_enable = 0
+                endif
             endif
-        elseif l:should_enable == 0
-            setlocal formatoptions-=a
-            setlocal formatoptions-=t
-            setlocal formatoptions-=c "just in case we have added it for a block quote
+            if l:should_enable == 1
+                setlocal formatoptions+=a
+                setlocal formatoptions+=t
+                " block quotes are formatted like text comments (hackish, i know), 
+                " so we want to make them break at textwidth
+                if l:stack != [] && l:synName == 'pandocBlockQuote'
+                    setlocal formatoptions+=c
+                endif
+            elseif l:should_enable == 0
+                setlocal formatoptions-=a
+                setlocal formatoptions-=t
+                setlocal formatoptions-=c "just in case we have added it for a block quote
+            endif
         endif
     elseif &formatoptions != 'tn'
         setlocal formatoptions=tnroq
@@ -167,10 +201,10 @@ function! pandoc#formatting#UseHardWraps() "{{{1
         setlocal formatoptions+=aw
     elseif stridx(g:pandoc#formatting#mode, 'A') >= 0
         augroup pandoc_autoformat
-        au InsertEnter <buffer> call pandoc#formatting#AutoFormat()
+        au InsertEnter <buffer> call pandoc#formatting#AutoFormat(1)
         au InsertLeave <buffer> setlocal formatoptions=tnroq
         if g:pandoc#formatting#smart_autoformat_on_cursormoved == 1
-            au CursorMovedI <buffer> call pandoc#formatting#AutoFormat()
+            au CursorMovedI <buffer> call pandoc#formatting#AutoFormat(0)
         endif
         augroup END
     endif

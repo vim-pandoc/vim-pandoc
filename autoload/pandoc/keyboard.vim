@@ -5,7 +5,7 @@ function! pandoc#keyboard#Init()
     " set up defaults {{{2
     " Enabled submodules {{{3
     if !exists("g:pandoc#keyboard#enabled_submodules")
-        let g:pandoc#keyboard#enabled_submodules = ["lists", "sections", "styles", "references"]
+        let g:pandoc#keyboard#enabled_submodules = ["lists", "sections", "styles", "references", "links"]
     endif
     " Use display motions when using soft wrapping {{{3
     if !exists("g:pandoc#keyboard#display_motions")
@@ -18,6 +18,9 @@ function! pandoc#keyboard#Init()
     " Use default mappings? {{{3
     if !exists("g:pandoc#keyboard#use_default_mappings")
         let g:pandoc#keyboard#use_default_mappings = 1
+    endif
+    if !exists("g:pandoc#keyboard#blacklist_submodule_mappings")
+        let g:pandoc#keyboard#blacklist_submodule_mappings = []
     endif
 
     " Display_Motion: {{{2
