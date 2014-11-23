@@ -79,7 +79,7 @@ class PandocHelpParser(object):
             elif i == "texinfo":
                 table[i] = "info"
             elif i == "latex":
-                table[i] = "ltx"
+                table[i] = "tex"
             else:
                 table[i] = i
         return table
