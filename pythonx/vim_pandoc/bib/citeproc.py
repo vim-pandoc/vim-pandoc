@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
+# vim: set fdm=marker:
 
+# imports {{{1
 import sys
 import os
 from subprocess import check_output
@@ -11,6 +13,7 @@ try:
 except:
     from collator import SourceCollator
 
+# _bib_extensions {{{1
 # Filetypes that citeproc.py will attempt to parse.
 _bib_extensions = ["bib",\
                    "bibtex",\
@@ -23,6 +26,7 @@ _bib_extensions = ["bib",\
                    "copac",\
                    "xml"]
 
+# _significant_tags {{{1
 # Tags that citeproc.py will search in, together with scaling
 # factors for relative importance. These are currently non-functional.
 _significant_tags = {"id": 0.5,
@@ -31,51 +35,117 @@ _significant_tags = {"id": 0.5,
                      "title": 1.0,
                      "publisher": 1.0,
                      "abstract": 0.1}
-class CSLItem:
+
+# _variable_type {{{1
+# Map of tags -> types.
+_variable_type = {
+        "abstract": "plain",
+        "annote": "plain",
+        "archive": "plain",
+        "archive_location": "plain",
+        "archive-place": "plain",
+        "authority": "plain",
+        "call-number": "plain",
+        "citation-label": "plain",
+        "citation-number": "plain",
+        "collection-title": "plain",
+        "container-title": "plain",
+        "container-title-short": "plain",
+        "dimensions": "plain",
+        "doi": "plain",
+        "event": "plain",
+        "event-place": "plain",
+        "first-reference-note-number": "plain",
+        "genre": "plain",
+        "isbn": "plain",
+        "issn": "plain",
+        "jurisdiction": "plain",
+        "keyword": "plain",
+        "locator": "plain",
+        "medium": "plain",
+        "note": "plain",
+        "original-publisher": "plain",
+        "original-publisher-place": "plain",
+        "original-title": "plain",
+        "page": "plain",
+        "page-first": "plain",
+        "pmcid": "plain",
+        "pmid": "plain",
+        "publisher": "plain",
+        "publisher-place": "plain",
+        "references": "plain",
+        "reviewed-title": "plain",
+        "scale": "plain",
+        "section": "plain",
+        "source": "plain",
+        "status": "plain",
+        "title": "plain",
+        "title-short": "plain",
+        "url": "plain",
+        "version": "plain",
+        "year-suffix": "plain",
+
+        "chapter-number": "number",
+        "collection-number": "number",
+        "edition": "number",
+        "issue": "number",
+        "number": "number",
+        "number-of-pages": "number",
+        "number-of-volumes": "number",
+        "volume": "number",
+
+        "accessed": "date",
+        "container": "date",
+        "event-date": "date",
+        "issued": "date",
+        "original-date": "date",
+        "submitted": "date",
+
+        "author": "name",
+        "collection-editor": "name",
+        "composer": "name",
+        "container-author": "name",
+        "director": "name",
+        "editor": "name",
+        "editorial-director": "name",
+        "illustrator": "name",
+        "interviewer": "name",
+        "original-author": "name",
+        "recipient": "name",
+        "reviewed-author": "name",
+        "translator": "name"
+        }
+
+class CSLItem: #{{{1
     # This class implements various helper methods for CSL-JSON formatted bibliography
     # entries.
-    def __init__(self, entry):
+    def __init__(self, entry): #{{{2
         self.data = entry
-        self.as_array_buffer = {}
 
-    def citekey(self):
-        return self.data["id"]
-
-    def buffered_as_array(self, variable_name):
-        if variable_name not in self.as_array_buffer:
-            self.as_array_buffer[variable_name] = as_array(variable_name)
-
-        return self.as_array_buffer[variable_name]
-
-    def as_array(self, variable_name):
-        def plain(variable_contents):
+    def as_array(self, variable_name): #{{{2
+        def plain(variable_contents): #{{{3
             # Takes the contents of a 'plain' variable and splits it into an array.
-            # nb. this must be able to cope with integer input as well as strings.
             return unicode(variable_contents).split('\n')
 
-        def number(variable_contents):
-            # Returns variable_contents as an array.
+        def number(variable_contents): #{{{3
             return [unicode(variable_contents)]
 
-        def name(variable_contents):
+        def name(variable_contents): #{{{3
             # Parses "name" CSL Variables and returns an array of names.
 
             def surname(author):
                 # Concat dropping particle and non-dropping particle with family name.
-                return [(author.get("dropping-particle", "") +
-                         " " +
-                         author.get("non-dropping-particle", "") +
-                         " " +
-                         author.get("family", ""))]
+                return [" ".join((author.get("dropping-particle", ""),
+                                  author.get("non-dropping-particle", ""),
+                                  author.get("family", ""))).strip()]
 
             def given_names(author):
-                # Return given variable split at spaces.
-                return author.get("given", "")
+                return [author.get("given", "").strip()]
 
             def literal_name(author):
                 # It seems likely there is some particular reason for the author being
                 # a literal, so don't try and do clever stuff like splitting into tokens...
-                return [author.get("literal", "")]
+                return [author.get("literal", "").strip()]
 
             array_of_names = []
 
@@ -88,7 +158,7 @@ class CSLItem:
 
             return array_of_names
 
-        def date(variable_contents):
+        def date(variable_contents): #{{{3
             # Currently a placeholder. Will parse 'date' CSL variables and return an array of
             # strings for matches.
             def date_parse(raw_date_array):
@@ -128,93 +198,16 @@ class CSLItem:
                 response.extend(date_function_lookup[element](variable_contents[element]))
 
             return response
-
-        variable_type = {
-                "abstract": plain,
-                "annote": plain,
-                "archive": plain,
-                "archive_location": plain,
-                "archive-place": plain,
-                "authority": plain,
-                "call-number": plain,
-                "citation-label": plain,
-                "citation-number": plain,
-                "collection-title": plain,
-                "container-title": plain,
-                "container-title-short": plain,
-                "dimensions": plain,
-                "doi": plain,
-                "event": plain,
-                "event-place": plain,
-                "first-reference-note-number": plain,
-                "genre": plain,
-                "isbn": plain,
-                "issn": plain,
-                "jurisdiction": plain,
-                "keyword": plain,
-                "locator": plain,
-                "medium": plain,
-                "note": plain,
-                "original-publisher": plain,
-                "original-publisher-place": plain,
-                "original-title": plain,
-                "page": plain,
-                "page-first": plain,
-                "pmcid": plain,
-                "pmid": plain,
-                "publisher": plain,
-                "publisher-place": plain,
-                "references": plain,
-                "reviewed-title": plain,
-                "scale": plain,
-                "section": plain,
-                "source": plain,
-                "status": plain,
-                "title": plain,
-                "title-short": plain,
-                "url": plain,
-                "version": plain,
-                "year-suffix": plain,
-
-                "chapter-number": number,
-                "collection-number": number,
-                "edition": number,
-                "issue": number,
-                "number": number,
-                "number-of-pages": number,
-                "number-of-volumes": number,
-                "volume": number,
-
-                "accessed": date,
-                "container": date,
-                "event-date": date,
-                "issued": date,
-                "original-date": date,
-                "submitted": date,
-
-                "author": name,
-                "collection-editor": name,
-                "composer": name,
-                "container-author": name,
-                "director": name,
-                "editor": name,
-                "editorial-director": name,
-                "illustrator": name,
-                "interviewer": name,
-                "original-author": name,
-                "recipient": name,
-                "reviewed-author": name,
-                "translator": name
-                }
+            # }}}3
 
         variable_contents = self.data.get(variable_name, False)
 
         if variable_contents:
-            return variable_type.get(variable_name, plain)(variable_contents)
+            return eval(_variable_type.get(variable_name, "plain"))(variable_contents)
         else:
             return []
 
-    def match(self, query):
+    def match(self, query): #{{{2
         # Matching engine. Returns 1 if match found, 0 otherwise.
         # Expects query to be a compiled regexp.
 
@@ -234,7 +227,7 @@ class CSLItem:
         else:
             return 0
 
-    def matches(self, query):
+    def matches(self, query): #{{{2
         # Provides a boolean match response to query.
         # Expects query to be a compiled regexp.
         if self.match(query) == 0:
@@ -242,7 +235,7 @@ class CSLItem:
         else:
             return True
 
-    def relevance(self, query):
+    def relevance(self, query): #{{{2
         # Returns the relevance of an item for a query
         query = re.compile(query, re.I)
         relevance = float(0.0)
@@ -256,24 +249,20 @@ class CSLItem:
             relevance = sum([_significant_tags[t] for t in tags_matched])
         return relevance
 
-    def formatted(self):
-        # Returns formatted Name/Date/Title string. Should be configurable somehow...
-        False
-
-class CiteprocSource:
-    def __init__(self, bib):
+class CiteprocSource: #{{{1
+    def __init__(self, bib): #{{{2
         try:
             raw_bib = json.loads(check_output(["pandoc-citeproc", "-j", bib]))
         except:
             raw_bib = []
         self.data = [CSLItem(entry) for entry in raw_bib]
 
-    def __iter__(self):
+    def __iter__(self): #{{{2
         for a in self.data:
             yield a
 
-class CiteprocCollator(SourceCollator):
-    def collate(self):
+class CiteprocCollator(SourceCollator): #{{{1
+    def collate(self): #{{{2
         data = []
 
         for bib in self.find_bibfiles():

@@ -2,8 +2,19 @@ import os
 from glob import glob
 from subprocess import check_output
 
+bib_extensions = ["bib",
+                    "bibtex",
+                    "ris",
+                    "json",
+                    "enl",
+                    "wos",
+                    "medline",
+                    "copac",
+                    "xml"]
+
+
 class SourceCollator():
-    def __init__(self, fname=None, query=None, sources=None, extra_sources=([], []), **extra_args):
+    def __init__(self, fname=None, query=None, sources="bcg", extra_sources=([], []), **extra_args):
         self.fname = fname
         self.query = query
         self.sources = sources
@@ -11,20 +22,11 @@ class SourceCollator():
         self.extra_args = extra_args
 
     def find_bibfiles(self):
-
-        bib_extensions = ["bib",
-                          "bibtex",
-                          "ris",
-                          "json",
-                          "enl",
-                          "wos",
-                          "medline",
-                          "copac",
-                          "xml"]
-
-        def b_search():
-            # Search for bibiographies with the same name as the current file in the
-            # current dir.
+        def curdir_by_name_search():
+            """
+            Search for bibiographies with the same name as the current file in the
+            current dir.
+            """
 
             if self.fname in (None, ""): return []
 
@@ -34,9 +36,11 @@ class SourceCollator():
             bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
             return bibfiles
 
-        def c_search():
-            # Search for any other bibliographies in the current dir.
-            # Note: This does not stop bibliographies picked up in b_search() from being found.
+        def curdir_all_search():
+            """
+            Search for any other bibliographies in the current dir.
+            Note: This does not stop bibliographies picked up in b_search() from being found.
+            """
 
             relative_bibfiles = []
             for ext in bib_extensions:
@@ -44,8 +48,10 @@ class SourceCollator():
             bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
             return bibfiles
 
-        def l_search():
-            # Search for bibliographies in the pandoc data dirs.
+        def pandoc_local_search():
+            """
+            Search for bibliographies in the pandoc data dirs.
+            """
 
             if os.path.exists(os.path.expandvars("$HOME/.pandoc/")):
                 b = os.path.expandvars("$HOME/.pandoc/")
@@ -58,8 +64,10 @@ class SourceCollator():
             bibfiles = [os.path.abspath(f) for f in search_paths if os.path.exists(f)]
             return bibfiles
 
-        def t_search():
-            # Search for bibliographies in the texmf data dirs.
+        def texmf_search():
+            """
+            Search for bibliographies in the texmf data dirs.
+            """
 
             texmf = check_output(["kpsewhich", "-var-value", "TEXMFHOME"])
 
@@ -71,17 +79,19 @@ class SourceCollator():
 
             return []
 
-        def g_search():
-            # Add bibliographies defined in pandoc#biblio#bibs, passed to the
-            # collator through the extra_sources argument
+        def explicit_global_search():
+            """
+            Add bibliographies defined in pandoc#biblio#bibs,
+            passed to the collator through the extra_sources argument
+            """
 
             return self.extra_sources[0]
 
-        search_methods = {"b": b_search,
-                          "c": c_search,
-                          "l": l_search,
-                          "t": t_search,
-                          "g": g_search}
+        search_methods = {"b": curdir_by_name_search,
+                          "c": curdir_all_search,
+                          "l": pandoc_local_search,
+                          "t": texmf_search,
+                          "g": explicit_global_search}
 
 
         bibfiles = []

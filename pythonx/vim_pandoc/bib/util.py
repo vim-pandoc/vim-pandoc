@@ -26,6 +26,8 @@ def dict_to_info(data):
     lines = []
     for i in data:
         if i in ("id", "author", "title", "issued", "abstract"):
+            # TODO: handle separators for "author" differently, to handle
+            # multiple authors
             lines.append((i, " ".join(item.as_array(i)).strip()))
 
     lines.sort(key=sort_keys)
