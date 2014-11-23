@@ -29,14 +29,14 @@ function! pandoc#bibliographies#Init()
         let g:pandoc#biblio#bibs = []
     endif
     " populate b:pandoc_biblio_bibs {{{2
-    let b:pandoc_biblio_bibs = pandoc#bibliographies#Find_Bibliographies()
+    let b:pandoc_biblio_bibs = []
 endfunction
 
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
 function! pandoc#bibliographies#Find_Bibliographies()
     if has("python")
-        python import vim_pandoc.bib
-        return pyeval("vim_pandoc.bib.find_bibfiles()")
+        python import vim_pandoc.bib.vim_completer
+        return pyeval("vim_pandoc.bib.vim_completer.find_bibfiles()")
     endif
     return []
 endfunction
@@ -45,7 +45,12 @@ endfunction
 " called by our omnifunc, if completion is enabled
 function! pandoc#bibliographies#GetSuggestions(partkey)
     if has("python")
-        python import vim_pandoc.bib
-        return pyeval("vim_pandoc.bib.get_suggestions()")
+        python import vim_pandoc.bib.vim_completer
+        let l:sugs = pyeval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval("a:partkey"))')
+        if len(l:sugs) > 0
+            return l:sugs
+        else
+            return []
+        endif
     endif
 endfunction

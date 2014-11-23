@@ -404,8 +404,9 @@ the corresponding flag to give g:pandoc#biblio#sources):
 4) [t] Search for bibliographies in texmf (requires the `kpsewhich` program)
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
 
-The default flags are "bcg". You can, of course, modify the value of
-|b:pandoc_biblio_bibs| at any time.
+The default flags are "bcg". For the 'c' and 'l' flags, the
+|g:pandoc#bibliographies#bib_extensions| is taken into account. You can, of
+course, modify the value of |b:pandoc_biblio_bibs| at any time.
 
 The `bibliographies` module also provides the functions that allow the
 `completion` module to give suggestions for citation keys (see below). 
@@ -428,8 +429,15 @@ setting the |g:pandoc#biblio#use_bibtool| variable to 1.
 - COMPLETION                                       *vim-pandoc-completion-module*
 
 Provides |omni-completion|. If the `bibliographies` module is active, it will
-complete bibliographic references from the bibliographies listed in
-|b:pandoc_biblio_bibs|.
+complete bibliographic references from the bibliography sources defined in
+|g:pandoc#biblio#sources|.
+
+The bibliographic completion has two backends, selected with the
+|g:pandoc#completion#bib#mode| variable, 'fallback' and 'citeproc'. 'fallback'
+uses internal information extractors for bibtex, ris and json bibliographies,
+and 'citeproc' uses pandoc-citeproc for additional bibliography database types
+and extra features. The 'citeproc' backend is experimental for now, but it is
+planned to become the default in the future.
 
 To use completion, start typing a citekey, e.g.,
 
@@ -465,6 +473,10 @@ and then add it to vim's |`dictionary`|, like so
     setlocal dictionary="citations.dict"
 
 Then, you can complete from this list by pressing CTRL-X CTRL-K.
+
+If the 'citeproc' backend is used, extra information can be displayed in the
+preview window, depending on the value of
+|g:pandoc#completion#bib#use_preview|.
 
 - TOC                                                     *vim-pandoc-toc-module*
 
@@ -632,13 +644,10 @@ A description of the available configuration variables follows:
     t: look in TeX's texmf
     g: append items in |g:pandoc#biblio#bibs|
 
-- *g:pandoc#bib#bib_extensions*
-  default = ["bib", "biblatex", "ris", "mods"]
+- *g:pandoc#biblio#bib_extensions*
+  default = ["bib", "bibtex", "ris", "mods", "enl", "wos", "medline", "copac"]
 
-  What bibliography extensions to look for in the working dir for `b` and `c`
-  flags in |g:pandoc#biblio#sources|.
-  "json" is not included here because it might interfere with other files the
-  user can have (we assume the files in `l`, `t` and `g` are safe).
+  What extensions to look for 'c' and 'l' values in |g:pandoc#biblio#sources|.
 
 - *g:pandoc#biblio#bibs*
   default = []
@@ -655,6 +664,21 @@ A description of the available configuration variables follows:
   default = 0
 
   Use bibtool for queries, if available (might help performance).
+
+- *g:pandoc#completion#bib#mode*
+  default = 'fallback'
+
+  Which backend to use for retrieving bibliographic information. 'fallback'
+  uses internal implementations for bibtex, ris, mods and json files.
+  'citeproc' uses pandoc-citeproc for support of additional bibliography types
+  and extra features. Note: The 'citeproc' backend is experimental for now,
+  but will become the default in the future.
+
+- *g:pandoc#completion#bib#use_preview*
+  default = 1
+
+  Should extra bibliographic completion information be displayed in the
+  |preview-window|? Requires the 'citeproc' backend.
 
 - *g:pandoc#keyboard#enabled_submodules*
   default = ["lists", "references", "styles", "sections", "links"]

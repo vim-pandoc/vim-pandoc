@@ -1,37 +1,54 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-" set the correct omnifunc completion
-function! pandoc#completion#Init()
+function! pandoc#completion#Init() "{{{1
+    " set up defaults:
+    if !exists('g:pandoc#completion#bib#mode')
+        let g:pandoc#completion#bib#mode = 'fallback'
+        " Note: in the future citeproc will be the default.
+        "if executable('pandoc-citeproc') 
+        "    let g:pandoc#completion#bib#mode = 'citeproc'
+        "else
+        "    let g:pandoc#completion#bib#mode = 'fallback'
+        "endif
+    endif
+    if !exists('g:pandoc#completion#bib#use_preview')
+        if g:pandoc#completion#bib#mode == 'citeproc'
+            let g:pandoc#completion#bib#use_preview = 1
+        else
+            let g:pandoc#completion#bib#use_preview = 0
+        endif
+    endif
+
+    " set the correct omnifunc completion
     if has("python")
         setlocal omnifunc=pandoc#completion#Complete
     endif
+
+    if g:pandoc#completion#bib#use_preview == 1
+        " handle completeopt, so the preview is enabled
+        if stridx(&cot, "preview") > -1
+            let b:pandoc_old_cot = &cot
+            let &cot = &cot.",preview"
+            au! BufEnter,WinEnter <buffer> let &cot = b:pandoc_old_cot.".preview"
+            au! BufLeave,WinLeave <buffer> let &cot = b:pandoc_old_cot
+        endif
+        " close the preview window when the completion has been inserted
+        au! CompleteDone <buffer> pclose
+    endif
 endfunction
 
-function! pandoc#completion#Complete(findstart, base)
-    if has("python")
+function! pandoc#completion#Complete(findstart, base) "{{{1
+    if has("python") && index(g:pandoc#modules#enabled, "bibliographies") >= 0 
         if a:findstart
-            " return the starting position of the word
-            let line = getline('.')
-            let pos = col('.') - 1
-            while pos > 0 && line[pos - 1] !~ '\\\|{\|\[\|<\|\s\|@\|\^'
-                let pos -= 1
-            endwhile
-
-            let line_start = line[:pos-1]
-            if line_start =~ '.*@$'
-                let s:completion_type = 'bib'
-            else
-                let s:completion_type = ''
+            let l:line = getline('.')
+            if l:line[:col('.')-1] =~ '@'
+                let l:pos = searchpos('@', 'Wncb')
+                if l:pos != [0,0]
+                    return l:pos[1]
+                endif
             endif
-            return pos
         else
-            "return suggestions in an array
-            let suggestions = []
-            if index(g:pandoc#modules#enabled, "bibliographies") >= 0 &&
-                        \ s:completion_type == 'bib'
-                " suggest BibTeX entries
-                let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
-            endif
+            let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
             return suggestions
         endif
     endif
