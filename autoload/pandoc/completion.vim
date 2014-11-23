@@ -3,20 +3,27 @@
 function! pandoc#completion#Init() "{{{1
     " set up defaults:
     if !exists('g:pandoc#completion#bib#mode')
-        if executable('pandoc-citeproc') 
-            let g:pandoc#completion#bib#mode = 'citeproc'
-        else
-            let g:pandoc#completion#bib#mode = 'fallback'
-        endif
+        let g:pandoc#completion#bib#mode = 'fallback'
+        " Note: in the future citeproc will be the default.
+        "if executable('pandoc-citeproc') 
+        "    let g:pandoc#completion#bib#mode = 'citeproc'
+        "else
+        "    let g:pandoc#completion#bib#mode = 'fallback'
+        "endif
     endif
     if !exists('g:pandoc#completion#bib#use_preview')
-        let g:pandoc#completion#bib#use_preview = 1
+        if g:pandoc#completion#bib#mode == 'citeproc'
+            let g:pandoc#completion#bib#use_preview = 1
+        else
+            let g:pandoc#completion#bib#use_preview = 0
+        endif
     endif
 
     " set the correct omnifunc completion
     if has("python")
         setlocal omnifunc=pandoc#completion#Complete
     endif
+
     if g:pandoc#completion#bib#use_preview == 1
         " handle completeopt, so the preview is enabled
         if stridx(&cot, "preview") > -1
