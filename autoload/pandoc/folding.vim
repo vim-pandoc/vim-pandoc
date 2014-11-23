@@ -225,7 +225,7 @@ endfunction
 
 " Basic foldexpr {{{2
 function! pandoc#folding#MarkdownLevelBasic()
-    if getline(v:lnum) =~ '^#\{1,6}'
+    if getline(v:lnum) =~ '^#\{1,6}' && getline(v:lnum-1) =~ '^\s*$'
         if g:pandoc#folding#mode == 'stacked'
             return ">1"
         else
