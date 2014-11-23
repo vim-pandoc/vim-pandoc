@@ -1,3 +1,9 @@
+def flatten(l):
+    if type(l) == list:
+        return " ".join(l)
+    else:
+        return l
+
 def make_title_ascii(title):
     import unicodedata
     if type(title) != str :
@@ -26,9 +32,14 @@ def dict_to_info(data):
     lines = []
     for i in data:
         if i in ("id", "author", "title", "issued", "abstract"):
-            # TODO: handle separators for "author" differently, to handle
-            # multiple authors
-            lines.append((i, " ".join(item.as_array(i)).strip()))
+            if i == "author":
+                formatted_names = []
+                for name in item.as_array(i):
+                    formatted_name = ", ".join([token for token in  name if token != ''])
+                    formatted_names.append(formatted_name)
+                lines.append((i, " & ".join(formatted_names)))
+            else:
+                lines.append((i, " ".join(map(flatten, item.as_array(i))).strip()))
 
     lines.sort(key=sort_keys)
 

@@ -10,8 +10,10 @@ from glob import glob
 import re
 try:
     from vim_pandoc.bib.collator import SourceCollator
+    from vim_pandoc.bib.util import flatten
 except:
     from collator import SourceCollator
+    from util import flatten
 
 # _bib_extensions {{{1
 # Filetypes that citeproc.py will attempt to parse.
@@ -147,16 +149,17 @@ class CSLItem: #{{{1
                 # a literal, so don't try and do clever stuff like splitting into tokens...
                 return [author.get("literal", "").strip()]
 
-            array_of_names = []
+            names = []
 
             for author in variable_contents:
+                name = ""
                 if "literal" in author:
-                    array_of_names.extend(literal_name(author))
+                    name = literal_name(author)
                 else:
-                    array_of_names.extend(surname(author))
-                    array_of_names.extend(given_names(author))
+                    name = surname(author) + given_names(author)
+                names.append(name)
 
-            return array_of_names
+            return names
 
         def date(variable_contents): #{{{3
             # Currently a placeholder. Will parse 'date' CSL variables and return an array of
@@ -218,7 +221,7 @@ class CSLItem: #{{{1
         matched = False
         for variable in _significant_tags:
             for token in self.as_array(variable):
-                matched = matched or query.search(token)
+                matched = matched or query.search(flatten(token))
                 if matched:
                     break
 
@@ -242,7 +245,7 @@ class CSLItem: #{{{1
         tags_matched = []
         for tag in _significant_tags:
             for token in self.as_array(tag):
-                if query.search(token):
+                if query.search(flatten(token)):
                     tags_matched.append(tag)
                     break
         if tags_matched != []:
