@@ -359,7 +359,7 @@ where they are available):
 - *<localleader>rg*    go to reference definition [n]
 - *<localleader>rb*    go back to reference label [n]
 - *<localleader>gl*    go to current link
-- *<localleader>gl*    go back from link(junt for internal header links)
+- *<localleader>gb*    go back from link (just for internal header links)
 - *<localleader>ln*    move to next list item [n]
 - *<localleader>lp*    move to previous list item [n]
 - *<localleader>ll*    move to the current list item [n]
