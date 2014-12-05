@@ -285,6 +285,17 @@ vim-pandoc, which allowed for the execution of command pipelines. This is no
 longer supported. If you want to pass the file through a filter, use pandoc's
 -F option.
 
+As a convenience, you can have vim-pandoc auto execute pandoc on writes. To
+enable this functionality, set |g:pandoc#command#autoexec_on_writes| to 1 and
+provide a command to execute like so:
+
+    let |g:pandoc#command#autoexec_command| = "Pandoc! pdf"
+
+You can also use a buffer local variable if you want to override the global
+setting.
+
+    let |b:pandoc_command_autoexec_command| = "Pandoc! html"
+
 -- TEMPLATES                                       *vim-pandoc-command-templates*
 
 It might get tedious to reuse the same arguments over and over. For example,
@@ -627,6 +638,22 @@ A description of the available configuration variables follows:
     function! MyPandocOpen(file)
         return "xdg-open ". a:file
     endfunction
+
+- *g:pandoc#command#autoexec_on_writes*
+  default = 0
+
+  Execute a command automatically on writes.
+
+- *g:pandoc#command#autoexec_command*
+  default = ''
+
+  Which command to autoexecute on writes if
+  |g:pandoc#command#autoexec_on_writes| is enabled. 
+
+- *b:pandoc_command_autoexec_command*
+  default = unset
+
+  Buffer-local override for |g:pandoc#command#autoexec_command|.
 
 - *g:pandoc#command#templates_file*
   default = split(&runtimepath, ",")[0]."/vim-pandoc-templates"

@@ -12,13 +12,21 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#latex_engine")
         let g:pandoc#command#latex_engine = "xelatex"
     endif
-    " custom function defining command to open the created files
+    " custom function defining command to open the created files {{{3
     if !exists("g:pandoc#command#custom_open")
         let g:pandoc#command#custom_open = ""
     endif
     " file where to save command templates {{{3
     if !exists("g:pandoc#command#templates_file")
         let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates"
+    endif
+    " auto-execute pandoc on writes {{{3
+    if !exists("g:pandoc#command#autoexec_on_writes")
+        let g:pandoc#command#autoexec_on_writes = 0
+    endif
+    " command to execute on writes {{{2
+    if !exists("g:pandoc#command#autoexec_command")
+        let g:pandoc#command#autoexec = ''
     endif
 
     " create :Pandoc {{{2
@@ -31,6 +39,9 @@ function! pandoc#command#Init()
     " create :PandocTemplate {{{2
     command! -buffer -nargs=1 -complete=custom,pandoc#command#PandocTemplateComplete
                     \ PandocTemplate call pandoc#command#PandocTemplate("<args>")
+
+    " set up auto-execution
+    au! BufWrite <buffer> call pandoc#command#AutoPandoc()
 endfunction
 
 " :Pandoc command {{{1
@@ -60,6 +71,19 @@ function! pandoc#command#PandocComplete(a, c, pos)
             let short_opts = pyeval("['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), PandocHelpParser.get_shortopts())]")
             return filter(uniq(extend(sort(short_opts), sort(long_opts))), 'v:val != "-:"')
         endif
+    endif
+endfunction
+
+function! pandoc#command#AutoPandoc()
+    if g:pandoc#command#autoexec_on_writes == 1
+        let command = ''
+        if exists('g:pandoc#command#autoexec_command')
+            let command = g:pandoc#command#autoexec_command
+        endif
+        if exists('b:pandoc_command_autoexec_command')
+            let command = b:pandoc_command_autoexec_command
+        endif
+        exe command
     endif
 endfunction
 
