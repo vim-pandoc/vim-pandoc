@@ -2,7 +2,7 @@
 
 function! pandoc#formatting#Init() "{{{1
     " set up defaults {{{2
-   
+
     " Formatting mode {{{3
     " s: use soft wraps
     " h: use hard wraps
@@ -36,7 +36,7 @@ function! pandoc#formatting#Init() "{{{1
     "}}}3
     " Text width {{{3
     if !exists("g:pandoc#formatting#textwidth")
-        let g:pandoc#formatting#textwidth = 79 
+        let g:pandoc#formatting#textwidth = 79
     endif
     " }}}3
     " equalprg {{{3
@@ -79,7 +79,7 @@ function! pandoc#formatting#Init() "{{{1
     endif
 
     " common settings {{{2
-   
+
     " indent using a custom indentexpr
     if g:pandoc#formatting#set_indentexpr == 1
         setlocal indentexpr=pandoc#formatting#IndentExpr()
@@ -127,7 +127,7 @@ function! pandoc#formatting#DisableAutoformat()
     let b:pandoc_autoformat_enabled = 0
 endfunction
 function! pandoc#formatting#ToggleAutoformat()
-    if b:pandoc_autoformat_enabled == 1
+    if get(b:, "pandoc_autoformat_enabled", 1) == 1
         let b:pandoc_autoformat_enabled = 0
     else
         let b:pandoc_autoformat_enabled = 1
@@ -158,7 +158,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
             if l:should_enable == 1
                 setlocal formatoptions+=a
                 setlocal formatoptions+=t
-                " block quotes are formatted like text comments (hackish, i know), 
+                " block quotes are formatted like text comments (hackish, i know),
                 " so we want to make them break at textwidth
                 if l:stack != [] && l:synName == 'pandocBlockQuote'
                     setlocal formatoptions+=c
@@ -192,7 +192,7 @@ function! pandoc#formatting#UseHardWraps() "{{{1
     " pandoc syntax.
     " TODO: add support for roman numerals
     setlocal formatlistpat=^\\s*\\([*+-]\\\|\\((*\\d\\+[.)]\\+\\)\\\|\\((*\\l[.)]\\+\\)\\)\\s\\+
-   
+
     if stridx(g:pandoc#formatting#mode, "a") >= 0
         " a: auto-format
         " w: lines with trailing spaces mark continuing
