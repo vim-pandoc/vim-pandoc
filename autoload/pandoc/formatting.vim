@@ -127,7 +127,7 @@ function! pandoc#formatting#DisableAutoformat()
     let b:pandoc_autoformat_enabled = 0
 endfunction
 function! pandoc#formatting#ToggleAutoformat()
-    if get(b:, 'pandoc_autoformat_enabled', 1) == 1
+    if get(b:, "pandoc_autoformat_enabled", 1) == 1
         let b:pandoc_autoformat_enabled = 0
     else
         let b:pandoc_autoformat_enabled = 1
