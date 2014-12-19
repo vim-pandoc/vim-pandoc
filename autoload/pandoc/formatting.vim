@@ -160,11 +160,11 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 catch /E684/
                     let l:p_synName = ''
                 endtry
-                if match(l:synName.l:p_synName, '\c\vpandoclist') >= 0 
+                if match(l:synName.l:p_synName, '\c\vpandocu?list') >= 0 
                     let l:within_list = 1
                 endif
             else
-                if synIDattr(synID(l:line-1, col('$'), 0), 'name') =~ '\c\vpandoclist'
+                if synIDattr(synID(l:line-1, col('$'), 0), 'name') =~ '\c\vpandocu?list'
                     let within_list = 1
                 endif
             endif
@@ -190,6 +190,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
         setlocal formatoptions=tnroq
     endif
 endfunction
+
 
 function! pandoc#formatting#UseHardWraps() "{{{1
     " reset settings that might have changed by UseSoftWraps
