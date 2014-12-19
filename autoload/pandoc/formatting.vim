@@ -17,7 +17,7 @@ function! pandoc#formatting#Init() "{{{1
     if !exists("g:pandoc#formatting#smart_autoformat_blacklist")
         let g:pandoc#formatting#smart_autoformat_blacklist = [
                     \ 'pandoc.+header',
-                    \ 'pandoc.+block',
+                    \ 'pandoc\S{-}(code|title|line|math)block(title)?',
                     \ 'pandoc.+table',
                     \ 'pandoctable',
                     \ 'pandoc.+latex',
