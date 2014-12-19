@@ -141,6 +141,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
             let s:last_autoformat_lnum = l:line
             let l:stack = []
             let l:should_enable = 1
+            let l:within_list = 0
             let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
             let l:stack = synstack(l:line, col('.'))
             if len(l:stack) == 0
@@ -154,9 +155,25 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 if match(l:synName, l:blacklist_re) >= 0
                     let l:should_enable = 0
                 endif
+                try
+                    let l:p_synName = synIDattr(synstack(l:line-1, col('$'))[0], 'name')
+                catch /E684/
+                    let l:p_synName = ''
+                endtry
+                if match(l:synName.l:p_synName, '\c\vpandoclist') >= 0 
+                    let l:within_list = 1
+                endif
+            else
+                if synIDattr(synID(l:line-1, col('$'), 0), 'name') =~ '\c\vpandoclist'
+                    let within_list = 1
+                endif
             endif
             if l:should_enable == 1
-                setlocal formatoptions+=a
+                if l:within_list != 1
+                    setlocal formatoptions+=a
+                else
+                    setlocal formatoptions-=a " in case it is set
+                endif
                 setlocal formatoptions+=t
                 " block quotes are formatted like text comments (hackish, i know),
                 " so we want to make them break at textwidth
