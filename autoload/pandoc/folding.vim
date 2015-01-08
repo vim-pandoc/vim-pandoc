@@ -63,6 +63,15 @@ function! pandoc#folding#Init()
     " }}}2
 endfunction
 
+function! pandoc#folding#Disable()
+    setlocal foldlevel&
+    setlocal foldmethod&
+    setlocal foldexpr&
+    setlocal foldcolumn&
+    augroup! EnableFastFolds
+    delcommand PandocFolding
+endfunction
+
 " Change folding mode on demand {{{1
 function! pandoc#folding#ModeCmdComplete(...)
     return "syntax\nrelative\nstacked"
