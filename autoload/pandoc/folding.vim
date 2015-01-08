@@ -64,15 +64,15 @@ function! pandoc#folding#Init()
 endfunction
 
 function! pandoc#folding#Disable()
-    setlocal foldlevel&
-    setlocal foldmethod&
-    setlocal foldexpr&
     setlocal foldcolumn&
+    setlocal foldlevel&
+    setlocal foldexpr&
     au! InsertEnter
     au! InsertLeave
     if exists(':PandocFolding')
         delcommand PandocFolding
     endif
+    setlocal foldmethod& " here because before deleting the autocmds, it might interfere
 endfunction
 
 " Change folding mode on demand {{{1
