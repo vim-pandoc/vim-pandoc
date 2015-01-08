@@ -68,8 +68,11 @@ function! pandoc#folding#Disable()
     setlocal foldmethod&
     setlocal foldexpr&
     setlocal foldcolumn&
-    augroup! EnableFastFolds
-    delcommand PandocFolding
+    au! InsertEnter
+    au! InsertLeave
+    if exists(':PandocFolding')
+        delcommand PandocFolding
+    endif
 endfunction
 
 " Change folding mode on demand {{{1
