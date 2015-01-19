@@ -164,7 +164,8 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                     let l:within_list = 1
                 endif
             else
-                if synIDattr(synID(l:line-1, col('$'), 0), 'name') =~ '\c\vpandocu?list'
+                let l:p_synName = synIDattr(synID(l:line-1, col('$'), 0), 'name')
+                if l:p_synName =~ '\c\vpandocu?list'
                     let within_list = 1
                 endif
             endif

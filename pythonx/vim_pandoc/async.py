@@ -4,7 +4,6 @@ if __name__ == "__main__":
     import sys
     from distutils.spawn import find_executable
     import getopt
-    import shlex
     from subprocess import Popen
 
     opts = dict(getopt.getopt(sys.argv[1:3], "", ["servername=", "open", "noopen"])[0])

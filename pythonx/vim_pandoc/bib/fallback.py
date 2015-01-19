@@ -3,7 +3,6 @@ import re
 import os
 import os.path
 import operator
-from glob import glob
 import subprocess as sp
 from vim_pandoc.bib.collator import SourceCollator
 from vim_pandoc.bib.util import make_title_ascii
@@ -105,7 +104,6 @@ def get_json_suggestions(text, query):
 
     def test_entry(entry):
         if type(entry) != dict: return False
-        filter_values = []
         for string in [entry.get(k) for k in string_matches]:
             if type(string) == unicode and check(string): return True
         for names in [entry.get(k) for k in name_matches]:

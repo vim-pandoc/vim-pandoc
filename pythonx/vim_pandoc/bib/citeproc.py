@@ -2,11 +2,8 @@
 # vim: set fdm=marker:
 
 # imports {{{1
-import sys
-import os
 from subprocess import check_output
 import json
-from glob import glob
 import re
 try:
     from vim_pandoc.bib.collator import SourceCollator

@@ -7,8 +7,6 @@ import os.path
 import getopt
 import shlex
 from subprocess import Popen, PIPE
-import tempfile
-import fileinput
 from vim_pandoc.bib.vim_completer import find_bibfiles
 
 class PandocHelpParser(object):
@@ -186,7 +184,7 @@ class PandocCommand(object):
                 open_arg  = "--open" if should_open else "--noopen"
                 async_command = " ".join(["python", async_runner, servername_arg, open_arg, self._run_command])
                 try:
-                    pid = Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
+                    Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
                 except:
                     vim.command('echoe "vim-pandoc: could not execute pandoc asynchronously"')
             elif vim.eval("has('nvim')") == '1':
@@ -260,7 +258,7 @@ class PandocCommand(object):
                             open_command = "xdg-open" # freedesktop/linux
 
                         with open(os.devnull, 'wb') as fnull:
-                            pid = Popen([open_command,  self._output_file_path], stderr=fnull)
+                            Popen([open_command,  self._output_file_path], stderr=fnull)
 
                     elif sys.platform.startswith("win"):
                         Popen('cmd /c "start ' + self._output_file_path + '"')
