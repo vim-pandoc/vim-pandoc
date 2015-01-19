@@ -235,6 +235,9 @@ Besides this, some extensions are provided:
 * Fold fenced codeblocks. By default, this is disabled, but can be turned on
   by setting |g:pandoc#folding#fold_fenced_codeblocks| to 1.
 
+NOTE: when using split windows, the foldexpr function can get called many more
+times than usual, so in this case the folding function is disabled for
+performance reasons.
 
 - COMMAND                                            *vim-pandoc-command-module*
 
