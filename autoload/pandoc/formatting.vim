@@ -41,11 +41,15 @@ function! pandoc#formatting#Init() "{{{1
     " }}}3
     " equalprg {{{3
     if !exists("g:pandoc#formatting#equalprg")
-        let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
-        if g:pandoc#formatting#mode =~ "h"
-            let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
+        if executable('pandoc')
+            let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
+            if g:pandoc#formatting#mode =~ "h"
+                let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
+            else
+                let g:pandoc#formatting#equalprg.= " --no-wrap"
+            endif
         else
-            let g:pandoc#formatting#equalprg.= " --no-wrap"
+            let g:pandoc#formatting#equalprog = ""
         endif
     endif
     " extend the value of equalprg if needed
