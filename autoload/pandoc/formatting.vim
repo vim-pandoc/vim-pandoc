@@ -22,6 +22,7 @@ function! pandoc#formatting#Init() "{{{1
                     \ 'pandoctable',
                     \ 'pandoc.+latex',
                     \ 'pandocreferencedefinition',
+                    \ 'pandocreferencelabel',
                     \ 'tex.*',
                     \ 'yaml.*',
                     \ 'delimiter'
@@ -169,7 +170,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 endif
             else
                 let l:p_synName = synIDattr(synID(l:line-1, col('$'), 0), 'name')
-                if l:p_synName =~ '\c\vpandocu?list'
+                if l:p_synName =~ '\c\vpandoc(u?list|referencedef)'
                     let within_list = 1
                 endif
             endif
