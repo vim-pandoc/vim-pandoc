@@ -108,6 +108,16 @@ appropiate filetype syntax file, but creates the Pandoc command and loads the
 extra utilities. What filetypes to attach to is determined by the value of the
 |g:pandoc#filetypes#handled| variable.
 
+Setting `pandoc#filetypes#pandoc_markdown` to 0 will disable all pandoc
+functionality for markdown files, unless "pandoc" exists in the
+`pandoc#filetypes#handled` array.
+
+To enable pandoc functionality for markdown files while using  the markdown
+filetype and syntax, use
+>
+     let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+     let g:pandoc#filetypes#pandoc_markdown = 0
+
 Note: vim-pandoc's developers mostly use pandoc's markdown syntax, so
 coverage for it is more complete than for the other filetypes.
 

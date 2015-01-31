@@ -79,7 +79,7 @@ if !exists("g:pandoc#filetypes#handled")
         			\"rst",
         			\"textile"]
         if g:pandoc#filetypes#pandoc_markdown == 1
-            let g:pandoc#filetypes#handled += "markdown"
+            let g:pandoc#filetypes#handled += ["markdown"]
         endif
 endif
 "}}}
