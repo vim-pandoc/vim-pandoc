@@ -15,14 +15,15 @@ let g:pandoc#loaded = 1
 
 " we use this to configure to what filetypes we attach to
 let g:pandoc_extensions_table = {
-        		\"extra": ["text", "txt"],
-        		\"html": ["html", "htm"],
-        		\"json" : ["json"],
-        		\"latex": ["latex", "tex", "ltx"],
-        		\"markdown" : ["markdown", "mkd", "md", "pandoc", "pdk", "pd", "pdc"],
-        		\"native" : ["hs"],
-        		\"rst" : ["rst"],
-        		\"textile": ["textile"] }
+            \"extra": ["text", "txt"],
+            \"html": ["html", "htm"],
+            \"json" : ["json"],
+            \"latex": ["latex", "tex", "ltx"],
+            \"markdown" : ["markdown", "mkd", "md"],
+            \"pandoc": ["pandoc", "pdk", "pd", "pdc"],
+            \"native" : ["hs"],
+            \"rst" : ["rst"],
+            \"textile": ["textile"] }
 " }}}1
 
 " Defaults: {{{1
@@ -66,17 +67,20 @@ if v:version < 704
 endif
 "}}}
 " Filetypes: {{{2
-"Markups to handle {{{3
-if !exists("g:pandoc#filetypes#handled")
-        let g:pandoc#filetypes#handled = [
-        			\"markdown",
-        			\"rst",
-        			\"textile"]
-endif
-"}}}
 " Use pandoc extensions to markdown for all markdown files {{{3
 if !exists("g:pandoc#filetypes#pandoc_markdown")
     let g:pandoc#filetypes#pandoc_markdown = 1
+endif
+"}}}
+"Markups to handle {{{3
+if !exists("g:pandoc#filetypes#handled")
+        let g:pandoc#filetypes#handled = [
+        			\"pandoc",
+        			\"rst",
+        			\"textile"]
+        if g:pandoc#filetypes#pandoc_markdown == 1
+            let g:pandoc#filetypes#handled += "markdown"
+        endif
 endif
 "}}}
 "}}}1
