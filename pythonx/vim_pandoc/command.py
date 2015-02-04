@@ -80,6 +80,8 @@ class PandocHelpParser(object):
                 table[i] = "tex"
             else:
                 table[i] = i
+        if "latex" in table or "beamer" in table and "pdf" not in table:
+            table["pdf"] = "pdf"
         return table
 
     @staticmethod
