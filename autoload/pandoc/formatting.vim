@@ -50,7 +50,7 @@ function! pandoc#formatting#Init() "{{{1
                 let g:pandoc#formatting#equalprg.= " --no-wrap"
             endif
         else
-            let g:pandoc#formatting#equalprog = ""
+            let g:pandoc#formatting#equalprg = ""
         endif
     endif
     " extend the value of equalprg if needed
