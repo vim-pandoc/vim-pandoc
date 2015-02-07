@@ -415,7 +415,7 @@ vim-pandoc can handle BibTeX, RIS, MODS and JSON bibliographies.
 
 The way the module populates the b:pandoc_biblio_bibs variable is determined
 by the value of the |g:pandoc#biblio#sources| variable. Depending on it, the
-module will gather bibliographies on the following orderi (between brackets,
+module will gather bibliographies on the following order (between brackets,
 the corresponding flag to give g:pandoc#biblio#sources):
 
 1) [b] Search for any bibliography that shares the name of the current file in the 

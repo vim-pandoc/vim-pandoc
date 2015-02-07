@@ -7,6 +7,7 @@ import os.path
 import getopt
 import shlex
 from subprocess import Popen, PIPE
+from vim_pandoc.utils import plugin_enabled_modules
 from vim_pandoc.bib.vim_completer import find_bibfiles
 
 class PandocHelpParser(object):
@@ -120,12 +121,15 @@ class PandocCommand(object):
     def __call__(self, args, should_open):
         # build arguments to pass pandoc
 
-        buffer_bibliographies = vim.eval('b:pandoc_biblio_bibs')
-        if len(buffer_bibliographies) < 1:
-            buffer_bibliographies = find_bibfiles()
-        bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
-                len(buffer_bibliographies) > 0 \
-                else ""
+        if 'bibliographies' in plugin_enabled_modules():
+            buffer_bibliographies = vim.eval('b:pandoc_biblio_bibs')
+            if len(buffer_bibliographies) < 1:
+                buffer_bibliographies = find_bibfiles()
+            bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
+                    len(buffer_bibliographies) > 0 \
+                    else ""
+        else
+            bib_arg = ""
 
         strict_arg = "-r markdown_strict" if \
                 vim.current.buffer.options["ft"] == "markdown" and \
