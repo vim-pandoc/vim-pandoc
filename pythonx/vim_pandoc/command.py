@@ -165,7 +165,7 @@ class PandocHelpParser(object):
 
     @staticmethod
     def in_allowed_formats(identifier):
-        if not identifier.startswith("markdown") and identifier in self.get_output_formats_table():
+        if not identifier.startswith("markdown") and identifier in PandocHelpParser.get_output_formats_table():
             return True
         elif identifier.startswith("markdown"):
             return re.match(identifier+"(([+-]("+"|".join(markdown_extensions)+"))+)?$",identifier)
