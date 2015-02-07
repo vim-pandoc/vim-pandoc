@@ -128,7 +128,7 @@ class PandocCommand(object):
             bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
                     len(buffer_bibliographies) > 0 \
                     else ""
-        else
+        else:
             bib_arg = ""
 
         strict_arg = "-r markdown_strict" if \
