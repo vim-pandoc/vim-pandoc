@@ -259,8 +259,12 @@ function! pandoc#hypertext#GotoID(...)
         else
             let id = expand("<cfile>")
         endif
-
-        let b:save_cursor = getcurpos()
+        
+        try
+            let b:save_cursor = getcurpos()
+        catch /E117/
+            let b:save_cursor = getpos('.')
+        endtry
         " header indentifier
         let header_pos = markdown#headers#GetAllIDs()
         let line = get(header_pos, id)
