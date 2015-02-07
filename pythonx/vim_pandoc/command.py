@@ -10,6 +10,58 @@ from subprocess import Popen, PIPE
 from vim_pandoc.utils import plugin_enabled_modules
 from vim_pandoc.bib.vim_completer import find_bibfiles
 
+markdown_extensions = [
+        "escaped_line_breaks",
+        "blank_before_header",
+        "header_attributes",
+        "auto_identifiers",
+        "implicit_header_references",
+        "blank_before_blockquote",
+        "fenced_code_blocks",
+        "fenced_code_attributes",
+        "line_blocks",
+        "fancy_lists",
+        "startnum",
+        "definition_lists",
+        "example_lists",
+        "table_captions",
+        "simple_tables",
+        "multiline_tables",
+        "grid_tables",
+        "pipe_tables",
+        "pandoc_title_block",
+        "yaml_metadata_block",
+        "all_symbols_escapable",
+        "intraword_underscores",
+        "strikeout",
+        "superscript",
+        "subscript",
+        "inline_code_attributes",
+        "tex_math_dollars",
+        "raw_html",
+        "markdown_in_html_blocks",
+        "native_divs",
+        "native_spans",
+        "raw_tex",
+        "latex_macros",
+        "footnotes",
+        "citations",
+        # non-pandoc
+        "lists_without_preceding_blankline",
+        "hard_line_breaks",
+        "ignore_line_breaks",
+        "tex_math_single_backlash",
+        "tex_math_double_backlash",
+        "markdown_attribute",
+        "mmd_title_block",
+        "abbreviations",
+        "autolink_bare_uris",
+        "ascii_identifiers",
+        "link_attributes",
+        "mmd_header_identifiers",
+        "compact_definition_lists"
+        ]
+
 class PandocHelpParser(object):
     def __init__(self):
         self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
@@ -111,6 +163,14 @@ class PandocHelpParser(object):
                 table[i] = i
         return table
 
+    @staticmethod
+    def in_allowed_formats(identifier):
+        if not identifier.startswith("markdown") and identifier in self.get_output_formats_table():
+            return True
+        elif identifier.startswith("markdown"):
+            return re.match(identifier+"(([+-]("+"|".join(markdown_extensions)+"))+)?$",identifier)
+        return False
+
 class PandocCommand(object):
     def __init__(self):
         self.opts = PandocHelpParser()
@@ -144,9 +204,13 @@ class PandocCommand(object):
                 return (i[0], i[1])
         c_opts = [wrap_args(i) for i in c_opts]
 
-        output_format = c_args.pop(0) if len(c_args) > 0 and c_args[0] in PandocHelpParser.get_output_formats_table().keys() else "html"
+        output_format = c_args.pop(0) if len(c_args) > 0 and self.opts.in_allowed_formats(c_args[0]) else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
-        self._output_file_path = vim.eval('expand("%:r")') + '.' + PandocHelpParser.get_output_formats_table()[output_format]
+        
+        def no_extensions(fmt):
+            return re.split("[-+]", fmt)[0]
+
+        self._output_file_path = vim.eval('expand("%:r")') + '.' + self.opts.get_output_formats_table()[no_extensions(output_format)]
         output_arg = '-o "' + self._output_file_path + '"'
 
         engine_arg = "--latex-engine=" + vim.vars["pandoc#command#latex_engine"] if output_format in ["pdf", "beamer"] else ""
