@@ -89,6 +89,7 @@ function! pandoc#formatting#Init() "{{{1
     if g:pandoc#formatting#set_indentexpr == 1
         setlocal indentexpr=pandoc#formatting#IndentExpr()
     endif
+    setlocal autoindent " copy indent level from previous line.
 
     " Don't add two spaces at the end of punctuation when joining lines
     setlocal nojoinspaces
@@ -142,11 +143,11 @@ endfunction
 function! pandoc#formatting#AutoFormat(force) "{{{1
     if !exists('b:pandoc_autoformat_enabled') || b:pandoc_autoformat_enabled == 1
         let l:line = line('.')
-        if a:force == 1 || l:line != s:last_autoformat_lnum
+        if a:force == 1 || l:line != s:last_autoformat_lnum || (l:line == s:last_autoformat_lnum && col('.') == 1)
             let s:last_autoformat_lnum = l:line
             let l:stack = []
             let l:should_enable = 1
-            let l:within_list = 0
+            let l:context_prevents = 0
             let l:blacklist_re = '\c\v('.join(g:pandoc#formatting#smart_autoformat_blacklist, '|').')'
             let l:stack = synstack(l:line, col('.'))
             if len(l:stack) == 0
@@ -166,16 +167,18 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                     let l:p_synName = ''
                 endtry
                 if match(l:synName.l:p_synName, '\c\vpandocu?list') >= 0 
-                    let l:within_list = 1
+                    let l:context_prevents = 1
                 endif
             else
                 let l:p_synName = synIDattr(synID(l:line-1, col('$'), 0), 'name')
                 if l:p_synName =~ '\c\vpandoc(u?list|referencedef)'
-                    let within_list = 1
+                    let context_prevents = 1
+                elseif l:p_synName =~ '\c\vpandoccodeblock' && indent('.')%4 == 0
+                    let context_prevents = 1
                 endif
             endif
             if l:should_enable == 1
-                if l:within_list != 1
+                if l:context_prevents != 1
                     setlocal formatoptions+=a
                 else
                     setlocal formatoptions-=a " in case it is set
