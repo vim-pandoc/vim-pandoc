@@ -22,6 +22,8 @@ if __name__ == "__main__":
 
     if find_executable('gvim') != '':
         command = [find_executable('gvim')]
+    elif find_executable('mvim') != '':
+        command = [find_executable('mvim')]
     elif find_executable('vim') != '':
         command = [find_executable('vim')]
     else:
