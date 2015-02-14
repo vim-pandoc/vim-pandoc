@@ -30,7 +30,7 @@ function! pandoc#command#Init()
     endif
 
     " create :Pandoc {{{2
-    if has("python")
+    if has("python") || has("python/dyn")
         " let's make sure it gets loaded
         py import vim
         command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete
@@ -50,7 +50,7 @@ endfunction
 " args: arguments to pass pandoc
 " bang: should we open the created file afterwards?
 function! pandoc#command#Pandoc(args, bang)
-    if has("python")
+    if has("python") || has("python/dyn")
         py from vim_pandoc.command import pandoc
         let templatized_args = substitute(a:args, '#\(\S\+\)',
                     \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
