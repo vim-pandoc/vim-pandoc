@@ -87,9 +87,10 @@ endfunction
 " Main foldexpr function, includes support for common stuff. {{{1
 " Delegates to filetype specific functions.
 function! pandoc#folding#FoldExpr()
-    " with splits, the folding code can be called many times more often, so
-    " it's best to disable it to keep good performance.
-    if winnr('$') > 1
+    " with multiple splits in the same buffer, the folding code can be called
+    " way too many times too often, so it's best to disable it to keep good
+    " performance.
+    if count(map(range(1, winnr('$')), 'bufname(winbufnr(v:val))'), bufname("")) > 1
         return
     endif
 
