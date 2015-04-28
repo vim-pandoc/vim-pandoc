@@ -97,6 +97,13 @@ function! pandoc#command#PandocAsyncCallback(should_open, returncode)
     endif
 endfunction
 
+function! pandoc#command#JobHandler(id, data, event)
+    if has("python")
+        py from vim_pandoc.command import pandoc
+        py pandoc.on_done(vim.eval("self.should_open") == '1', vim.eval("a:data"))
+    endif
+endfunction
+
 " Command template functions {{{1
 
 function! pandoc#command#PandocTemplate(args) "{{{2
