@@ -3,6 +3,7 @@
 if __name__ == "__main__":
     import sys
     from distutils.spawn import find_executable
+    import re
     import getopt
     from subprocess import Popen
 
@@ -20,14 +21,18 @@ if __name__ == "__main__":
     # to notify pandoc's execution
     func_call = "pandoc#command#PandocAsyncCallback("+should_open+","+returncode+")"
 
-    if find_executable('gvim') != '':
+    if find_executable('gvim') not in ('', None):
         command = [find_executable('gvim')]
-    elif find_executable('mvim') != '':
+    elif find_executable('mvim') not in ('', None):
         command = [find_executable('mvim')]
-    elif find_executable('vim') != '':
+    elif find_executable('vim') not in ('', None):
         command = [find_executable('vim')]
     else:
-        sys.exit()
+        cmd = re.match('[gm]?vim', servername.lower())
+        if cmd:
+            command = cmd.group()
+        else:
+            sys.exit()
 
     command.extend(["--servername", servername])
     # windows requires the callback name to be sent instead of being eval'ed,
