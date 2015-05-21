@@ -51,7 +51,7 @@ function! pandoc#folding#Init()
         au!
         autocmd InsertEnter <buffer> setlocal foldmethod=manual
         autocmd InsertLeave <buffer> setlocal foldmethod=expr
-    augroup end  
+    augroup end
     setlocal foldexpr=pandoc#folding#FoldExpr()
     setlocal foldtext=pandoc#folding#FoldText()
     if g:pandoc#folding#fdc > 0
@@ -77,11 +77,17 @@ endfunction
 
 " Change folding mode on demand {{{1
 function! pandoc#folding#ModeCmdComplete(...)
-    return "syntax\nrelative\nstacked"
+    return "syntax\nrelative\nstacked\nnone"
 endfunction
 function! pandoc#folding#ModeCmd(mode)
-    exe "let g:pandoc#folding#mode = '".a:mode."'"
-    normal! zx
+    if a:mode == "none"
+        setlocal foldmethod=manual
+        normal! zE
+    else
+        exe "let g:pandoc#folding#mode = '".a:mode."'"
+        setlocal foldmethod=expr
+        normal! zx
+    endif
 endfunction
 
 " Main foldexpr function, includes support for common stuff. {{{1
