@@ -58,7 +58,11 @@ endfunction
 function! pandoc#keyboard#styles#ToggleOperator(type, ends)
     let sel_save = &selection
     let &selection = "old"
-    let reg_save = getreg('*')
+    if has('clipboard')
+        let reg_save = getreg('*')
+    else
+        let reg_save = getreg('"')
+    endif
     if a:type ==# "v"
         execute "normal! `<".a:type."`>".'"*x'
     elseif a:type ==# "char"
@@ -95,7 +99,11 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends)
         call setreg('*', match_data[2])
         execute 'normal "*P'
     endif
-    call setreg('*', reg_save)
+    if has('clipboard')
+        call setreg('*', reg_save)
+    else
+        call setreg('"', reg_save)
+    endif
     let &selection = sel_save
 endfunction "}}}3
 

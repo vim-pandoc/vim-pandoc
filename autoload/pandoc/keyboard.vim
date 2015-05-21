@@ -44,7 +44,7 @@ function! pandoc#keyboard#Init()
         augroup END
     endif "}}}2
     "
-  
+
     " Submodules: {{{2
     for module in g:pandoc#keyboard#enabled_submodules
         exe "call pandoc#keyboard#".module."#Init()"
