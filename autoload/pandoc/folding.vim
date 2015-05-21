@@ -103,12 +103,14 @@ function! pandoc#folding#FoldExpr()
     let vline = getline(v:lnum)
     " fold YAML headers
     if g:pandoc#folding#fold_yaml == 1
-        if vline =~ '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), "name") == "Delimiter"
+        if vline =~ '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), "name") =~? '\(delimiter\|yamldocumentstart\)'
             if vline =~ '^---$' && v:lnum == 1
                 return ">1"
             elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlkey"
                 return "<1"
             elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "pandocYAMLHeader"
+                return "<1"
+            elseif synIDattr(synID(v:lnum - 1, 1, 1), "name") == "yamlBlockMappingKey"
                 return "<1"
             else
                 return "="
