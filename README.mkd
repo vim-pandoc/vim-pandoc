@@ -81,3 +81,5 @@ github][]. Please state the problem clearly, and if possible, provide a
 document sample to reproduce it.
 
 [issue tracker at github]: https://github.com/vim-pandoc/vim-pandoc/issues
+
+Join the chat at https://gitter.im/vim-pandoc/vim-pandoc
