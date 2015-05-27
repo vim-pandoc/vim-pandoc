@@ -116,6 +116,15 @@ function! pandoc#formatting#Init() "{{{1
 
     let s:last_autoformat_lnum = 0
     "}}}2
+    "
+    " Global settings we must override {{{2
+    let s:original_breakat = &breakat
+    augroup pandoc_formatting
+        au! BufEnter <buffer> set breakat-=@
+        au! BufLeave <buffer> exe "set breakat=".substitute(s:original_breakat, '\s*', '\\ ', 1)
+    augroup END
+    set breakat-=@
+    "}}}2
 endfunction
 
 " Autoformat switches {{{1
@@ -166,7 +175,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 catch /E684/
                     let l:p_synName = ''
                 endtry
-                if match(l:synName.l:p_synName, '\c\vpandocu?list') >= 0 
+                if match(l:synName.l:p_synName, '\c\vpandocu?list') >= 0
                     let l:context_prevents = 1
                 endif
             else
