@@ -1,24 +1,24 @@
-*vim-pandoc*                                           Last change: 04/11/2013 
+*vim-pandoc* pandoc integration for Vim
 
 |vim-pandoc| provides facilities to integrate Vim with the |pandoc| document
 converter and work with documents written in |pandocs-markdown-variant|
 variant (although textile documents are also supported). It is the main item
 in |vim-pandoc-project|.
 
- *pandoc* 
+ *pandoc*
     http://johnmacfarlane.net/pandoc/
- *pandoc-markdown-variant* 
+ *pandoc-markdown-variant*
     http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
   *vim-pandoc-project*
     http://github.com/vim-pandoc
 
 vim-pandoc's goals are
 
- 1) to provide advanced integration with pandoc, 
+ 1) to provide advanced integration with pandoc,
  2) to offer a comfortable document writing environment,
  3) to allow great configurability.
 
-CONTENTS 
+CONTENTS
 
 - REQUIREMENTS |vim-pandoc-requirements|
 - INSTALLATION |vim-pandoc-installation|
@@ -41,7 +41,7 @@ CONTENTS
 
 
 REQUIREMENTS			                      *vim-pandoc-requirements*
- 
+
 * Vim 7.4
   Note: On vim versions < 7.4, some modules are automatically disabled (see
   |g:pandoc#modules#disabled|, but vim-vim-pandoc is able to run in a degraded
@@ -125,7 +125,7 @@ MODULES                                                     *vim-pandoc-modules*
 
 vim-pandoc is split in several modules. They can be enabled and disabled
 independently at startup, by adjusting the values of the
-|g:pandoc#modules#enabled| and |g:pandoc#modules#disabled| variables. 
+|g:pandoc#modules#enabled| and |g:pandoc#modules#disabled| variables.
 
 For example, some people prefer not to use folds, so they would want to
 disable the `folding` module, which creates folds for headers and some special
@@ -174,7 +174,7 @@ inline links and footnotes into reference links, etc.). This is configured
 with the |g:pandoc#formatting#equalprg| and
 |g:pandoc#formatting#extra_equalprg| variables. Please note that if you pass a
 whole file through the default filter, it might delete some stuff, like LaTeX
-macro definitions and title blocks. 
+macro definitions and title blocks.
 
 - FOLDING                                            *vim-pandoc-folding-module*
 
@@ -268,7 +268,7 @@ pandoc, and ARGS are auxiliary arguments you want to pass pandoc. For example,
     :Pandoc beamer -Vlang:spanish
 
 will create an incantation like:
-    
+
     pandoc -t beamer -Vlang:spanish -o file.pdf file.pdc
 
 :Pandoc will also use the value of |b:pandoc_biblio_bibs| to pass
@@ -282,13 +282,13 @@ it can be checked using |:messages|.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
 the created file in its associated program. This behavior can be customized
-through the |g:pandoc#command#custom_open| variable. 
+through the |g:pandoc#command#custom_open| variable.
 
 Note: The pandoc execution is performed asynchronously if vim supports the
 |clientserver| feature and the running instance is a valid server (this is the
 default for gvim, but must be made explicit when running in a terminal, see
 |x11-clientserver|). This feature also requires python to be available in the
-system. 
+system.
 
 The :Pandoc command has argument completion for supported output formats and
 pandoc option arguments.
@@ -418,12 +418,12 @@ by the value of the |g:pandoc#biblio#sources| variable. Depending on it, the
 module will gather bibliographies on the following order (between brackets,
 the corresponding flag to give g:pandoc#biblio#sources):
 
-1) [b] Search for any bibliography that shares the name of the current file in the 
+1) [b] Search for any bibliography that shares the name of the current file in the
    current directory.
    So, if the document is named `paper.mkd`, it will look for `paper.bib`,
    `paper.ris`, and so on.
 2) [c] Search for any bibliography in the current dir.
-3) [l] Search for default bibliographies (`default.bib`, `default.ris`, etc.) in pandoc's 
+3) [l] Search for default bibliographies (`default.bib`, `default.ris`, etc.) in pandoc's
     data dir ("$HOME/.pandoc/" in *nix, "%APPDATA%/pandoc/" in Windows)
 4) [t] Search for bibliographies in texmf (requires the `kpsewhich` program)
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
@@ -433,7 +433,7 @@ The default flags are "bcg". For the 'c' and 'l' flags, the
 course, modify the value of |b:pandoc_biblio_bibs| at any time.
 
 The `bibliographies` module also provides the functions that allow the
-`completion` module to give suggestions for citation keys (see below). 
+`completion` module to give suggestions for citation keys (see below).
 
 By default, this will only return matches for citekeys, but it is possible to
 retrieve suggestions that match in any key by using the bibtool program. So,
@@ -448,6 +448,8 @@ you might retrieve both
 
 This is off by default, but can be turned on (if `bibtool` is available) by
 setting the |g:pandoc#biblio#use_bibtool| variable to 1.
+
+TIP: If you use unite.vim, you might want to check https://github.com/msprev/unite-bibtex
 
 
 - COMPLETION                                       *vim-pandoc-completion-module*
@@ -580,7 +582,7 @@ A description of the available configuration variables follows:
   regular markdown. In that case, we use vim's default syntax highlighting for
   markdown.
 
-- *g:pandoc#modules#enabled* 
+- *g:pandoc#modules#enabled*
 
   default = ["formatting", "folding", "bibliographies", "completion",
   "metadata", "menu", "executors", "keyboard", "toc", "chdir", "spell", "hypertext"]
@@ -618,9 +620,9 @@ A description of the available configuration variables follows:
   default = "pandoc -t markdown --reference-links [--columns {g:pandoc#formatting#textwidth}|no-wrap]"
 
   What command to use for equalprg. If set to '', vim's default will be used.
-  See |'equalprg'|. 
+  See |'equalprg'|.
   NOTE the default changes depending on whether the formatting mode uses hard
-  or soft wraps. 
+  or soft wraps.
 
 - *g:pandoc#formatting#extra_equalprg*
   default = ""
@@ -661,7 +663,7 @@ A description of the available configuration variables follows:
   default = ''
 
   Which command to autoexecute on writes if
-  |g:pandoc#command#autoexec_on_writes| is enabled. 
+  |g:pandoc#command#autoexec_on_writes| is enabled.
 
 - *b:pandoc_command_autoexec_command*
   default = unset
@@ -733,7 +735,7 @@ A description of the available configuration variables follows:
 - *g:pandoc#keyboard#wrap_cursor*
   default = 0
 
-  Wrap the cursor around line boundaries (see |onemore|) 
+  Wrap the cursor around line boundaries (see |onemore|)
 
 - *g:pandoc#keyboard#references#mark*
   default = "r"
@@ -784,7 +786,7 @@ A description of the available configuration variables follows:
       #### header
 
       blah blah blah
- 
+
   the level of "## header" is 2 using the default method, but 1 using
   relative, and the level of "#### header" is 4 using the default method, but
   2 using relative.
@@ -800,8 +802,8 @@ A description of the available configuration variables follows:
   default = ["notes"]
 
   What div classes to fold. NOTE: you need to end the folds using the
-  `foldend` attribute in the closing tag, like so: 
-      
+  `foldend` attribute in the closing tag, like so:
+
       <div class="notes">
       test
       </div foldend>
