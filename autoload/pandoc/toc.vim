@@ -106,11 +106,6 @@ function! pandoc#toc#ReDisplay(bufname)
     setlocal linebreak
 
     noremap <buffer> q :lclose<CR>
-    if g:pandoc#toc#close_after_navigating == 1
-        let mod = ""
-        noremap <buffer> <C-CR> <CR>
-    else
-        let mod = "C-"
-    endif
-    exe "noremap <buffer> <".mod."CR> <CR>:lclose<CR>"
+    noremap <buffer> <expr> <CR> g:pandoc#toc#close_after_navigating == 1 ? '<CR>:lclose<CR>' : '<CR>'
+    noremap <buffer> <expr> <C-CR> g:pandoc#toc#close_after_navigating == 1 ? '<CR>': '<CR>:lclose<CR>'
 endfunction
