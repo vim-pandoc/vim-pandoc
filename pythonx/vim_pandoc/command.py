@@ -62,6 +62,19 @@ markdown_extensions = [
         "compact_definition_lists"
         ]
 
+def get_raw_pandoc_data(pattern):
+    data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
+    return re.search(pattern, data, re.DOTALL).group(1)
+
+def wrap_formats(fn):
+        # pandoc's output changes depending on platform
+        if sys.platform == "win32":
+            splitter = '\r\n'
+        else:
+            splitter = '\n'
+        data = fn()
+        return lambda: re.findall('(\w+\**)[,'+splitter+']', data)
+
 class PandocHelpParser(object):
     def __init__(self):
         self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
@@ -70,17 +83,17 @@ class PandocHelpParser(object):
 
     @staticmethod
     def get_longopts():
-        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
+        data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
                           [ i.group() for i in re.finditer("-(-\w+)+=?", data)]))
 
     @staticmethod
     def get_shortopts():
-        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        no_args = map(lambda i: i.replace("-", "").strip(), \
+        data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
+        no_args = list(map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-v ", "-h "), \
-                             [i.group() for i in re.finditer("-\w\s(?!\w+)", data)]))
+                             [i.group() for i in re.finditer("-\w\s(?!\w+)", data)])))
 
         # -m doesn't comply with the format of the other short options in pandoc 1.12
         # if you need to pass an URL, use the long versions
@@ -94,22 +107,14 @@ class PandocHelpParser(object):
         return "".join(no_args) + "".join(map(lambda i: i + ":", args))
 
     @staticmethod
-    def _get_formats():
-        # pandoc's output changes depending on platform
-        if sys.platform == "win32":
-            splitter = '\r\n'
-        else:
-            splitter = '\n'
-        data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        return " ".join(re.findall('(\w+\**[,'+splitter+'])+', data)).split(splitter[0])[:2]
-
-    @staticmethod
+    @wrap_formats
     def _get_input_formats():
-        return map(lambda i: i.strip(), PandocHelpParser._get_formats()[0].split(", "))
+        return get_raw_pandoc_data("Input formats:(.*)Output formats")
 
     @staticmethod
+    @wrap_formats
     def _get_output_formats():
-        return map(lambda i: i.strip().replace("*", ""), PandocHelpParser._get_formats()[1].split(", "))
+        return get_raw_pandoc_data("Output formats:(.*)\[\*for pdf")
 
     @staticmethod
     def get_output_formats_table():
@@ -206,7 +211,7 @@ class PandocCommand(object):
 
         output_format = c_args.pop(0) if len(c_args) > 0 and self.opts.in_allowed_formats(c_args[0]) else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
-        
+
         def no_extensions(fmt):
             return re.split("[-+]", fmt)[0]
 

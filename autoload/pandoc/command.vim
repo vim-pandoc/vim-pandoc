@@ -30,9 +30,16 @@ function! pandoc#command#Init()
     endif
 
     " create :Pandoc {{{2
-    if has("python") || has("python/dyn")
+    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
+        if has("python") || has("python/dyn")
+            let s:python = "py "
+            let s:pyeval = "pyeval"
+        else
+            let s:python = "py3 "
+            let s:pyeval = "py3eval"
+        endif
         " let's make sure it gets loaded
-        py import vim
+        exe s:python ."import vim"
         command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete
                     \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
     endif "}}}2
@@ -50,25 +57,25 @@ endfunction
 " args: arguments to pass pandoc
 " bang: should we open the created file afterwards?
 function! pandoc#command#Pandoc(args, bang)
-    if has("python") || has("python/dyn")
-        py from vim_pandoc.command import pandoc
+    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
+        exe s:python ."from vim_pandoc.command import pandoc"
         let templatized_args = substitute(a:args, '#\(\S\+\)',
                     \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
-        py pandoc(vim.eval("templatized_args"), vim.eval("a:bang") != '')
+        exe s:python ."pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')"
     endif
 endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
 function! pandoc#command#PandocComplete(a, c, pos)
-    if has("python")
-        py from vim_pandoc.command import PandocHelpParser
+    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
+        exe s:python ."from vim_pandoc.command import PandocHelpParser"
         let cmd_args = split(a:c, " ", 1)[1:]
-        if len(cmd_args) == 1 && (cmd_args[0] == '' || pyeval("vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))"))
-            return pyeval("filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))")
+        if len(cmd_args) == 1 && (cmd_args[0] == '' || eval(s:pyeval .'("'."vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))".'")'))
+            exe "return ".s:pyeval.'("'."filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))".'")'
         endif
         if len(cmd_args) >= 2
-            let long_opts = pyeval("['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), PandocHelpParser.get_longopts())]")
-            let short_opts = pyeval("['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), PandocHelpParser.get_shortopts())]")
+            let long_opts = eval(s:pyeval . '("'. "['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), PandocHelpParser.get_longopts())]".'")')
+            let short_opts = eval(s:pyeval . '("'. "['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), PandocHelpParser.get_shortopts())]". '")')
             return filter(uniq(extend(sort(short_opts), sort(long_opts))), 'v:val != "-:"')
         endif
     endif
@@ -91,17 +98,13 @@ endfunction
 " should_open: should we open the cretaed file?
 " returncode: the returncode value pandoc gave
 function! pandoc#command#PandocAsyncCallback(should_open, returncode)
-    if has("python")
-        py from vim_pandoc.command import pandoc
-        py pandoc.on_done(vim.eval("a:should_open") == '1', vim.eval("a:returncode"))
-    endif
+    exe s:python ."from vim_pandoc.command import pandoc"
+    exe s:python ."pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))"
 endfunction
 
 function! pandoc#command#JobHandler(id, data, event)
-    if has("python")
-        py from vim_pandoc.command import pandoc
-        py pandoc.on_done(vim.eval("self.should_open") == '1', vim.eval("a:data"))
-    endif
+    exe s:python ."from vim_pandoc.command import pandoc"
+    exe s:python ."pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))"
 endfunction
 
 " Command template functions {{{1
