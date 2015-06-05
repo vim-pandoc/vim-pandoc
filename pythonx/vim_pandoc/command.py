@@ -78,7 +78,7 @@ def wrap_formats(fn):
 class PandocHelpParser(object):
     def __init__(self):
         self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
-        self.longopts = PandocHelpParser.get_longopts()
+        self.longopts = list(PandocHelpParser.get_longopts())
         self.shortopts = PandocHelpParser.get_shortopts()
 
     @staticmethod
