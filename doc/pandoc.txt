@@ -429,7 +429,7 @@ the corresponding flag to give g:pandoc#biblio#sources):
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
 
 The default flags are "bcg". For the 'c' and 'l' flags, the
-|g:pandoc#bibliographies#bib_extensions| is taken into account. You can, of
+|g:pandoc#biblio#bib_extensions| is taken into account. You can, of
 course, modify the value of |b:pandoc_biblio_bibs| at any time.
 
 The `bibliographies` module also provides the functions that allow the
