@@ -59,12 +59,13 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends)
     let sel_save = &selection
     let &selection = "old"
     if has('clipboard')
-        let reg_save = getreg('*')
+        let reg = '*'
     else
-        let reg_save = getreg('"')
+        let reg = '"'
     endif
+    let reg_save = getreg(reg)
     if a:type ==# "v"
-        execute "normal! `<".a:type."`>".'"*x'
+        execute "normal! `<".a:type."`>".'"'.reg.'x'
     elseif a:type ==# "char"
         let cline = getline(".")
         let ccol = getpos(".")[2]
@@ -72,38 +73,34 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends)
         let pchar = cline[ccol-2]
         if cline[ccol] == ""
             " at end
-            execute "normal! `[Bv`]BE".'"*x'
+            execute "normal! `[Bv`]BE".'"'.reg.'x'
         elseif match(pchar, '[[:blank:]]') > -1
             if match(nchar, '[[:blank:]]') > -1
                 " single char
-                execute "normal! `[v`]ege".'"*x'
+                execute "normal! `[v`]ege".'"'.reg.'x'
             else
                 " after space
-                execute "normal! `[v`]BE".'"*x'
+                execute "normal! `[v`]BE".'"'.reg.'x'
             endif
         elseif match(nchar, '[[:blank:]]') > -1
             " before space
-            execute "normal! `[Bv`]BE".'"*x'
+            execute "normal! `[Bv`]BE".'"'.reg.'x'
         else
             " inside a word
-            execute "normal! `[EBv`]BE".'"*x'
+            execute "normal! `[EBv`]BE".'"'.reg.'x'
         endif
     else
         return
     endif
-    let match_data = matchlist(getreg('*'), '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
+    let match_data = matchlist(getreg(reg), '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
     if len(match_data) == 0
-        call setreg('*', a:ends.getreg('*').a:ends)
-        execute 'normal "*P'
+        call setreg(reg, a:ends.getreg(reg).a:ends)
+        execute 'normal "'.reg.'P'
     else
-        call setreg('*', match_data[2])
-        execute 'normal "*P'
+        call setreg(reg, match_data[2])
+        execute 'normal "'.reg.'P'
     endif
-    if has('clipboard')
-        call setreg('*', reg_save)
-    else
-        call setreg('"', reg_save)
-    endif
+    call setreg(reg, reg_save)
     let &selection = sel_save
 endfunction "}}}3
 
@@ -111,17 +108,22 @@ endfunction "}}}3
 function! pandoc#keyboard#styles#Apply(type, ends)
     let sel_save = &selection
     let &selection = "old"
-    let reg_save = getreg('*')
+    if has('clipboard')
+        let reg = '*'
+    else
+        let reg = '"'
+    endif
+    let reg_save = getreg(reg)
     if a:type ==# "v"
-        execute "normal! `<".a:type."`>".'"*x'
+        execute "normal! `<".a:type."`>".'"'.reg.'x'
     elseif a:type ==# "char"
-        execute "normal! `[v`]".'"*x'
+        execute "normal! `[v`]".'"'.reg.'x'
     else
         return
     endif
-    call setreg('*', a:ends.getreg('*').a:ends)
-    execute 'normal "*P'
-    call setreg('*', reg_save)
+    call setreg(reg, a:ends.getreg(reg).a:ends)
+    execute 'normal "'.reg.'P'
+    call setreg(reg, reg_save)
     let &selection = sel_save
 endfunction
 "}}}3
