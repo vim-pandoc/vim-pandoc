@@ -114,7 +114,7 @@ class PandocHelpParser(object):
     @staticmethod
     @wrap_formats
     def _get_output_formats():
-        return get_raw_pandoc_data("Output formats:(.*)\[\*for pdf")
+        return get_raw_pandoc_data("Output formats:(.*)\[\*+for pdf")
 
     @staticmethod
     def get_output_formats_table():
