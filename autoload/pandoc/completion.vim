@@ -20,7 +20,7 @@ function! pandoc#completion#Init() "{{{1
     endif
 
     " set the correct omnifunc completion
-    if has("python")
+    if has("python") || has("python3")
         setlocal omnifunc=pandoc#completion#Complete
     endif
 
