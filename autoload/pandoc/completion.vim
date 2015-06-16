@@ -38,18 +38,20 @@ function! pandoc#completion#Init() "{{{1
 endfunction
 
 function! pandoc#completion#Complete(findstart, base) "{{{1
-    if has("python") && index(g:pandoc#modules#enabled, "bibliographies") >= 0 
-        if a:findstart
-            let l:line = getline('.')
-            if l:line[:col('.')-1] =~ '@'
-                let l:pos = searchpos('@', 'Wncb')
-                if l:pos != [0,0]
-                    return l:pos[1]
+    if has("python") || has("python3")
+        if index(g:pandoc#modules#enabled, "bibliographies") >= 0
+            if a:findstart
+                let l:line = getline('.')
+                if l:line[:col('.')-1] =~ '@'
+                    let l:pos = searchpos('@', 'Wncb')
+                    if l:pos != [0,0]
+                        return l:pos[1]
+                    endif
                 endif
+            else
+                let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
+                return suggestions
             endif
-        else
-            let suggestions = pandoc#bibliographies#GetSuggestions(a:base)
-            return suggestions
         endif
     endif
     return -3
