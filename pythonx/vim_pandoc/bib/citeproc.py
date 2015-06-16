@@ -2,6 +2,7 @@
 # vim: set fdm=marker:
 
 # imports {{{1
+from sys import version_info
 from subprocess import check_output
 import json
 import re
@@ -124,10 +125,16 @@ class CSLItem: #{{{1
     def as_array(self, variable_name): #{{{2
         def plain(variable_contents): #{{{3
             # Takes the contents of a 'plain' variable and splits it into an array.
-            return unicode(variable_contents).split('\n')
+            if version_info.major == 2:
+                return unicode(variable_contents).split('\n')
+            else:
+                return variable_contents.split('\n')
 
         def number(variable_contents): #{{{3
-            return [unicode(variable_contents)]
+            if version_info.major == 2:
+                return [unicode(variable_contents)]
+            else:
+                return [variable_contents]
 
         def name(variable_contents): #{{{3
             # Parses "name" CSL Variables and returns an array of names.
@@ -164,7 +171,10 @@ class CSLItem: #{{{1
             def date_parse(raw_date_array):
                 # Presently, this function returns the date in yyyy-mm-dd format. In future, it
                 # will provide a variety of alternative forms.
-                date = [unicode(x) for x in raw_date_array]
+                if version_info.major == 2:
+                    date = [unicode(x) for x in raw_date_array]
+                else:
+                    date = [str(x) for x in  raw_date_array]
                 return ["-".join(date)]
             def date_parts(date_parts_contents):
                 # Call date_parts for each element.
@@ -251,10 +261,11 @@ class CSLItem: #{{{1
 
 class CiteprocSource: #{{{1
     def __init__(self, bib): #{{{2
-        try:
-            raw_bib = json.loads(check_output(["pandoc-citeproc", "-j", bib]))
-        except:
-            raw_bib = []
+        citeproc_output = check_output(["pandoc-citeproc", "-j", bib])
+        if version_info.major == 2:
+            raw_bib = json.loads(citeproc_output)
+        elif version_info.major == 3:
+            raw_bib = json.loads(citeproc_output.decode("utf-8"))
         self.data = [CSLItem(entry) for entry in raw_bib]
 
     def __iter__(self): #{{{2

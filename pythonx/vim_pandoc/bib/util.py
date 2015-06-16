@@ -27,7 +27,10 @@ def dict_to_info(data):
         else:
             return -1
 
-    from citeproc import CSLItem
+    try:
+        from citeproc import CSLItem
+    except:
+        from .citeproc import CSLItem
     item = CSLItem(data)
     lines = []
     for i in data:
