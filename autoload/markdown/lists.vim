@@ -2,7 +2,6 @@
 
 " functions for list navigation
 "
-" TODO: detect list limits.
 
 function! markdown#lists#ListItemStart(...) "{{{1
     if a:0 > 0
@@ -10,16 +9,82 @@ function! markdown#lists#ListItemStart(...) "{{{1
     else
         let line = getline(".")
     endif
-    if 
+    if
         \ line =~ '^>\=\s*[*+-]\s\+-\@!' ||
         \ line =~ '^\s*\(\((*\d\+[.)]\+\)\|\((*\l[.)]\+\)\)\s\+' ||
         \ line =~ '^\s*(*\u[.)]\+\s\{2,}' ||
         \ line =~ '^\s*(*[#][.)]\+\s\{1,}' ||
         \ line =~ '^\s*(*@.\{-}[.)]\+\s\{1,}' ||
-        \ line =~ '^\s*(*x\=l\=\(i\{,3}[vx]\=\)\{,3}c\{,3}[.)]\+' 
+        \ line =~ '^\s*(*x\=l\=\(i\{,3}[vx]\=\)\{,3}c\{,3}[.)]\+'
         return 1
     endif
     return 0
+endfunction
+
+function! markdown#lists#ListStart(...) "{{{1
+    if a:0 > 0
+        let l:l = a:1
+    else
+        let l:l = line('.')
+    endif
+    let orig_pos = getpos('.')[1:]
+    normal {
+    if getpos('.')[1:] == orig_pos && markdown#lists#ListItemStart() != 1
+        return -1
+    endif
+    normal w
+    let pos = markdown#lists#ListItemStart()
+    if pos == 1
+        let c_par_start = line('.')
+        normal 2{w
+        let p_par_start = line('.')
+        if c_par_start != p_par_start
+            let check_prev = markdown#lists#ListItemStart()
+            if check_prev == 1
+                let l:l = markdown#lists#ListStart()
+            else
+                normal }w
+                let l:l = line('.')
+            endif
+        else
+            let l:l = c_par_start
+        endif
+    else
+        let l:l = -1
+    endif
+    call cursor(orig_pos)
+    return l:l
+endfunction
+
+function! markdown#lists#ListEnd(...) "{{{1
+    if markdown#lists#ListStart() == -1
+        " not in a list
+        return -1
+    endif
+    if a:0 > 0
+        let l:l = a:1
+    else
+        let l:l = line('.')
+    endif
+    let orig_pos = getpos('.')[1:]
+    if getline(l:l) =~ '^\s*$' && markdown#lists#ListItemStart(l:l+1) == 0
+        " the list just ended
+        return l:l-1
+    endif
+    normal }
+    let c_lnum = line('.')
+    let c_par_end = c_lnum-1
+    let next_par_start = c_lnum+1
+    let pos = markdown#lists#ListItemStart(next_par_start)
+    if pos == 1
+        let l:l = markdown#lists#ListEnd(next_par_start)
+    elseif c_lnum == line('$')
+        let l:l = c_lnum
+    else
+        let l:l = c_par_end
+    endif
+    call cursor(orig_pos)
+    return l:l
 endfunction
 
 function! markdown#lists#ListKind(...) "{{{1
