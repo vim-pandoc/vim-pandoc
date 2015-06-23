@@ -28,6 +28,7 @@ function! markdown#lists#ListStart(...) "{{{1
         let l:l = line('.')
     endif
     let orig_pos = getpos('.')[1:]
+    call cursor(l:l, 0)
     normal {
     if getpos('.')[1:] == orig_pos && markdown#lists#ListItemStart() != 1
         return -1
@@ -67,6 +68,7 @@ function! markdown#lists#ListEnd(...) "{{{1
         let l:l = line('.')
     endif
     let orig_pos = getpos('.')[1:]
+    call cursor(l:l,0)
     if getline(l:l) =~ '^\s*$' && markdown#lists#ListItemStart(l:l+1) == 0
         " the list just ended
         return l:l-1
@@ -107,14 +109,19 @@ function! markdown#lists#NextListItem(...) "{{{1
         let search_from = line(".")
     endif
     let lnum = search_from + 1
-    while lnum <= line("$")
-        if markdown#lists#ListItemStart(lnum) == 1
-            return lnum
-        else
-            let lnum = lnum + 1
-            continue
-        endif
-    endwhile
+    if markdown#lists#ListStart(search_from) > -1
+        while lnum <= line("$")
+            if markdown#lists#ListStart(lnum+1) == -1
+                return markdown#lists#CurrentListItem(lnum)
+            endif
+            if markdown#lists#ListItemStart(lnum) == 1
+                return lnum
+            else
+                let lnum = lnum + 1
+                continue
+            endif
+        endwhile
+    endif
     return -1
 endfunction
 
@@ -126,6 +133,9 @@ function! markdown#lists#PrevListItem(...) "{{{1
     endif
     let lnum = search_from - 1
     while lnum >= 1
+        if markdown#lists#ListStart(lnum) == -1
+            return -1
+        endif
         if markdown#lists#ListItemStart(lnum) == 1
             return lnum
         else
