@@ -218,7 +218,7 @@ class PandocCommand(object):
         self._output_file_path = vim.eval('expand("%:r")') + '.' + self.opts.get_output_formats_table()[no_extensions(output_format)]
         output_arg = '-o "' + self._output_file_path + '"'
 
-        engine_arg = "--latex-engine=" + vim.vars["pandoc#command#latex_engine"] if output_format in ["pdf", "beamer"] else ""
+        engine_arg = "--latex-engine=" + vim.vars["pandoc#command#latex_engine"].decode() if output_format in ["pdf", "beamer"] else ""
 
         extra = []
         for opt in c_opts:
