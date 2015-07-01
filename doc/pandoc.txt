@@ -382,8 +382,10 @@ where they are available):
 - *<localleader>nr*    insert a ref definition after this paragraph [n]
 - *<localleader>rg*    go to reference definition [n]
 - *<localleader>rb*    go back to reference label [n]
-- *<localleader>gl*    go to current link
-- *<localleader>gb*    go back from link (just for internal header links)
+- *<localleader>gl*    go to current link in current window
+- *<localleader>sl*    go to current link in split window
+- *<localleader>gb*    go back from link
+- *<localleader>gB*    go back from link to the previous file
 - *<localleader>ln*    move to next list item [n]
 - *<localleader>lp*    move to previous list item [n]
 - *<localleader>ll*    move to the current list item [n]
@@ -866,19 +868,31 @@ A description of the available configuration variables follows:
   editable files are available when opening locally and
   |g:pandoc#hypertext#open_editable_alternates| is 1.
 
-- *g:pandoc#hypertext#open_cmd*
+- *g:pandoc#hypertext#split_open_cmd*
   default = "botright vsplit"
 
-  How to open files within vim.
+  How to split-open files within vim.
+
+- *g:pandoc#hypertext#edit_open_cmd*
+  default = "edit"
+
+  How to edit-open files within vim.
+
+- *g:pandoc#hypertext#autosave_on_edit_open_link*
+  default = 0
+
+  Automatically save the current file when following some link in the same
+  window for editing.
+
 - *g:pandoc#hypertext#create_if_no_alternates_exists*
   default = 0
 
-  When open the link at cursor, and it could have alternate files, but not
-  exist, set this to `1` to automaticly create the alternate file with the
-  extention of |g:pandoc#hypertext#preferred_alternate|.
+  When open the link at cursor, and it does not exist, set this to `1` to
+  automatically create the file with the given extension or the extension of
+  |g:pandoc#hypertext#preferred_alternate|.
 
-  To use this, the value of |g:pandoc#hypertext#open_editable_alternates|
-  should be 1.
+  To use this for alternate files, the value of
+  |g:pandoc#hypertext#open_editable_alternates| should be 1.
 
 
 - *g:pandoc#hypertext#use_default_mappings*
