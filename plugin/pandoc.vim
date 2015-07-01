@@ -107,6 +107,7 @@ augroup pandoc_attach
         call extend(s:exts, map(g:pandoc_extensions_table[ext], '"*." . v:val'))
     endfor
     execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pandoc.vim'
+    execute 'au BufEnter '.join(s:exts,",").' if index(g:pandoc#modules#disabled, "chdir") == -1 | call pandoc#chdir#Init() | endif'
 augroup END
 "}}}
 " }}}1
