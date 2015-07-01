@@ -7,14 +7,20 @@ function! pandoc#hypertext#Init()
     if !exists("g:pandoc#hypertext#create_if_no_alternates_exists")
         let g:pandoc#hypertext#create_if_no_alternates_exists = 0
     endif
-    if !exists("g:pandoc#hypertext#open_cmd")
-        let g:pandoc#hypertext#open_cmd = "botright vsplit"
+    if !exists("g:pandoc#hypertext#split_open_cmd")
+        let g:pandoc#hypertext#split_open_cmd = "botright vsplit"
+    endif
+    if !exists("g:pandoc#hypertext#edit_open_cmd")
+        let g:pandoc#hypertext#edit_open_cmd = "edit"
     endif
     if !exists("g:pandoc#hypertext#preferred_alternate")
         let g:pandoc#hypertext#preferred_alternate = "md"
     endif
     if !exists("g:pandoc#hypertext#use_default_mappings")
         let g:pandoc#hypertext#use_default_mappings = 1
+    endif
+    if !exists("g:pandoc#hypertext#autosave_on_edit_open_link")
+        let g:pandoc#hypertext#autosave_on_edit_open_link = 0
     endif
 
     if exists('g:pandoc#hypertext#automatic_link_regex')
@@ -93,6 +99,26 @@ function! s:ExtendedCFILE()
     return addr
 endfunction
 
+function! pandoc#hypertext#PushLink(link)
+    if !exists('w:link_stack')
+        let w:link_stack = []
+    endif
+    let w:link_stack = add(w:link_stack, a:link)
+endfunction
+
+function! pandoc#hypertext#PopLink()
+    if exists('w:link_stack')
+        try
+            let link = remove(w:link_stack,-1)
+        catch
+            return ['','']
+        endtry
+    else
+        return ['','']
+    endif
+    return link
+endfunction
+
 " MatchstrAtCursor(pattern)
 " Returns part of the line that matches pattern at cursor
 " Copyed from vimwiki plugin: autoload/base.vim
@@ -168,12 +194,30 @@ function! pandoc#hypertext#GetLinkAddress()
     return link
 endfunction
 
+function! pandoc#hypertext#OpenFileWithCmd(file, cmd, push)
+    if a:cmd == g:pandoc#hypertext#edit_open_cmd
+        if &modified == 1 &&
+                    \ g:pandoc#hypertext#autosave_on_edit_open_link == 1
+            exe 'write'
+        endif
+        if a:push == 1
+            call pandoc#hypertext#PushLink( ['file', expand('%:p')] )
+        endif
+    endif
+    exe a:cmd . " " . a:file
+endfunction
 
 function! pandoc#hypertext#OpenLocal(...)
     if exists('a:1')
         let addr = a:1
     else
         let addr = s:ExtendedCFILE()
+    endif
+
+    if exists('a:2') 
+        let cmd = a:2
+    else
+        let cmd = g:pandoc#hypertext#split_open_cmd
     endif
 
     if g:pandoc#hypertext#open_editable_alternates == 1
@@ -201,7 +245,7 @@ function! pandoc#hypertext#OpenLocal(...)
                     endif
 
                     let addr = fnamemodify(addr, ":r") . '.' . g:pandoc#hypertext#preferred_alternate
-                    exe g:pandoc#hypertext#open_cmd. " ".addr
+                    call pandoc#hypertext#OpenFileWithCmd(addr, cmd, 1)
                 else
                     call pandoc#hypertext#OpenSystem(addr)
                 endif
@@ -211,8 +255,8 @@ function! pandoc#hypertext#OpenLocal(...)
         endif
     endif
 
-    if glob(addr) != ''
-        exe g:pandoc#hypertext#open_cmd. " ".addr
+    if glob(addr) != '' || g:pandoc#hypertext#create_if_no_alternates_exists == 1
+        call pandoc#hypertext#OpenFileWithCmd(addr, cmd, 1)
     endif
 endfunction
 
@@ -232,23 +276,37 @@ function! pandoc#hypertext#OpenSystem(...)
     endif
 endfunction
 
-function! pandoc#hypertext#GotoSavedCursor()
-    if exists('b:save_cursor')
-        call setpos('.', b:save_cursor)
-        unlet b:save_cursor
-    endif
-endfunction
 
-function! pandoc#hypertext#OpenLink()
+function! pandoc#hypertext#OpenLink(cmd)
     let url = pandoc#hypertext#GetLinkAddress()
     let ext = fnamemodify(url, ":e")
 
     if '#' == url[:0]
         call pandoc#hypertext#GotoID(url[1:])
     elseif ext =~ '\(pdf\|htm\|odt\|doc\)' || s:IsEditable(url)
-        call pandoc#hypertext#OpenLocal(url)
+        call pandoc#hypertext#OpenLocal(url, a:cmd)
     else
         call pandoc#hypertext#OpenSystem(url)
+    endif
+endfunction
+
+function! pandoc#hypertext#BackFromLink()
+    let [type, link] = pandoc#hypertext#PopLink()
+    if type == 'position'
+        call setpos('.', link)
+    elseif type == 'file'
+        call pandoc#hypertext#OpenFileWithCmd(link, g:pandoc#hypertext#edit_open_cmd, 0) 
+    endif
+endfunction
+
+function! pandoc#hypertext#BackFromFile()
+    if exists('w:link_stack')
+        let types = map(reverse(copy(w:link_stack)), 'v:val[0]')
+        let i = index(types, 'file')
+        if i != -1
+            let w:link_stack = w:link_stack[0:-i-1]
+            call pandoc#hypertext#BackFromLink()
+        endif
     endif
 endfunction
 
@@ -261,9 +319,9 @@ function! pandoc#hypertext#GotoID(...)
         endif
         
         try
-            let b:save_cursor = getcurpos()
+            call pandoc#hypertext#PushLink( ['position',getcurpos()] )
         catch /E117/
-            let b:save_cursor = getpos('.')
+            call pandoc#hypertext#PushLink( ['position',getpos('.')] )
         endtry
         " header indentifier
         let header_pos = markdown#headers#GetAllIDs()
