@@ -236,15 +236,17 @@ class PandocCommand(object):
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
-        self._run_command = " ".join(filter(lambda i: i != "", ["pandoc", \
-                                                                bib_arg, \
-                                                                strict_arg, \
-                                                                output_format_arg, \
-                                                                engine_arg, \
-                                                                output_arg, \
-                                                                extra_args, \
-                                                                extra_input_args, \
-                                                                input_arg]))
+        arg_list = map(lambda i: str(i), [  "pandoc", \
+                                            bib_arg, \
+                                            strict_arg, \
+                                            output_format_arg, \
+                                            engine_arg, \
+                                            output_arg, \
+                                            extra_args, \
+                                            extra_input_args, \
+                                            input_arg])
+
+        self._run_command = " ".join(filter(lambda i: len(i) > 0, arg_list ))
 
         # execute
         self.execute(should_open)
