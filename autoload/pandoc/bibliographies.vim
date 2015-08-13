@@ -39,7 +39,9 @@ function! pandoc#bibliographies#Init()
         let s:python.cmd = "python3"
         let s:python.eval = "py3eval"
     endif
-    exe s:python.cmd . " import vim_pandoc.bib.vim_completer"
+    if has("python") || has("python3")
+        exe s:python.cmd . " import vim_pandoc.bib.vim_completer"
+    endif    
 endfunction
 
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
