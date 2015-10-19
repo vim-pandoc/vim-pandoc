@@ -184,6 +184,8 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                     let context_prevents = 1
                 elseif l:p_synName =~ '\c\vpandoccodeblock' && indent('.')%4 == 0
                     let context_prevents = 1
+                elseif getline(l:line -1) =~ '^\w\+:'
+                    let context_prevents = 1
                 endif
             endif
             if l:should_enable == 1
