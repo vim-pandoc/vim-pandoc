@@ -47,7 +47,7 @@ function! pandoc#formatting#Init() "{{{1
             if g:pandoc#formatting#mode =~ "h"
                 let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
             else
-                let g:pandoc#formatting#equalprg.= " --no-wrap"
+                let g:pandoc#formatting#equalprg.= " --wrap=none"
             endif
         else
             let g:pandoc#formatting#equalprg = ""
