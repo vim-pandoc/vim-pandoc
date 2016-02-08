@@ -263,9 +263,13 @@ class PandocCommand(object):
                 except:
                     vim.command('echoe "vim-pandoc: could not execute pandoc asynchronously"')
             elif vim.eval("has('nvim')") == '1':
+                try:
+                    should_open_s = str(int(should_open))
+                except:
+                    should_open_s = '0'
                 vim.command("call jobstart("+ \
                         str(['pandoc'] + shlex.split(self._run_command)[1:]) + \
-                                ", extend({'should_open': '" + str(int(should_open)) + \
+                                ", extend({'should_open': '" + should_open_s + \
                                 "'}, {'on_exit': 'pandoc#command#JobHandler'}))")
                 #vim.command('call jobstart(["pandoc", ' + str(shlex.split(self._run_command)[1:]) + '])')
             else:
@@ -318,7 +322,10 @@ class PandocCommand(object):
                 os.remove("pandoc.out")
 
             # open file if needed
-            if os.path.exists(self._output_file_path) and should_open:
+            if vim.eval('has("nvim")') == '1':
+                # nvim's python host doesn't change the directory the same way vim does
+                os.chdir(vim.eval('expand("%:p:h")'))
+            if os.path.exists(os.path.abspath(self._output_file_path)) and should_open:
                 # if g:pandoc#command#custom_open is defined and is a valid funcref
                 if vim.eval("g:pandoc#command#custom_open") != "" \
                         and vim.eval("exists('*"+vim.eval("g:pandoc#command#custom_open")+"')") == 1:
