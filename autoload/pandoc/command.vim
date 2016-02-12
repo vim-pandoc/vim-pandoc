@@ -48,7 +48,7 @@ function! pandoc#command#Init()
                     \ PandocTemplate call pandoc#command#PandocTemplate("<args>")
 
     " set up auto-execution
-    au! BufWrite <buffer> call pandoc#command#AutoPandoc()
+    au! BufWritePost <buffer> call pandoc#command#AutoPandoc()
 endfunction
 
 " :Pandoc command {{{1
