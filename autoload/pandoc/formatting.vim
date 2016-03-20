@@ -182,6 +182,8 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 let l:p_synName = synIDattr(synID(l:line-1, col('$'), 0), 'name')
                 if l:p_synName =~ '\c\vpandoc(u?list|referencedef)'
                     let context_prevents = 1
+                elseif l:p_synName =~ '\c\vpandochrule'
+                    let context_prevents = 1
                 elseif l:p_synName =~ '\c\vpandoccodeblock' && indent('.')%4 == 0
                     let context_prevents = 1
                 elseif getline(l:line -1) =~ '^\w\+:'
