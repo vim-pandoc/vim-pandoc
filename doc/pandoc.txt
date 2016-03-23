@@ -856,10 +856,16 @@ A description of the available configuration variables follows:
 - *g:pandoc#hypertext#open_editable_alternates*
   default = 1
 
-  If opening locally files with *.pdf, *.html, *.odt and *.doc extensions, try
-  to open a vim editable file instead. For example, if you try to open
-  "test.html" and "test.md" is available in the same folder, vim will try to
-  edit "test.md".
+  If opening locally files matching
+  |g:pandoc#hypertext#editable_alternates_extensions|, try to open a vim
+  editable file instead. For example, if you try to open "test.html" and
+  "test.md" is available in the same folder, vim will try to edit "test.md".
+
+- *g:pandoc#hypertext#editable_alternates_extensions*
+  default = '\(pdf\|htm\|odt\|doc\)'
+
+  A regular expression determining for what files a vim editable file
+  should be opened instead when opening locally.
 
 - *g:pandoc#hypertext#preferred_alternate*
   default = "md"
