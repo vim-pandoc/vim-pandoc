@@ -224,7 +224,7 @@ function! pandoc#hypertext#OpenSystem(...)
     endif
 
     if has("unix") && executable("xdg-open")
-        call system("xdg-open ". addr)
+        call system("xdg-open ". shellescape(expand(addr,':p')))
     elseif has("win32") || has("win64")
         call system('cmd /c "start '. addr .'"')
     elseif has("macunix")
