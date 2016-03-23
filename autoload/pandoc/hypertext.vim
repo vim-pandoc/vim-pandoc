@@ -4,6 +4,9 @@ function! pandoc#hypertext#Init()
     if !exists("g:pandoc#hypertext#open_editable_alternates")
         let g:pandoc#hypertext#open_editable_alternates = 1
     endif
+    if !exists("g:pandoc#hypertext#editable_alternates_extensions")
+        let g:pandoc#hypertext#editable_alternates_extensions ='\(pdf\|htm\|odt\|doc\)'
+    endif
     if !exists("g:pandoc#hypertext#create_if_no_alternates_exists")
         let g:pandoc#hypertext#create_if_no_alternates_exists = 0
     endif
@@ -222,7 +225,7 @@ function! pandoc#hypertext#OpenLocal(...)
 
     if g:pandoc#hypertext#open_editable_alternates == 1
         let ext = fnamemodify(addr, ":e")
-        if ext =~ '\(pdf\|htm\|odt\|doc\)'
+        if ext =~ g:pandoc#hypertext#editable_alternates_extensions
             let alt_addrs = s:FindAlternates(addr)
             if alt_addrs != []
                 let pos = 0
@@ -283,8 +286,8 @@ function! pandoc#hypertext#OpenLink(cmd)
 
     if '#' == url[:0]
         call pandoc#hypertext#GotoID(url[1:])
-    elseif ext =~ '\(pdf\|htm\|odt\|doc\)' || s:IsEditable(url)
-        call pandoc#hypertext#OpenLocal(url, a:cmd)
+    elseif ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
+        call pandoc#hypertext#OpenLocal(url)
     else
         call pandoc#hypertext#OpenSystem(url)
     endif
