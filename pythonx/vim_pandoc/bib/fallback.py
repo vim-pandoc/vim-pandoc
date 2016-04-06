@@ -1,5 +1,6 @@
 import vim
 import re
+import sys
 import os
 import os.path
 import operator
@@ -89,8 +90,17 @@ def get_json_suggestions(text, query):
     import json
 
     entries = []
-    string_matches = [u'title', u'id']
-    name_matches = [u'author', u'editor']
+
+    if sys.version_info.major == 2:
+        string_matches = [u'title', u'id']
+        name_matches = [u'author', u'editor']
+        family_match = u'family'
+        literal_match = u'literal'
+    else:
+        string_matches = ['title', 'id']
+        name_matches = ['author', 'editor']
+        family_match = 'family'
+        literal_match = 'literal'
 
     try:
         data = json.loads(text)
@@ -109,10 +119,10 @@ def get_json_suggestions(text, query):
         for names in [entry.get(k) for k in name_matches]:
             if type(names) == list:
                 for person in names:
-                    if type(person.get(u'family')) == unicode:
-                        if check(person[u'family']): return True
-                    elif type(person.get(u'literal')) == unicode:
-                        if check(person[u'literal']): return True
+                    if type(person.get(family_match)) == unicode:
+                        if check(person[family_match]): return True
+                    elif type(person.get(literal_match)) == unicode:
+                        if check(person[literal_match]): return True
 
     for entry in filter(test_entry, data):
         entries.append({"word": entry.get('id'),
