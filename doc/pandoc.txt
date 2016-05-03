@@ -653,7 +653,7 @@ A description of the available configuration variables follows:
     let g:pandoc#command#custom_open = "MyPandocOpen"
 
     function! MyPandocOpen(file)
-        return "xdg-open ". a:file
+        return 'xdg-open ' . shellescape(expand(a:file,':p'))
     endfunction
 
 - *g:pandoc#command#autoexec_on_writes*
