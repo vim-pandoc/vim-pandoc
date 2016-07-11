@@ -53,6 +53,9 @@ endfunction
 function! s:EscapeEnds(ends)
     return escape(a:ends, '*^~')
 endfunction
+function! s:IsCursorAtEndofNonEmptyLine()
+    return (col('.')+1) == col('$') && col('.') != 1
+endfunction
 " Base: {{{2
 " Toggle Operators, WYSIWYG-style {{{3
 function! pandoc#keyboard#styles#ToggleOperator(type, ends)
@@ -95,10 +98,18 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends)
     let match_data = matchlist(getreg(reg), '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
     if len(match_data) == 0
         call setreg(reg, a:ends.getreg(reg).a:ends)
-        execute 'normal "'.reg.'P'
+        if s:IsCursorAtEndofNonEmptyLine()
+            execute 'normal "'.reg.'p'
+        else
+            execute 'normal "'.reg.'P'
+        endif
     else
         call setreg(reg, match_data[2])
-        execute 'normal "'.reg.'P'
+        if s:IsCursorAtEndofNonEmptyLine()
+            execute 'normal "'.reg.'p'
+        else
+            execute 'normal "'.reg.'P'
+        endif
     endif
     call setreg(reg, reg_save)
     let &selection = sel_save
