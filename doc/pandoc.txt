@@ -309,6 +309,9 @@ setting.
 
     let |b:pandoc_command_autoexec_command| = "Pandoc! html"
 
+Notice that vim-pandoc also defines and sets a 'compiler' pandoc that can be
+started by ':make' or ':lmake' and compiles the current file by pandoc.
+
 -- TEMPLATES                                       *vim-pandoc-command-templates*
 
 It might get tedious to reuse the same arguments over and over. For example,
