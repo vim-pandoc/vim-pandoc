@@ -43,7 +43,7 @@ function! pandoc#formatting#Init() "{{{1
     " equalprg {{{3
     if !exists("g:pandoc#formatting#equalprg")
         if executable('pandoc')
-            let g:pandoc#formatting#equalprg = "pandoc -t markdown --reference-links"
+            let g:pandoc#formatting#equalprg = "pandoc -t markdown"
             if g:pandoc#formatting#mode =~ "h"
                 let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
             else
@@ -55,7 +55,7 @@ function! pandoc#formatting#Init() "{{{1
     endif
     " extend the value of equalprg if needed
     if !exists("g:pandoc#formatting#extra_equalprg")
-        let g:pandoc#formatting#extra_equalprg = ""
+        let g:pandoc#formatting#extra_equalprg = "--reference-links"
     endif
     " }}}3
     " Use a custom indentexpr? {{{3

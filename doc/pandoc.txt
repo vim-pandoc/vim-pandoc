@@ -622,7 +622,7 @@ A description of the available configuration variables follows:
   enabled, it might cause some lag.
 
 - *g:pandoc#formatting#equalprg*
-  default = "pandoc -t markdown --reference-links [--columns {g:pandoc#formatting#textwidth}|no-wrap]"
+  default = "pandoc -t markdown [--columns {g:pandoc#formatting#textwidth}|--wrap=none]"
 
   What command to use for equalprg. If set to '', vim's default will be used.
   See |'equalprg'|.
@@ -630,7 +630,7 @@ A description of the available configuration variables follows:
   or soft wraps.
 
 - *g:pandoc#formatting#extra_equalprg*
-  default = ""
+  default = "--reference-links"
 
   Extra arguments to append to the value of equalprg. Useful when the default
   behavior of |g:pandoc#formatting#equalprg| wants to be preserved.
