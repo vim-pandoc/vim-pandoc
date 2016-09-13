@@ -86,7 +86,7 @@ class PandocHelpParser(object):
         data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
-                          [ i.group() for i in re.finditer("-(-\w+)+=?", data)]))
+                          [ ''.join(i.groups()) for i in re.finditer("--([-\w]+)+\[?(=?)\w*\]?", data)]))
 
     @staticmethod
     def get_shortopts():
