@@ -62,17 +62,25 @@ markdown_extensions = [
         "compact_definition_lists"
         ]
 
-def get_raw_pandoc_data(pattern):
-    data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
-    return re.search(pattern, data, re.DOTALL).group(1)
+def get_pandoc_version():
+    data = str(Popen(["pandoc", "--version"], stdout=PIPE).communicate()[0])
+    m = re.search("pandoc (\d+\.\d+)", data)
+    if m:
+        return m.group(1)
 
-def wrap_formats(fn):
+def get_raw_pandoc_data(pattern, cmd="--help"):
+    data = Popen(["pandoc", cmd], stdout=PIPE).communicate()[0]
+    if cmd == "--help":
+        return re.search(pattern, data, re.DOTALL).group(1)
+    else:
+        return data
+
+def wrap_formats(data):
         # pandoc's output changes depending on platform
         if sys.platform == "win32":
             splitter = '\r\n'
         else:
             splitter = '\n'
-        data = fn()
         return lambda: re.findall('(\w+\**)[,'+splitter+']', data)
 
 class PandocHelpParser(object):
@@ -107,14 +115,18 @@ class PandocHelpParser(object):
         return "".join(no_args) + "".join(map(lambda i: i + ":", args))
 
     @staticmethod
-    @wrap_formats
     def _get_input_formats():
-        return get_raw_pandoc_data("Input formats:(.*)Output formats")
+        if get_pandoc_version() == '1.18':
+            return get_raw_pandoc_data(None, '--list-input-formats').splitlines()
+        else:
+            return wrap_formats(get_raw_pandoc_data("Input formats:(.*)Output formats", ))
 
     @staticmethod
-    @wrap_formats
     def _get_output_formats():
-        return get_raw_pandoc_data("Output formats:(.*)\[\*+for pdf")
+         if get_pandoc_version() == '1.18':
+            return get_raw_pandoc_data(None, '--list-output-formats').splitlines()
+         else:
+            return wrap_formats(get_raw_pandoc_data("Output formats:(.*)\[\*+for pdf"))
 
     @staticmethod
     def get_output_formats_table():
