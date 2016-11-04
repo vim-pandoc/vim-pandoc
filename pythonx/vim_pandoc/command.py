@@ -81,7 +81,7 @@ def wrap_formats(data):
             splitter = '\r\n'
         else:
             splitter = '\n'
-        return lambda: re.findall('(\w+\**)[,'+splitter+']', data)
+        return re.findall('(\w+\**)[,'+splitter+']', data)
 
 class PandocHelpParser(object):
     def __init__(self):
