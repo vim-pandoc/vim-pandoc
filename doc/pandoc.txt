@@ -58,6 +58,12 @@ To check if the requirements are satisfied, check if
 
 outputs "1".
 
+The warning message when modules are automatically disabled can be suppressed
+by using
+>
+    let g:pandoc#modules#warn_disabled = 0
+
+
 INSTALLATION                                          *vim-pandoc-installation*
 
 The plugin follows the usual bundle structure, so it's easy to install it
