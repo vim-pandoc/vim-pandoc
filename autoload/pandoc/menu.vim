@@ -13,9 +13,11 @@ function! pandoc#menu#CreateMenu()
         amenu Pandoc.Compile.&ODT :Pandoc odt<CR>
         amenu Pandoc.Compile.&HTML :Pandoc html -s<CR>
         amenu Pandoc.Compile.-Sep1- :
-        for temp in pandoc#command#GetTemplateNames()
-            exe "amenu Pandoc.Compile.".temp." :Pandoc #".temp."<CR>"
-        endfor
+        if exists('g:pandoc#command#templates_file')
+            for temp in pandoc#command#GetTemplateNames()
+                exe "amenu Pandoc.Compile.".temp." :Pandoc #".temp."<CR>"
+            endfor
+        endif
         amenu Pandoc.Compile\ and\ View.Pdf :Pandoc! pdf<CR>
         amenu Pandoc.Compile\ and\ View.Beamer :Pandoc! beamer<CR>
         amenu Pandoc.Compile\ and\ View.ODT :Pandoc! odt<CR>
