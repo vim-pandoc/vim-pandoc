@@ -255,9 +255,34 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
         endif
         augroup END
     endif
+    " restore j and k
+    " based on http://vi.stackexchange.com/a/7735/6682
+    if exists('l:save_j')
+        " restore visual mode mapping for j
+        exec (l:save_j.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_j.lhs . ' ' .
+             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
+        " restore visual mode mapping for j
+        exec (l:save_j.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_j.lhs . ' ' .
+             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
+    endif
+    if exists('l:save_k')
+        " restore visual mode mapping for k
+        exec (l:save_k.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_k.lhs . ' ' .
+             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
+        " restore visual mode mapping for k
+        exec (l:save_k.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_k.lhs . ' ' .
+             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
+    endif
 endfunction
 
-function! pandoc#formatting#UseSoftWraps() "{{{1
 function! pandoc#formatting#UseSoftWraps() abort "{{{1
     " reset settings that might have been changed by UseHardWraps
     setlocal textwidth&
