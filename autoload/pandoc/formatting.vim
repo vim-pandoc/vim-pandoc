@@ -1,6 +1,6 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! pandoc#formatting#Init() "{{{1
+function! pandoc#formatting#Init() abort "{{{1
     " set up defaults {{{2
 
     " Formatting mode {{{3
@@ -44,7 +44,7 @@ function! pandoc#formatting#Init() "{{{1
     if !exists("g:pandoc#formatting#equalprg")
         if executable('pandoc')
             let g:pandoc#formatting#equalprg = "pandoc -t markdown"
-            if g:pandoc#formatting#mode =~ "h"
+            if g:pandoc#formatting#mode =~# "h"
                 let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
             else
                 let g:pandoc#formatting#equalprg.= " --wrap=none"
@@ -79,7 +79,7 @@ function! pandoc#formatting#Init() "{{{1
     "
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
-    if g:pandoc#formatting#equalprg != ''
+    if g:pandoc#formatting#equalprg !=? ''
         let &l:equalprg=g:pandoc#formatting#equalprg." ".g:pandoc#formatting#extra_equalprg
     endif
 
@@ -106,7 +106,7 @@ function! pandoc#formatting#Init() "{{{1
     endif
 
     " Textile uses .. for comments
-    if &ft == "textile"
+    if &filetype ==? "textile"
         setlocal commentstring=..%s
         setlocal comments=f:..
     else " Other markup formats use HTML-style comments
@@ -128,20 +128,20 @@ function! pandoc#formatting#Init() "{{{1
 endfunction
 
 " Autoformat switches {{{1
-function! pandoc#formatting#isAutoformatEnabled()
+function! pandoc#formatting#isAutoformatEnabled() abort
     if exists("b:pandoc_autoformat_enabled")
         return b:pandoc_autoformat_enabled
     else
         return 1
     endif
 endfunction
-function! pandoc#formatting#EnableAutoformat()
+function! pandoc#formatting#EnableAutoformat() abort
     let b:pandoc_autoformat_enabled = 1
 endfunction
-function! pandoc#formatting#DisableAutoformat()
+function! pandoc#formatting#DisableAutoformat() abort
     let b:pandoc_autoformat_enabled = 0
 endfunction
-function! pandoc#formatting#ToggleAutoformat()
+function! pandoc#formatting#ToggleAutoformat() abort
     if get(b:, "pandoc_autoformat_enabled", 1) == 1
         let b:pandoc_autoformat_enabled = 0
     else
@@ -149,7 +149,7 @@ function! pandoc#formatting#ToggleAutoformat()
     endif
 endfunction
 
-function! pandoc#formatting#AutoFormat(force) "{{{1
+function! pandoc#formatting#AutoFormat(force) abort "{{{1
     if !exists('b:pandoc_autoformat_enabled') || b:pandoc_autoformat_enabled == 1
         let l:line = line('.')
         if a:force == 1 || l:line != s:last_autoformat_lnum || (l:line == s:last_autoformat_lnum && col('.') == 1)
@@ -180,14 +180,14 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 endif
             else
                 let l:p_synName = synIDattr(synID(l:line-1, col('$'), 0), 'name')
-                if l:p_synName =~ '\c\vpandoc(u?list|referencedef)'
-                    let context_prevents = 1
-                elseif l:p_synName =~ '\c\vpandochrule'
-                    let context_prevents = 1
-                elseif l:p_synName =~ '\c\vpandoccodeblock' && indent('.')%4 == 0
-                    let context_prevents = 1
-                elseif getline(l:line -1) =~ '^\w\+:'
-                    let context_prevents = 1
+                if l:p_synName =~? '\c\vpandoc(u?list|referencedef)'
+                    let l:context_prevents = 1
+                elseif l:p_synName =~? '\c\vpandochrule'
+                    let l:context_prevents = 1
+                elseif l:p_synName =~? '\c\vpandoccodeblock' && indent('.')%4 == 0
+                    let l:context_prevents = 1
+                elseif getline(l:line -1) =~? '^\w\+:'
+                    let l:context_prevents = 1
                 endif
             endif
             if l:should_enable == 1
@@ -199,7 +199,7 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 setlocal formatoptions+=t
                 " block quotes are formatted like text comments (hackish, i know),
                 " so we want to make them break at textwidth
-                if l:stack != [] && l:synName == 'pandocBlockQuote'
+                if l:stack != [] && l:synName ==? 'pandocBlockQuote'
                     setlocal formatoptions+=c
                 endif
             elseif l:should_enable == 0
@@ -208,17 +208,24 @@ function! pandoc#formatting#AutoFormat(force) "{{{1
                 setlocal formatoptions-=c "just in case we have added it for a block quote
             endif
         endif
-    elseif &formatoptions != 'tn'
+    elseif &formatoptions !=# 'tn'
         setlocal formatoptions=tnroq
     endif
 endfunction
 
 
-function! pandoc#formatting#UseHardWraps() "{{{1
+function! pandoc#formatting#UseHardWraps() abort "{{{1
     " reset settings that might have changed by UseSoftWraps
     setlocal formatoptions&
     setlocal display&
     setlocal wrap&
+    " save j, k mappings in case user remapped them
+    if !empty(maparg('j', 'n', 0, 1))
+        let l:save_j = maparg('j', 'n', 0, 1)
+    endif
+    if !empty(maparg('k', 'n', 0, 1))
+        let l:save_k = maparg('k', 'n', 0, 1)
+    endif
     silent! unmap j
     silent! unmap k
 
@@ -248,9 +255,35 @@ function! pandoc#formatting#UseHardWraps() "{{{1
         endif
         augroup END
     endif
+    " restore j and k
+    " based on http://vi.stackexchange.com/a/7735/6682
+    if exists('l:save_j')
+        " restore visual mode mapping for j
+        exec (l:save_j.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_j.lhs . ' ' .
+             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
+        " restore visual mode mapping for j
+        exec (l:save_j.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_j.lhs . ' ' .
+             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
+    endif
+    if exists('l:save_k')
+        " restore visual mode mapping for k
+        exec (l:save_k.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_k.lhs . ' ' .
+             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
+        " restore visual mode mapping for k
+        exec (l:save_k.noremap ? 'nnoremap' : 'nmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_k.lhs . ' ' .
+             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
+    endif
 endfunction
 
-function! pandoc#formatting#UseSoftWraps() "{{{1
+function! pandoc#formatting#UseSoftWraps() abort "{{{1
     " reset settings that might have been changed by UseHardWraps
     setlocal textwidth&
     setlocal formatoptions&
@@ -264,18 +297,18 @@ function! pandoc#formatting#UseSoftWraps() "{{{1
     setlocal display=lastline
 endfunction
 
-function! pandoc#formatting#IndentExpr() "{{{1
-    let cline = getline(v:lnum)
-    let pline = getline(v:lnum - 1)
-    let cline_li = matchstr(cline, '^\s*[*-:]\s*')
-    if cline_li != ""
-        return len(matchstr(cline_li, '^\s*'))
+function! pandoc#formatting#IndentExpr() abort "{{{1
+    let l:cline = getline(v:lnum)
+    let l:pline = getline(v:lnum - 1)
+    let l:cline_li = matchstr(l:cline, '^\s*[*-:]\s*')
+    if l:cline_li !=? ""
+        return len(matchstr(l:cline_li, '^\s*'))
     endif
-    let pline_li = matchstr(pline, '^\s*[*-:]\s\+')
-    if pline_li != ""
-        return len(pline_li)
+    let l:pline_li = matchstr(l:pline, '^\s*[*-:]\s\+')
+    if l:pline_li !=? ""
+        return len(l:pline_li)
     endif
-    if pline == ""
+    if l:pline ==? ""
         return indent(v:lnum)
     else
         return indent(v:lnum - 1)
