@@ -116,14 +116,14 @@ class PandocHelpParser(object):
 
     @staticmethod
     def _get_input_formats():
-        if get_pandoc_version() == '1.18':
+        if get_pandoc_version() >= '1.18':
             return get_raw_pandoc_data(None, '--list-input-formats').splitlines()
         else:
             return wrap_formats(get_raw_pandoc_data("Input formats:(.*)Output formats", ))
 
     @staticmethod
     def _get_output_formats():
-         if get_pandoc_version() == '1.18':
+         if get_pandoc_version() >= '1.18':
             return get_raw_pandoc_data(None, '--list-output-formats').splitlines()
          else:
             return wrap_formats(get_raw_pandoc_data("Output formats:(.*)\[\*+for pdf"))
