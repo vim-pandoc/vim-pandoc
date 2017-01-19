@@ -30,6 +30,7 @@ if exists("loaded_matchit")
       \ ',' . '\%(^\s*\)\@<=\\begin{\w\+\*\?}' . ':' . '\%(^\s*\)\@<=\\end{\w\+\*\?}'
 endif
 
-setlocal formatlistpat=^\\s*[\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|^\\s*[-+o*]\\s\\+
+setlocal formatlistpat=\\C^\\s*[\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|^\\s*[-+o*]\\s\\+
+setlocal formatoptions+=n
 
 let b:pandoc_loaded = 1
