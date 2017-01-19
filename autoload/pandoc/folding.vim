@@ -157,7 +157,7 @@ function! pandoc#folding#FoldExpr()
     endif
 
     " Delegate to filetype specific functions
-    if &ft =~ "markdown" || &ft == "pandoc"
+    if &ft =~ "markdown" || &ft == "pandoc" || &ft == "rmd"
         " vim-pandoc-syntax sets this variable, so we can check if we can use
         " syntax assistance in our foldexpr function
         if exists("g:vim_pandoc_syntax_exists") && b:pandoc_folding_basic != 1
@@ -191,7 +191,7 @@ function! pandoc#folding#FoldText()
     if f_line =~ "<div class="
         return v:folddashes . " [". matchstr(f_line, "\\(class=[\"']\\)\\@<=.*[\"']\\@="). "] " . n_line[:30] . "..." . line_count_text
     endif
-    if &ft =~ "markdown" || &ft == "pandoc"
+    if &ft =~ "markdown" || &ft == "pandoc" || &ft == "rmd"
         return pandoc#folding#MarkdownFoldText() . line_count_text
     elseif &ft == "textile"
         return pandoc#folding#TextileFoldText() . line_count_text
