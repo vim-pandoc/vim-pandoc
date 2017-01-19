@@ -665,6 +665,11 @@ A description of the available configuration variables follows:
   The LaTeX engine to use with pandoc. 'xelatex' is the default for greater
   unicode compatibility.
 
+- *b:pandoc_command_latex_engine*
+  default = None
+
+  As |g:pandoc#command#latex_engine|, but for the current file.
+
 - *g:pandoc#command#custom_open*
   default = ""
 

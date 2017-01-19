@@ -237,7 +237,11 @@ class PandocCommand(object):
             '.' + self.opts.get_output_formats_table()[no_extensions(output_format)]
         output_arg = '-o "' + self._output_file_path + '"'
 
-        engine_var = vim.vars['pandoc#command#latex_engine']
+        try: # try a buffer local engine
+            engine_var = vim.current.buffer.vars['pandoc_command_latex_engine']
+        except:
+            engine_var = vim.vars['pandoc#command#latex_engine']
+        # vim's python3's .vars are bytes, unlike in neovim
         if type(engine_var) == bytes:
             engine_var = engine_var.decode()
         engine_arg = "--latex-engine=" + engine_var \
