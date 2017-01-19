@@ -202,8 +202,9 @@ class PandocCommand(object):
             buffer_bibliographies = vim.eval('b:pandoc_biblio_bibs')
             if len(buffer_bibliographies) < 1:
                 buffer_bibliographies = find_bibfiles()
-            bib_arg = " ".join(['--bibliography "' + i  + '"' for i in buffer_bibliographies]) if \
-                    len(buffer_bibliographies) > 0 \
+            bib_arg = " ".join(['--bibliography "' + i  + '"' \
+                                for i in buffer_bibliographies]) \
+                    if len(buffer_bibliographies) > 0 \
                     else ""
         else:
             bib_arg = ""
@@ -213,7 +214,9 @@ class PandocCommand(object):
                 not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
                 else ""
 
-        c_opts, c_args = getopt.gnu_getopt(shlex.split(args), self.opts.shortopts, self.opts.longopts)
+        c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
+                                           self.opts.shortopts,
+                                           self.opts.longopts)
         def wrap_args(i):
             if re.search('=', i[1]):
                 return (i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])))
@@ -221,16 +224,25 @@ class PandocCommand(object):
                 return (i[0], i[1])
         c_opts = [wrap_args(i) for i in c_opts]
 
-        output_format = c_args.pop(0) if len(c_args) > 0 and self.opts.in_allowed_formats(c_args[0]) else "html"
+        output_format = c_args.pop(0) \
+            if len(c_args) > 0 \
+                and self.opts.in_allowed_formats(c_args[0]) \
+            else "html"
         output_format_arg = "-t " + output_format if output_format != "pdf" else ""
 
         def no_extensions(fmt):
             return re.split("[-+]", fmt)[0]
 
-        self._output_file_path = vim.eval('expand("%:r")') + '.' + self.opts.get_output_formats_table()[no_extensions(output_format)]
+        self._output_file_path = vim.eval('expand("%:r")') + \
+            '.' + self.opts.get_output_formats_table()[no_extensions(output_format)]
         output_arg = '-o "' + self._output_file_path + '"'
 
-        engine_arg = "--latex-engine=" + vim.vars["pandoc#command#latex_engine"] if output_format in ["pdf", "beamer"] else ""
+        engine_var = vim.vars['pandoc#command#latex_engine']
+        if type(engine_var) == bytes:
+            engine_var = engine_var.decode()
+        engine_arg = "--latex-engine=" + engine_var \
+            if output_format in ["pdf", "beamer"] \
+            else ""
 
         extra = []
         for opt in c_opts:
