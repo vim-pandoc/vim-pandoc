@@ -257,7 +257,7 @@ performance reasons.
 
 - COMMAND                                            *vim-pandoc-command-module*
 
-Note: This modules requires python support.
+Note: Full functionality of this module requires python support.
 
 The `command` module sets up a buffer-local *:Pandoc* command which handles
 pandoc execution. This command builds an incantation for pandoc using
@@ -317,6 +317,19 @@ setting.
 
 Notice that vim-pandoc also defines and sets a 'compiler' pandoc that can be
 started by ':make' or ':lmake' and compiles the current file by pandoc.
+
+						                 *Pandoc-native*
+If you vim doesn't have support for python, you can still use a limited
+version of the Pandoc command, however this will not support autocompletion,
+the convenience abbreviations or the ability to open the file after compiling
+(these features might be supported in the feature). Thus, instead of
+
+    Pandoc pdf
+
+you would need to issue
+
+    Pandoc -o myfile.pdf
+
 
 -- TEMPLATES                                       *vim-pandoc-command-templates*
 

@@ -42,6 +42,9 @@ function! pandoc#command#Init()
         exe s:python ."import vim"
         command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete
                     \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
+    else
+        " simple version for systems without python
+        command! -buffer -nargs=? Pandoc call pandoc#command#PandocNative("<args>")
     endif "}}}2
     " create :PandocTemplate {{{2
     command! -buffer -nargs=1 -complete=custom,pandoc#command#PandocTemplateComplete
@@ -62,6 +65,15 @@ function! pandoc#command#Pandoc(args, bang)
         let templatized_args = substitute(a:args, '#\(\S\+\)',
                     \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
         exe s:python ."pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')"
+    endif
+endfunction
+
+function! pandoc#command#PandocNative(args)
+    let l:cmd = 'pandoc '.a:args. ' '.fnameescape(expand('%'))
+    if has('job')
+        call job_start(l:cmd)
+    else
+        call system(l:cmd)
     endif
 endfunction
 
