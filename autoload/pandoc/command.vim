@@ -12,6 +12,11 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#latex_engine")
         let g:pandoc#command#latex_engine = "xelatex"
     endif
+    if exists('b:pandoc_yaml_data')
+        if has_key(b:pandoc_yaml_data, 'latex_engine')
+            let b:pandoc_command_latex_engine = b:pandoc_yaml_data[latex_engine]
+        endif
+    endif
     " custom function defining command to open the created files {{{3
     if !exists("g:pandoc#command#custom_open")
         let g:pandoc#command#custom_open = ""
