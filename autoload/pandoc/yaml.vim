@@ -1,6 +1,6 @@
 " Parsing of YAML metadata blocks
 
-function! pandoc#yaml#init()
+function! pandoc#yaml#Init()
     let b:pandoc_yaml_data = pandoc#yaml#Parse()
 endfunction
 
