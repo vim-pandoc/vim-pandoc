@@ -70,6 +70,8 @@ def get_pandoc_version():
 
 def get_raw_pandoc_data(pattern, cmd="--help"):
     data = Popen(["pandoc", cmd], stdout=PIPE).communicate()[0]
+    if type(data) == bytes:
+        data = data.decode()
     if cmd == "--help":
         return re.search(pattern, data, re.DOTALL).group(1)
     else:
@@ -243,7 +245,7 @@ class PandocCommand(object):
             engine_var = vim.vars['pandoc#command#latex_engine']
         # vim's python3's .vars are bytes, unlike in neovim
         if type(engine_var) == bytes:
-            engine_var = engine_var.decode()
+            engine_var = '"' + engine_var.decode() + '"'
         engine_arg = "--latex-engine=" + engine_var \
             if output_format in ["pdf", "beamer"] \
             else ""
@@ -299,7 +301,6 @@ class PandocCommand(object):
                         str(['pandoc'] + shlex.split(self._run_command)[1:]) + \
                                 ", extend({'should_open': '" + should_open_s + \
                                 "'}, {'on_exit': 'pandoc#command#JobHandler'}))")
-                #vim.command('call jobstart(["pandoc", ' + str(shlex.split(self._run_command)[1:]) + '])')
             else:
                 try:
                     com = Popen(shlex.split(self._run_command), stdout=tmp, stderr=tmp)
@@ -313,7 +314,7 @@ class PandocCommand(object):
     def on_done(self, should_open, returncode):
         if self._run_command and self._output_file_path:
             vim.command("echohl Statement")
-            vim.command("echom 'vim-pandoc:ran:" + self._run_command + "'")
+            vim.command("echom 'vim-pandoc:ran " + self._run_command + "'")
             vim.command("echohl None")
 
             if vim.eval("g:pandoc#command#use_message_buffers") == '1' and returncode not in  ('0', 0):
@@ -325,7 +326,7 @@ class PandocCommand(object):
                 vim.command("setlocal wrap")
                 vim.command("setlocal linebreak")
                 vim.current.buffer[0] = "# Press q to close this"
-                vim.current.buffer.append("▶ " + self._run_command)
+                vim.current.buffer.append("> " + self._run_command)
                 vim.command("normal! G")
                 if vim.eval('filereadable("pandoc.out")') == '1':
                     vim.command("silent r pandoc.out")
