@@ -475,6 +475,10 @@ setting the |g:pandoc#biblio#use_bibtool| variable to 1.
 
 TIP: If you use unite.vim, you might want to check https://github.com/msprev/unite-bibtex
 
+- YAML						  *vim-pandoc-yaml-module*
+
+This module gathers data from YAML headers, if present, and keeps it in the
+*b:pandoc_yaml_data* variable. Other modules might be configured using this.
 
 - COMPLETION                                       *vim-pandoc-completion-module*
 

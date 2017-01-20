@@ -32,6 +32,7 @@ let g:pandoc_extensions_table = {
 " Enabled modules {{{3
 if !exists("g:pandoc#modules#enabled")
     let g:pandoc#modules#enabled = [
+                \"yaml",
                 \"bibliographies",
                 \"completion",
                 \"command",
