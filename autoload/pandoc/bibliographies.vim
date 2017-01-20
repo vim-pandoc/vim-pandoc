@@ -9,9 +9,10 @@ function! pandoc#bibliographies#Init()
     " l: pandoc local dir
     " t: texmf
     " g: append values in g:pandoc#biblio#bibs
+    " y: add bibliography specified in yaml header
     "
     if !exists("g:pandoc#biblio#sources")
-        let g:pandoc#biblio#sources = "bcg"
+        let g:pandoc#biblio#sources = "bcgy"
     endif
     "}}}
     " File extensions to check for {{{3
@@ -30,6 +31,14 @@ function! pandoc#bibliographies#Init()
     endif
     " populate b:pandoc_biblio_bibs {{{2
     let b:pandoc_biblio_bibs = []
+    " add bibliographies in yaml header
+    if match(g:pandoc#biblio#sources, 'y') > -1
+        if exists('b:pandoc_yaml_data')
+            if has_key(b:pandoc_yaml_data, 'bibliography')
+                call add(b:pandoc_biblio_bibs, b:pandoc_yaml_data[bibliography])
+            endif
+        endif
+    endif
     " set up python
     let s:python = {}
     if has("python")
@@ -41,7 +50,7 @@ function! pandoc#bibliographies#Init()
     endif
     if has("python") || has("python3")
         exe s:python.cmd . " import vim_pandoc.bib.vim_completer"
-    endif    
+    endif
 endfunction
 
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
