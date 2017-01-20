@@ -14,7 +14,7 @@ function! pandoc#command#Init()
     endif
     if exists('b:pandoc_yaml_data')
         if has_key(b:pandoc_yaml_data, 'latex_engine')
-            let b:pandoc_command_latex_engine = b:pandoc_yaml_data[latex_engine]
+            let b:pandoc_command_latex_engine = b:pandoc_yaml_data['latex_engine']
         endif
     endif
     " custom function defining command to open the created files {{{3

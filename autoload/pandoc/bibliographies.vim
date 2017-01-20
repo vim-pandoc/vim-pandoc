@@ -35,7 +35,7 @@ function! pandoc#bibliographies#Init()
     if match(g:pandoc#biblio#sources, 'y') > -1
         if exists('b:pandoc_yaml_data')
             if has_key(b:pandoc_yaml_data, 'bibliography')
-                call add(b:pandoc_biblio_bibs, b:pandoc_yaml_data[bibliography])
+                call add(b:pandoc_biblio_bibs, b:pandoc_yaml_data['bibliography'])
             endif
         endif
     endif
