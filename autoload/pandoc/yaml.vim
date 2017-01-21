@@ -18,7 +18,7 @@ function! pandoc#yaml#Extract()
 	let l:cline = getline(l:cline_n)
 	let l:is_delim = l:cline =~ '^[-.]\{3}'
 	if l:cline_n == 1 && !l:is_delim " assume no header, end early
-	    return ''
+	    return []
 	elseif l:cline_n > 1 && l:is_delim " yield data as soon as we find a delimiter
 	    return l:tmp_lines
 	else
@@ -28,7 +28,7 @@ function! pandoc#yaml#Extract()
 	endif
 	let l:cline_n += 1
     endwhile
-    return '' " just in case
+    return [] " just in case
 endfunction
 
 function! pandoc#yaml#Parse(...)
@@ -37,7 +37,7 @@ function! pandoc#yaml#Parse(...)
     else
 	let l:block = a:1
     endif
-    if l:block == ''
+    if l:block == []
 	return -1
     endif
     let yaml_dict = {}
