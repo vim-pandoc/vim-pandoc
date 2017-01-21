@@ -246,7 +246,7 @@ class PandocCommand(object):
         # vim's python3's .vars are bytes, unlike in neovim
         if type(engine_var) == bytes:
             engine_var = '"' + engine_var.decode() + '"'
-        engine_arg = "--latex-engine=" + engine_var \
+        engine_arg = "--latex-engine=" + str(engine_var) \
             if output_format in ["pdf", "beamer"] \
             else ""
 
@@ -266,15 +266,17 @@ class PandocCommand(object):
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
-        self._run_command = " ".join(filter(lambda i: i != "", ["pandoc", \
-                                                                bib_arg, \
-                                                                strict_arg, \
-                                                                output_format_arg, \
-                                                                engine_arg, \
-                                                                output_arg, \
-                                                                extra_args, \
-                                                                extra_input_args, \
-                                                                input_arg]))
+        arglist = ["pandoc", \
+                   bib_arg, \
+                   strict_arg, \
+                   output_format_arg, \
+                   engine_arg, \
+                   output_arg, \
+                   extra_args, \
+                   extra_input_args, \
+                   input_arg]
+
+        self._run_command = " ".join(filter(lambda i: len(i) > 0, arglist))
 
         # execute
         self.execute(should_open)
@@ -297,9 +299,10 @@ class PandocCommand(object):
                     should_open_s = str(int(should_open))
                 except:
                     should_open_s = '0'
-                vim.command("call jobstart("+ \
-                        str(['pandoc'] + shlex.split(self._run_command)[1:]) + \
-                                ", extend({'should_open': '" + should_open_s + \
+
+                vim.command("call jobstart(['"+ \
+                        "','".join(shlex.split(self._run_command)) + \
+                                "'], extend({'should_open': '" + should_open_s + \
                                 "'}, {'on_exit': 'pandoc#command#JobHandler'}))")
             else:
                 try:
