@@ -133,7 +133,7 @@ function! pandoc#folding#FoldExpr()
     if g:pandoc#folding#fold_vim_markers == 1
         if vline =~ '[{}]\{3}'
             if g:pandoc#folding#vim_markers_in_comments_only == 1
-                let mark_head = '<!--\s*'
+                let mark_head = '<!--.*'
             else
                 let mark_head = ''
             endif
@@ -183,10 +183,13 @@ function! pandoc#folding#FoldText()
     let line_count_text = " / " . line_count . " lines / "
 
     if n_line =~ 'title\s*:'
-        return v:folddashes . " [yaml] " . matchstr(n_line, '\(title\s*:\s*\)\@<=\S.*') . line_count_text
+        return v:folddashes . " [y] " . matchstr(n_line, '\(title\s*:\s*\)\@<=\S.*') . line_count_text
     endif
     if f_line =~ "fold-begin"
-        return v:folddashes . " [custom] " . matchstr(f_line, '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
+        return v:folddashes . " [c] " . matchstr(f_line, '\(<!-- \)\@<=.*\( fold-begin -->\)\@=') . line_count_text
+    endif
+    if f_line =~ "<!-- .*{{{"
+        return v:folddashes . " [m] " . matchstr(f_line, '\(<!-- \)\@<=.*\( {{{.* -->\)\@=') . line_count_text
     endif
     if f_line =~ "<div class="
         return v:folddashes . " [". matchstr(f_line, "\\(class=[\"']\\)\\@<=.*[\"']\\@="). "] " . n_line[:30] . "..." . line_count_text
