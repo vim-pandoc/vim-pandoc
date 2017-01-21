@@ -1,7 +1,11 @@
 " Parsing of YAML metadata blocks
 
 function! pandoc#yaml#Init()
-    let b:pandoc_yaml_data = pandoc#yaml#Parse()
+    let b:pandoc_yaml_data = {}
+    try
+	call extend(b:pandoc_yaml_data, pandoc#yaml#Parse())
+    catch
+    endtry
 endfunction
 
 " extract yaml header text from the current text, as a list of lines
@@ -31,11 +35,11 @@ function! pandoc#yaml#Parse(...)
     if a:0 == 0 " if no arguments, extract from the current buffer
 	let l:block = pandoc#yaml#Extract()
     else
-	if l:block = ''
-	    return -1
-	end
 	let l:block = a:1
-    end
+    endif
+    if l:block == ''
+	return -1
+    endif
     let yaml_dict = {}
     " assume a flat structure
     for line in l:block
