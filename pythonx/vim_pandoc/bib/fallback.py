@@ -34,6 +34,8 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
 
         args = "-- select{$key title booktitle author editor \"%(query)s\"}'" % {"query": query}
         text = sp.Popen(["bibtool", "--preserve.key.case=on",  args, bib], stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0]
+        if isinstance(text, bytes):
+            text = text.decode("utf-8")
     else:
         bibtex_id_search = re.compile(".*{\s*(?P<id>" + query + ".*),")
 
