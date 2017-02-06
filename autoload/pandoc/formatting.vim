@@ -58,6 +58,25 @@ function! pandoc#formatting#Init() abort "{{{1
         let g:pandoc#formatting#extra_equalprg = "--reference-links"
     endif
     " }}}3
+    " formatprg {{{3
+    if !exists("g:pandoc#formatting#formatprg#use_pandoc")
+        let g:pandoc#formatting#formatprg#use_pandoc = 0
+    endif
+    if !exists("g:pandoc#formatting#formatprg")
+        if g:pandoc#formatting#formatprg#use_pandoc == 1
+            if executable('pandoc')
+                let g:pandoc#formatting#formatprg = "pandoc -t markdown"
+                if g:pandoc#formatting#mode =~# "h"
+                    let g:pandoc#formatting#formatprg.= " --columns ".g:pandoc#formatting#textwidth
+                else
+                    let g:pandoc#formatting#formatprg.= " --wrap=none"
+                endif
+            endif
+        else
+            let g:pandoc#formatting#formatprg = ''
+        endif
+    endif
+    " }}}3
     " Use a custom indentexpr? {{{3
     if !exists("g:pandoc#formatting#set_indentexpr")
         let g:pandoc#formatting#set_indentexpr = 0
@@ -81,6 +100,11 @@ function! pandoc#formatting#Init() abort "{{{1
     "
     if g:pandoc#formatting#equalprg !=? ''
         let &l:equalprg=g:pandoc#formatting#equalprg." ".g:pandoc#formatting#extra_equalprg
+    endif
+
+    " formatprg {{{2
+    if g:pandoc#formatting#formatprg !=? ''
+        let &l:formatprg=g:pandoc#formatting#formatprg
     endif
 
     " common settings {{{2
