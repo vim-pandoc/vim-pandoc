@@ -217,8 +217,8 @@ class PandocCommand(object):
                 not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
                 else ""
 
-        if re.search(args, '--mathjax '):
-            args = re.sub(args, '--mathjax', '')
+        if re.search('--mathjax( |$)', args):
+            args = re.sub('--mathjax', '', args)
             extra_mathjax = True
 
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
