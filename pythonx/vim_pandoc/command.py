@@ -217,6 +217,10 @@ class PandocCommand(object):
                 not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
                 else ""
 
+        if re.search(args, '--mathjax '):
+            args = re.sub(args, '--mathjax', '')
+            extra_mathjax = True
+
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
                                            self.opts.shortopts,
                                            self.opts.longopts)
@@ -261,6 +265,8 @@ class PandocCommand(object):
                 extra.append(opt[0] + (eq or ' ') + '"' + val + '"')
             else:
                 extra.append(opt[0] + eq + opt[1])
+        if extra_mathjax:
+            extra.append('--mathjax')
 
         extra_args = " ".join(extra)
 
