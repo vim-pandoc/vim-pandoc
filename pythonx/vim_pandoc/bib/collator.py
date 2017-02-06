@@ -1,4 +1,5 @@
 import os
+import vim
 from glob import glob
 from subprocess import check_output
 
@@ -15,6 +16,9 @@ bib_extensions = ["bib",
 
 class SourceCollator():
     def __init__(self, fname=None, query=None, sources="bcg", extra_sources=([], []), **extra_args):
+        # nvim's python host doesn't change the directory the same way vim does
+        if vim.eval('has("nvim")') == '1':
+            os.chdir(vim.eval('expand("%:p:h")'))
         self.fname = fname
         self.query = query
         self.sources = sources
