@@ -220,6 +220,8 @@ class PandocCommand(object):
         if re.search('--mathjax( |$)', args):
             args = re.sub('--mathjax', '', args)
             extra_mathjax = True
+        else:
+            extra_mathjax = False
 
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
                                            self.opts.shortopts,
