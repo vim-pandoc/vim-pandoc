@@ -38,7 +38,6 @@ if !exists("g:pandoc#modules#enabled")
                 \"command",
                 \"folding",
                 \"formatting",
-                \"indent",
                 \"menu",
                 \"metadata",
                 \"keyboard" ,
