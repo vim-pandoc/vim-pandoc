@@ -1,5 +1,8 @@
 function! pandoc#indent#Init()
     runtime! indent/tex.vim
+    if exists("#LatexBox_Completion#CompleteDone")
+	au! LatexBox_Completion CompleteDone
+    endif
     setlocal indentexpr=pandoc#indent#GetIndent()
 endfunction
 
