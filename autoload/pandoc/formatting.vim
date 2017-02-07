@@ -194,6 +194,9 @@ function! pandoc#formatting#AutoFormat(force) abort "{{{1
                 if match(l:synName, l:blacklist_re) >= 0
                     let l:should_enable = 0
                 endif
+                if match(l:synName, 'pandocdefinitionblock') >= 0
+                    let context_prevents = 1
+                endif
                 try
                     let l:p_synName = synIDattr(synstack(l:line-1, col('$'))[0], 'name')
                 catch /E684/
