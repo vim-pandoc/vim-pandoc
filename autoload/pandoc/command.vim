@@ -119,7 +119,7 @@ function! pandoc#command#PandocAsyncCallback(should_open, returncode)
     exe s:python ."pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))"
 endfunction
 
-function! pandoc#command#JobHandler(id, data, event)
+function! pandoc#command#JobHandler(id, data, event) dict
     exe s:python ."from vim_pandoc.command import pandoc"
     exe s:python ."pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))"
 endfunction

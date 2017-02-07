@@ -302,10 +302,10 @@ class PandocCommand(object):
                 except:
                     should_open_s = '0'
 
-                vim.command("call jobstart(['"+ \
-                        "','".join(shlex.split(self._run_command)) + \
-                        "'], extend({'should_open': '" + should_open_s + \
-                        "'}, {'on_exit': 'pandoc#command#JobHandler'}))")
+                vim.command("call jobstart(" + \
+                            "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
+                            " extend({'should_open': '" + should_open_s + "'}," +\
+                            " {'on_exit': 'pandoc#command#JobHandler'}))")
 
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
