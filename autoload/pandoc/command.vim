@@ -119,9 +119,16 @@ function! pandoc#command#PandocAsyncCallback(should_open, returncode)
     exe s:python ."pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))"
 endfunction
 
+" PandocJobHandler(id, data, event): Callback for neovim {{{2
 function! pandoc#command#JobHandler(id, data, event) dict
-    exe s:python ."from vim_pandoc.command import pandoc"
-    exe s:python ."pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))"
+    if a:event == 'stdout'
+        call writefile(a:data, 'pandoc.out', 'ab')
+    elseif a:event == 'stderr'
+        call writefile(a:data, 'pandoc.out', 'ab')
+    else
+        exe s:python ."from vim_pandoc.command import pandoc"
+        exe s:python ."pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))"
+    endif
 endfunction
 
 " Command template functions {{{1

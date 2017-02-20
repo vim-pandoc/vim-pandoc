@@ -305,7 +305,9 @@ class PandocCommand(object):
                 vim.command("call jobstart(" + \
                             "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
                             " extend({'should_open': '" + should_open_s + "'}," +\
-                            " {'on_exit': 'pandoc#command#JobHandler'}))")
+                            " {'on_exit': 'pandoc#command#JobHandler'," + \
+                            "'on_stdout': 'pandoc#command#JobHandler'," + \
+                            "'on_stderr': 'pandoc#command#JobHandler'}))")
 
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
@@ -356,10 +358,10 @@ class PandocCommand(object):
                 vim.command("map <buffer> q :bd<cr>")
                 # we will highlight some elements in the buffer
                 vim.command("syn match PandocOutputMarks /^>>/")
-                vim.command("syn match PandocCommand /^▶.*$/hs=s+1")
+                vim.command("syn match PandocCommand /^>.*$/hs=s+1")
                 vim.command("syn match PandocInstructions /^#.*$/")
                 vim.command("hi! link PandocOutputMarks Operator")
-                vim.command("hi! link PandocCommand Statement")
+                vim.command("hi! link PandocCommand Debug")
                 vim.command("hi! link PandocInstructions Comment")
 
             # under windows, pandoc.out is not closed by async.py in time sometimes,
