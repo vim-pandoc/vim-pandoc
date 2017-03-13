@@ -261,6 +261,14 @@ class PandocCommand(object):
         extra = []
         for opt in c_opts:
             eq = '=' if opt[1] and re.match('^--', opt[0]) else ''
+            if opt[0] in ("-V", "--variable") and "=" in opt[1]:
+                # we have -V var=thing
+                # Should also apply logic below regarding paths
+                var, _, arg = opt[1].partition("=")
+                # Coerse opt such that the below works on the true value, i.e.
+                # the value of the variable being set.
+                opt = ("-V " + var, arg.strip('"'))
+                eq = "="
             # if it begins with ~, it will expand, otherwise, it will just copy
             val = os.path.expanduser(opt[1])
             if os.path.isabs(val) and os.path.exists(val):
