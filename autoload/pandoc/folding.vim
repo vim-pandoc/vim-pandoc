@@ -38,6 +38,10 @@ function! pandoc#folding#Init()
     if !exists("g:pandoc#folding#fold_fenced_codeblocks")
         let g:pandoc#folding#fold_fenced_codeblocks = 0
     endif
+    " Use custom foldtext? {{{3
+    if !exists('g:pandoc#folding#use_foldtext')
+        let g:pandoc#folding#use_foldtext = 1
+    endif
     " Use basic folding fot this buffer? {{{3
     if !exists("b:pandoc_folding_basic")
         let b:pandoc_folding_basic = 0
@@ -53,7 +57,9 @@ function! pandoc#folding#Init()
         autocmd InsertLeave <buffer> setlocal foldmethod=expr
     augroup end
     setlocal foldexpr=pandoc#folding#FoldExpr()
-    setlocal foldtext=pandoc#folding#FoldText()
+    if g:pandoc#folding#use_foldtext
+        setlocal foldtext=pandoc#folding#FoldText()
+    endif
     if g:pandoc#folding#fdc > 0
         let &l:foldcolumn = g:pandoc#folding#fdc
     endif
