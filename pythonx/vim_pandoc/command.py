@@ -387,7 +387,7 @@ class PandocCommand(object):
             if os.path.exists(os.path.abspath(self._output_file_path)) and should_open:
                 # if g:pandoc#command#custom_open is defined and is a valid funcref
                 if vim.eval("g:pandoc#command#custom_open") != "" \
-                   and vim.eval("exists('*"+vim.eval("g:pandoc#command#custom_open")+"')") == 1:
+                   and vim.eval("exists('*"+vim.eval("g:pandoc#command#custom_open")+"')") == '1':
 
                     custom_command = vim.eval(vim.eval("g:pandoc#command#custom_open") \
                                               + "('"+self._output_file_path+"')")
