@@ -271,7 +271,8 @@ class PandocCommand(object):
                 eq = "="
             # if it begins with ~, it will expand, otherwise, it will just copy
             val = os.path.expanduser(opt[1])
-            extra.append(opt[0] + (eq or ' ') + '"' + val + '"')
+            extra.append(opt[0] + (eq or ' ')
+                + (('"' + val + '"') if len(val) else ''))
         if extra_mathjax:
             extra.append('--mathjax')
 
