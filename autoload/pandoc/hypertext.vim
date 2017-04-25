@@ -333,7 +333,7 @@ function! pandoc#hypertext#GotoID(...)
         if line > 0
             call cursor(line, 1)
         else
-            call pandoc#hypertext#GotoSavedCursor()
+            call pandoc#hypertext#BackFromLink()
         endif
     endif
 endfunction
