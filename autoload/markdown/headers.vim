@@ -384,7 +384,7 @@ function! markdown#headers#GetAutomaticID(header) " {{{1
     if !exists("header_id") || header_id == ""
         let text = substitute(a:header, '\[\(.\{-}\)\]\[.*\]', '\1', '') " remove links
         let text = substitute(text, '\s{.*}', '', '') " remove attributes
-        let text = substitute(text, '[[:punct:]]', '', 'g') " remove formatting and punctuation
+        let text = substitute(text, '[!"#\$%\&''()\*+,/:;<=>?@\[\\\]\^`{|}\~]', '', 'g') " remove formatting and punctuation, except -_. (hyphen, underscore, period)
         let text = substitute(text, '.\{-}[[:alpha:]\u20AC-\uFFFF]\@=', '', '') " remove everything before the first letter
         let text = substitute(text, '\s', '-', 'g') " replace spaces with dashes
         let text = tolower(text) " turn lowercase
