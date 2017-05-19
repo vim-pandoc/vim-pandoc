@@ -223,6 +223,15 @@ class PandocCommand(object):
         else:
             extra_mathjax = False
 
+        if re.search('--smart( |$)', args):
+            args = re.sub('--smart', '', args)
+            extra_smart = True
+        elif re.search('-S( |$)', args):
+            args = re.sub('-S', '', args)
+            extra_smart = True
+        else:
+            extra_smart = False
+
         c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
                                            self.opts.shortopts,
                                            self.opts.longopts)
@@ -275,6 +284,8 @@ class PandocCommand(object):
                 + (('"' + val + '"') if len(val) else ''))
         if extra_mathjax:
             extra.append('--mathjax')
+        if extra_smart:
+            extra.append('--smart')
 
         extra_args = " ".join(extra)
 
