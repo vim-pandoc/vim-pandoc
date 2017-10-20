@@ -64,13 +64,13 @@ markdown_extensions = [
         ]
 #}}}
 def get_pandoc_version():
-    data = str(Popen(["pandoc", "--version"], stdout=PIPE).communicate()[0])
+    data = str(Popen([vim.vars["pandoc#command#path"], "--version"], stdout=PIPE).communicate()[0])
     m = re.search("pandoc (\d+\.\d+)", data)
     if m:
         return m.group(1)
 
 def get_raw_pandoc_data(pattern, cmd="--help"):
-    data = Popen(["pandoc", cmd], stdout=PIPE).communicate()[0]
+    data = Popen([vim.vars["pandoc#command#path"], cmd], stdout=PIPE).communicate()[0]
     if type(data) == bytes:
         data = data.decode()
     if cmd == "--help":
@@ -88,20 +88,20 @@ def wrap_formats(data):
 
 class PandocHelpParser(object):
     def __init__(self):
-        self._help_data = Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0]
+        self._help_data = Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0]
         self.longopts = list(PandocHelpParser.get_longopts())
         self.shortopts = PandocHelpParser.get_shortopts()
 
     @staticmethod
     def get_longopts():
-        data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
+        data = str(Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0])
         return map(lambda i: i.replace("--", ""), \
                    filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
                           [ ''.join(i.groups()) for i in re.finditer("--([-\w]+)+\[?(=?)\w*\]?", data)]))
 
     @staticmethod
     def get_shortopts():
-        data = str(Popen(["pandoc", "--help"], stdout=PIPE).communicate()[0])
+        data = str(Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0])
         no_args = list(map(lambda i: i.replace("-", "").strip(), \
                       filter(lambda i: i not in ("-v ", "-h "), \
                              [i.group() for i in re.finditer("-\w\s(?!\w+)", data)])))
@@ -283,7 +283,8 @@ class PandocCommand(object):
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
-        arglist = ["pandoc", \
+        arglist = [vim.vars['pandoc#compiler#command'], \
+                   vim.vars['pandoc#compiler#arguments'], \
                    bib_arg, \
                    strict_arg, \
                    output_format_arg, \
