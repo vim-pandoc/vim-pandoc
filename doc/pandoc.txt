@@ -674,6 +674,12 @@ A description of the available configuration variables follows:
 
   As |g:pandoc#command#latex_engine|, but for the current file.
 
+- *g:pandoc#command#path*
+  default = "pandoc"
+
+  The name of the pandoc command. Can also be an absolute path if the program
+  is not located in the $PATH.
+
 - *g:pandoc#command#custom_open*
   default = ""
 
@@ -707,6 +713,25 @@ A description of the available configuration variables follows:
   default = split(&runtimepath, ",")[0]."/vim-pandoc-templates"
 
   Where to save and retrieve command templates.
+
+- *g:pandoc#compiler#command*
+  default = "{g:pandoc#command#path}"
+
+  The name of the command invoked in |:Pandoc|. Can also be an absolute path
+  if the program is not located in the $PATH.
+
+  The difference to *g:pandoc#command#path* is that the latter is used for
+  internal purposes. For example, if you want to use Panzer:
+
+    let g:pandoc#compiler#command = "panzer"
+
+- *g:pandoc#compiler#arguments*
+  default = ''
+
+  Additional arguments for the command invoked in |:Pandoc|.
+  For example, if you're using Panzer this setting is recommended:
+
+    let g:pandoc#compiler#arguments = "---quiet ---strict"
 
 - *g:pandoc#biblio#sources*
   default = "bcg"

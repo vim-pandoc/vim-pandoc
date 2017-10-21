@@ -33,6 +33,18 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#autoexec_command")
         let g:pandoc#command#autoexec = ''
     endif
+    " path to pandoc executable
+    if !exists("g:pandoc#command#path")
+        let g:pandoc#command#path = 'pandoc'
+    endif
+    " custom command to execute instead of pandoc
+    if !exists("g:pandoc#compiler#command")
+        let g:pandoc#compiler#command = g:pandoc#command#path
+    endif
+    " custom command arguments
+    if !exists("g:pandoc#compiler#arguments")
+        let g:pandoc#compiler#arguments = ''
+    endif
 
     " create :Pandoc {{{2
     if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
@@ -74,7 +86,7 @@ function! pandoc#command#Pandoc(args, bang)
 endfunction
 
 function! pandoc#command#PandocNative(args)
-    let l:cmd = 'pandoc '.a:args. ' '.fnameescape(expand('%'))
+    let l:cmd = g:pandoc#compiler#command.' '.g:pandoc#compiler#arguments.' '.a:args.' '.fnameescape(expand('%'))
     if has('job')
         call job_start(l:cmd)
     else
