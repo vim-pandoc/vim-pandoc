@@ -720,7 +720,7 @@ A description of the available configuration variables follows:
   The name of the command invoked in |:Pandoc|. Can also be an absolute path
   if the program is not located in the $PATH.
 
-  The difference to *g:pandoc#command#path* is that the latter is used for
+  The difference to |g:pandoc#command#path| is that the latter is used for
   internal purposes. For example, if you want to use Panzer:
 
     let g:pandoc#compiler#command = "panzer"
