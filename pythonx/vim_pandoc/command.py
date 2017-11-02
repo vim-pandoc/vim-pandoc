@@ -141,7 +141,7 @@ class PandocHelpParser(object):
                 table[i] = "pdf"
             elif i in ("dzslides", "html", "html5", "mediawiki", "revealjs", "s5", "slideous", "slidy"):
                 table[i] = "html"
-            elif i in  ("markdown", "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict"):
+            elif i in  ("markdown", "gfm", "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict"):
                 table[i] = "md"
             elif i in ("odt", "opendocument"):
                 table[i] = "odt"
