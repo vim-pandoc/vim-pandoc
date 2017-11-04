@@ -247,10 +247,10 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
     setlocal display&
     setlocal wrap&
     " save j, k mappings in case user remapped them
-    if !empty(maparg('j', 'n', 0, 1))
+    if !empty(maparg('j', '', 0, 1))
         let l:save_j = maparg('j', 'n', 0, 1)
     endif
-    if !empty(maparg('k', 'n', 0, 1))
+    if !empty(maparg('k', '', 0, 1))
         let l:save_k = maparg('k', 'n', 0, 1)
     endif
     silent! unmap j
@@ -295,6 +295,11 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
              \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
              \ l:save_j.lhs . ' ' .
              \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
+        " restore operation-pending mode mapping for j
+        exec (l:save_j.noremap ? 'onoremap' : 'omap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_j.lhs . ' ' .
+             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
     endif
     if exists('l:save_k')
         " restore normal mode mapping for k
@@ -304,6 +309,11 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
              \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
         " restore visual mode mapping for k
         exec (l:save_k.noremap ? 'vnoremap' : 'vmap') .
+             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
+             \ l:save_k.lhs . ' ' .
+             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
+        " restore operation-pending mode mapping for k
+        exec (l:save_k.noremap ? 'onoremap' : 'omap') .
              \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
              \ l:save_k.lhs . ' ' .
              \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
