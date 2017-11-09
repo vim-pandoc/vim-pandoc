@@ -254,7 +254,11 @@ class PandocCommand(object):
         # vim's python3's .vars are bytes, unlike in neovim
         if type(engine_var) == bytes:
             engine_var = '"' + engine_var.decode() + '"'
-        engine_arg = "--latex-engine=" + str(engine_var) \
+        if get_pandoc_version() >= '2':
+            engine_flag = '--pdf-engine'
+        else:
+            engine_flag = '--latex_engine'
+        engine_arg = engine_flag + "=" + str(engine_var) \
             if output_format in ["pdf", "beamer"] \
             else ""
 
