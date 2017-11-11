@@ -4,302 +4,115 @@ import vim
 import re
 import sys
 import os.path
-import getopt
+import argparse
 import shlex
 from subprocess import Popen, PIPE
+from itertools import chain
 from vim_pandoc.utils import plugin_enabled_modules
 from vim_pandoc.bib.vim_completer import find_bibfiles
-
-# pandoc's markdown extensions {{{1
-markdown_extensions = [
-        "escaped_line_breaks",
-        "blank_before_header",
-        "header_attributes",
-        "auto_identifiers",
-        "implicit_header_references",
-        "blank_before_blockquote",
-        "fenced_code_blocks",
-        "fenced_code_attributes",
-        "line_blocks",
-        "fancy_lists",
-        "startnum",
-        "definition_lists",
-        "example_lists",
-        "table_captions",
-        "simple_tables",
-        "multiline_tables",
-        "grid_tables",
-        "pipe_tables",
-        "pandoc_title_block",
-        "yaml_metadata_block",
-        "all_symbols_escapable",
-        "intraword_underscores",
-        "strikeout",
-        "superscript",
-        "subscript",
-        "inline_code_attributes",
-        "tex_math_dollars",
-        "raw_html",
-        "markdown_in_html_blocks",
-        "native_divs",
-        "native_spans",
-        "raw_tex",
-        "latex_macros",
-        "footnotes",
-        "citations",
-        # non-pandoc
-        "lists_without_preceding_blankline",
-        "hard_line_breaks",
-        "ignore_line_breaks",
-        "tex_math_single_backlash",
-        "tex_math_double_backlash",
-        "markdown_attribute",
-        "mmd_title_block",
-        "abbreviations",
-        "autolink_bare_uris",
-        "ascii_identifiers",
-        "link_attributes",
-        "mmd_header_identifiers",
-        "compact_definition_lists"
-        ]
-#}}}
-def get_pandoc_version():
-    data = str(Popen([vim.vars["pandoc#command#path"], "--version"], stdout=PIPE).communicate()[0])
-    m = re.search("pandoc (\d+\.\d+)", data)
-    if m:
-        return m.group(1)
-
-def get_raw_pandoc_data(pattern, cmd="--help"):
-    data = Popen([vim.vars["pandoc#command#path"], cmd], stdout=PIPE).communicate()[0]
-    if type(data) == bytes:
-        data = data.decode()
-    if cmd == "--help":
-        return re.search(pattern, data, re.DOTALL).group(1)
-    else:
-        return data
-
-def wrap_formats(data):
-        # pandoc's output changes depending on platform
-        if sys.platform == "win32":
-            splitter = '\r\n'
-        else:
-            splitter = '\n'
-        return re.findall('(\w+\**)[,'+splitter+']', data)
-
-class PandocHelpParser(object):
-    def __init__(self):
-        self._help_data = Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0]
-        self.longopts = list(PandocHelpParser.get_longopts())
-        self.shortopts = PandocHelpParser.get_shortopts()
-
-    @staticmethod
-    def get_longopts():
-        data = str(Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0])
-        return map(lambda i: i.replace("--", ""), \
-                   filter(lambda i: i not in ("--version", "--help", "--to", "--write"), \
-                          [ ''.join(i.groups()) for i in re.finditer("--([-\w]+)+\[?(=?)\w*\]?", data)]))
-
-    @staticmethod
-    def get_shortopts():
-        data = str(Popen([vim.vars["pandoc#command#path"], "--help"], stdout=PIPE).communicate()[0])
-        no_args = list(map(lambda i: i.replace("-", "").strip(), \
-                      filter(lambda i: i not in ("-v ", "-h "), \
-                             [i.group() for i in re.finditer("-\w\s(?!\w+)", data)])))
-
-        # -m doesn't comply with the format of the other short options in pandoc 1.12
-        # if you need to pass an URL, use the long versions
-        no_args.append("m")
-
-        args = map(lambda i: i.replace("-", "").strip(), \
-                      filter(lambda i: i not in ("-t ", "-w "), \
-                             [i.group() for i in re.finditer("-\w\s(?=[A-Z]+)", data)]))
-
-
-        return "".join(no_args) + "".join(map(lambda i: i + ":", args))
-
-    @staticmethod
-    def _get_input_formats():
-        if get_pandoc_version() >= '1.18':
-            return get_raw_pandoc_data(None, '--list-input-formats').splitlines()
-        else:
-            return wrap_formats(get_raw_pandoc_data("Input formats:(.*)Output formats", ))
-
-    @staticmethod
-    def _get_output_formats():
-         if get_pandoc_version() >= '1.18':
-            return get_raw_pandoc_data(None, '--list-output-formats').splitlines()
-         else:
-            return wrap_formats(get_raw_pandoc_data("Output formats:(.*)\[\*+for pdf"))
-
-    @staticmethod
-    def get_output_formats_table():
-        table = {}
-        for i in PandocHelpParser._get_output_formats():
-            if i in ("asciidoc", "plain"):
-                table[i] = "txt"
-            elif i in ("beamer", "pdf"):
-                table[i] = "pdf"
-            elif i in ("dzslides", "html", "html5", "mediawiki", "revealjs", "s5", "slideous", "slidy"):
-                table[i] = "html"
-            elif i in  ("markdown", "gfm", "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict"):
-                table[i] = "md"
-            elif i in ("odt", "opendocument"):
-                table[i] = "odt"
-            elif i == "native":
-                table[i] = "hs"
-            elif i == "texinfo":
-                table[i] = "info"
-            elif i == "latex":
-                table[i] = "tex"
-            else:
-                table[i] = i
-        if "latex" in table or "beamer" in table and "pdf" not in table:
-            table["pdf"] = "pdf"
-        return table
-
-    @staticmethod
-    def get_input_formats_table():
-        """
-        gets a dict with input formats associated to vim filetypes
-        """
-        table = {}
-        for i in PandocHelpParser._get_input_formats():
-            if re.match("markdown", i):
-                if vim.vars["pandoc#filetypes#pandoc_markdown"] != 0:
-                    table[i] = "pandoc"
-                else:
-                    if i == "markdown_strict":
-                        table[i] = "markdown"
-                    else:
-                        table[i] = "pandoc"
-            # requires wikipeadia.vim
-            elif i == "mediawiki":
-                table[i] = "Wikipedia"
-            elif i == "docbook":
-                table[i] = "docbk"
-            elif i == "native":
-                table[i] = "haskell"
-            else:
-                table[i] = i
-        return table
-
-    @staticmethod
-    def in_allowed_formats(identifier):
-        if not identifier.startswith("markdown") and identifier in PandocHelpParser.get_output_formats_table():
-            return True
-        elif identifier.startswith("markdown"):
-            return re.match(identifier+"(([+-]("+"|".join(markdown_extensions)+"))+)?$",identifier)
-        return False
+from vim_pandoc.helpparser import PandocInfo
 
 class PandocCommand(object):
     def __init__(self):
-        self.opts = PandocHelpParser()
+        self.pandoc_info = PandocInfo(vim.vars["pandoc#command#path"])
+        self.formats_table = {}
+        self.build_formats_table()
         self._output_file_path = None
         self._run_command = None
         self._out = None
 
-    def __call__(self, args, should_open):
-        # build arguments to pass pandoc
-
-        if 'bibliographies' in plugin_enabled_modules():
-            buffer_bibliographies = vim.eval('b:pandoc_biblio_bibs')
-            if len(buffer_bibliographies) < 1:
-                buffer_bibliographies = find_bibfiles()
-            bib_arg = " ".join(['--bibliography "' + i  + '"' \
-                                for i in buffer_bibliographies]) \
-                    if len(buffer_bibliographies) > 0 \
-                    else ""
-        else:
-            bib_arg = ""
-
-        strict_arg = "-r markdown_strict" if \
-                vim.current.buffer.options["ft"] == "markdown" and \
-                not bool(vim.vars["pandoc#filetypes#pandoc_markdown"]) \
-                else ""
-
-        if re.search('--mathjax( |$)', args):
-            args = re.sub('--mathjax', '', args)
-            extra_mathjax = True
-        else:
-            extra_mathjax = False
-
-        c_opts, c_args = getopt.gnu_getopt(shlex.split(args),
-                                           self.opts.shortopts,
-                                           self.opts.longopts)
-        def wrap_args(i):
-            if re.search('=', i[1]):
-                return (i[0], re.sub('$', '"', re.sub('(.*)=', '\\1="', i[1])))
+    def build_formats_table(self):
+        for i in self.pandoc_info.output_formats:
+            if i in ("asciidoc", "plain"):
+                self.formats_table[i] = "txt"
+            elif i in ("beamer", "pdf"):
+                self.formats_table[i] = "pdf"
+            elif i in ("dzslides", "html", "html5", "mediawiki", "revealjs", "s5", "slideous", "slidy"):
+                self.formats_table[i] = "html"
+            elif i in  ("markdown", "gfm", "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict"):
+                self.formats_table[i] = "md"
+            elif i in ("odt", "opendocument"):
+                self.formats_table[i] = "odt"
+            elif i == "native":
+                self.formats_table[i] = "hs"
+            elif i == "texinfo":
+                self.formats_table[i] = "info"
+            elif i == "latex":
+                self.formats_table[i] = "tex"
             else:
-                return (i[0], i[1])
-        c_opts = [wrap_args(i) for i in c_opts]
+                self.formats_table[i] = i
+        if "latex" in self.formats_table or "beamer" in self.formats_table and "pdf" not in self.formats_table:
+            self.formats_table["pdf"] = "pdf"
 
-        output_format = c_args.pop(0) \
-            if len(c_args) > 0 \
-                and self.opts.in_allowed_formats(c_args[0]) \
+    def __call__(self, args, should_open):
+        p = self.pandoc_info.build_argument_parser()
+        c_vars = vars(p.parse_args(shlex.split(args)))
+
+        # Infer arguments from vim environment
+
+        # a) bibliographies
+        if 'bibliographies' in plugin_enabled_modules():
+            c_vars['bibliography'] = vim.eval('b:pandoc_biblio_bibs')
+            if len(c_vars['bibliography']) < 1:
+                c_vars['bibliography'] = find_bibfiles()
+
+        # b) pdf engine
+        if self.pandoc_info.version >= '2':
+            engine_option = 'pdf_engine'
+        else:
+            engine_option = 'latex_engine'
+        if not c_vars[engine_option]:
+            try: # try a buffer local engine
+                engine_var = vim.current.buffer.vars['pandoc_command_latex_engine']
+            except: # use te global value
+                engine_var = vim.vars['pandoc#command#latex_engine']
+            c_vars[engine_option] = str(engine_var)
+
+        # Now, we must determine what are our input and output files
+
+        # a) First, let's see what is the desired output format...
+        output_format = c_vars['output_format'] \
+            if self.pandoc_info.is_valid_output_format(c_vars['output_format']) \
+            or c_vars['output_format'] == 'pdf' \
             else "html"
-        output_format_arg = "-t " + output_format if output_format != "pdf" \
-                            else ""
-
-        def no_ext(fmt):
-            return re.split("[-+]", fmt)[0]
+        # overwrite --to with this value
+        # 'pdf' is not a valid output format, we pass it to -o instead)
+        if output_format != 'pdf':
+            c_vars['to'] = output_format
 
         self._output_file_path = vim.eval('expand("%:r")') + '.' \
-            + self.opts.get_output_formats_table()[no_ext(output_format)]
-        output_arg = '-o "' + self._output_file_path + '"'
-
-        try: # try a buffer local engine
-            engine_var = vim.current.buffer.vars['pandoc_command_latex_engine']
-        except:
-            engine_var = vim.vars['pandoc#command#latex_engine']
-        # vim's python3's .vars are bytes, unlike in neovim
-        if type(engine_var) == bytes:
-            engine_var = '"' + engine_var.decode() + '"'
-        if get_pandoc_version() >= '2':
-            engine_flag = '--pdf-engine'
-        else:
-            engine_flag = '--latex_engine'
-        engine_arg = engine_flag + "=" + str(engine_var) \
-            if output_format in ["pdf", "beamer"] \
-            else ""
-
-        extra = []
-        for opt in c_opts:
-            eq = '=' if opt[1] and re.match('^--', opt[0]) else ''
-            if opt[0] in ("-V", "--variable") and "=" in opt[1]:
-                # we have -V var=thing
-                # Should also apply logic below regarding paths
-                var, _, arg = opt[1].partition("=")
-                # Coerse opt such that the below works on the true value, i.e.
-                # the value of the variable being set.
-                opt = ("-V " + var, arg.strip('"'))
-                eq = "="
-            # if it begins with ~, it will expand, otherwise, it will just copy
-            val = os.path.expanduser(opt[1])
-            extra.append(opt[0] + (eq or ' ')
-                + (('"' + val + '"') if len(val) else ''))
-        if extra_mathjax:
-            extra.append('--mathjax')
-
-        extra_args = " ".join(extra)
-
-        extra_input_args = '"' + '" "'.join(c_args) + '"' if len(c_args) > 0 \
-                            else ""
+            + self.formats_table[re.split("[-+]", output_format)[0]]
+        c_vars['output'] = self._output_file_path
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
-        arglist = [vim.vars['pandoc#compiler#command'], \
-                   vim.vars['pandoc#compiler#arguments'], \
-                   bib_arg, \
-                   strict_arg, \
-                   output_format_arg, \
-                   engine_arg, \
-                   output_arg, \
-                   extra_args, \
-                   extra_input_args, \
-                   input_arg]
+        # Now, we reconstruct the pandoc call
+        arglist = []
+        arglist.append(vim.vars['pandoc#compiler#command'])
+        arglist.append(vim.vars['pandoc#compiler#arguments'])
+        # Only consider enabled flags and arguments with values
+        extra_arg_vars_keys = [k for k in c_vars.keys() if c_vars[k] and k != 'output_format']
+        for var in extra_arg_vars_keys:
+            real_var = var.replace("_", "-")
+            val = c_vars[var]
+            if type(val) == list and len(val) > 1: # multiple values, repeat keys
+                for vv in val:
+                    if type(vv) == list and type(vv[0]) == list:
+                        vv = vv[0][0]
+                    elif type(vv) == list:
+                        vv = vv[0]
+                    vv = os.path.expanduser(vv)
+                    arglist.append("--" + real_var + '="' + str(vv) + '"')
+            else:
+                if type(val) == list and type(val[0]) == list:
+                    val = val[0][0]
+                elif type(val) == list:
+                    val = val[0]
+                val = os.path.expanduser(val)
+                arglist.append('--' + real_var + '="' + str(val) + '"')
+        arglist.append(input_arg)
 
-        self._run_command = " ".join(filter(lambda i: len(i) > 0, arglist))
-
+        self._run_command = " ".join(arglist)
         # execute
         self.execute(should_open)
 
