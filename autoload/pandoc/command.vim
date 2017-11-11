@@ -97,14 +97,15 @@ endfunction
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
 function! pandoc#command#PandocComplete(a, c, pos)
     if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
-        exe s:python ."from vim_pandoc.command import PandocHelpParser"
+        exe s:python ."from vim_pandoc.helpparser import PandocInfo"
+        exe s:python ."pandoc_info = PandocInfo()"
         let cmd_args = split(a:c, " ", 1)[1:]
         if len(cmd_args) == 1 && (cmd_args[0] == '' || eval(s:pyeval .'("'."vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))".'")'))
-            exe "return ".s:pyeval.'("'."filter(lambda i: i.startswith(vim.eval('a:a')), sorted(PandocHelpParser.get_output_formats_table().keys()))".'")'
+            exe "return ".s:pyeval.'("'."filter(lambda i: i.startswith(vim.eval('a:a')), sorted(pandoc_info.output_formats + ['pdf']))".'")'
         endif
         if len(cmd_args) >= 2
-            let long_opts = eval(s:pyeval . '("'. "['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), PandocHelpParser.get_longopts())]".'")')
-            let short_opts = eval(s:pyeval . '("'. "['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), PandocHelpParser.get_shortopts())]". '")')
+            let long_opts = eval(s:pyeval . '("'. "['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), [v for v in pandoc_info.get_options_list() if len(v) > 1])]".'")')
+            let short_opts = eval(s:pyeval . '("'. "['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), [v for v in pandoc_info.get_options_list() if len(v) == 1])]". '")')
             return filter(uniq(extend(sort(short_opts), sort(long_opts))), 'v:val != "-:"')
         endif
     endif
