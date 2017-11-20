@@ -45,8 +45,11 @@ class PandocCommand(object):
             self.formats_table["pdf"] = "pdf"
 
     def __call__(self, args, should_open):
+        largs = shlex.split(args)
+        if largs == []:
+            largs = ['html'] # make sure we pass an output format
         p = self.pandoc_info.build_argument_parser()
-        c_vars = vars(p.parse_args(shlex.split(args)))
+        c_vars = vars(p.parse_args(largs))
 
         # Infer arguments from vim environment
 
