@@ -57,7 +57,7 @@ endfunction
 " called by our omnifunc, if completion is enabled
 function! pandoc#bibliographies#GetSuggestions(partkey)
     if has("python3")
-        let l:sugs = py3eval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval(\"a:partkey\"))')
+        let l:sugs = py3eval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval("a:partkey"))')
         if len(l:sugs) > 0
             return l:sugs
         else
