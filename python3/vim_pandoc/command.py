@@ -104,15 +104,25 @@ class PandocCommand(object):
                         vv = vv[0][0]
                     elif type(vv) == list:
                         vv = vv[0]
-                    vv = os.path.expanduser(vv)
-                    arglist.append("--" + real_var + '="' + str(vv) + '"')
+                    elif type(val) == bool:
+                        vv = None
+                    if vv:
+                        vv = os.path.expanduser(vv)
+                        arglist.append("--" + real_var + '="' + str(vv) + '"')
+                    else:
+                        arglist.append("--" + real_var)
             else:
                 if type(val) == list and type(val[0]) == list:
                     val = val[0][0]
                 elif type(val) == list:
                     val = val[0]
-                val = os.path.expanduser(val)
-                arglist.append('--' + real_var + '="' + str(val) + '"')
+                elif type(val) == bool:
+                    val = None
+                if val:
+                    val = os.path.expanduser(val)
+                    arglist.append('--' + real_var + '="' + str(val) + '"')
+                else:
+                    arglist.append('--' + real_var)
         arglist.append(input_arg)
 
         self._run_command = " ".join(arglist)
