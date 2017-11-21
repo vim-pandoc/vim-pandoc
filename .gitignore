@@ -4,3 +4,4 @@
 /t/tmp/*
 /pythonx/vim_pandoc/.ropeproject/*
 /pythonx/vim_pandoc/bib/.ropeproject/*
+/python3/vim_pandoc/.ropeproject/*

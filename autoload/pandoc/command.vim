@@ -47,16 +47,9 @@ function! pandoc#command#Init()
     endif
 
     " create :Pandoc {{{2
-    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
-        if has("python") || has("python/dyn")
-            let s:python = "py "
-            let s:pyeval = "pyeval"
-        else
-            let s:python = "py3 "
-            let s:pyeval = "py3eval"
-        endif
-        " let's make sure it gets loaded
-        exe s:python ."import vim"
+    if has("python3") || has("python3/dyn")
+       " let's make sure it gets loaded
+        py3 import vim
         command! -buffer -bang -nargs=? -complete=customlist,pandoc#command#PandocComplete
                     \ Pandoc call pandoc#command#Pandoc("<args>", "<bang>")
     else
@@ -77,11 +70,11 @@ endfunction
 " args: arguments to pass pandoc
 " bang: should we open the created file afterwards?
 function! pandoc#command#Pandoc(args, bang)
-    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
-        exe s:python ."from vim_pandoc.command import pandoc"
+    if has("python3") || has("python3/dyn")
+        py3 from vim_pandoc.command import pandoc
         let templatized_args = substitute(a:args, '#\(\S\+\)',
                     \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
-        exe s:python ."pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')"
+        py3 pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')
     endif
 endfunction
 
@@ -96,16 +89,16 @@ endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
 function! pandoc#command#PandocComplete(a, c, pos)
-    if has("python") || has("python/dyn") || has("python3") || has("python3/dyn")
-        exe s:python ."from vim_pandoc.helpparser import PandocInfo"
-        exe s:python ."pandoc_info = PandocInfo()"
+    if has("python3") || has("python3/dyn")
+        py3 from vim_pandoc.helpparser import PandocInfo
+        py3 pandoc_info = PandocInfo()
         let cmd_args = split(a:c, " ", 1)[1:]
-        if len(cmd_args) == 1 && (cmd_args[0] == '' || eval(s:pyeval .'("'."vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))".'")'))
-            exe "return ".s:pyeval.'("'."filter(lambda i: i.startswith(vim.eval('a:a')), sorted(pandoc_info.output_formats + ['pdf']))".'")'
+        if len(cmd_args) == 1 && (cmd_args[0] == '' || eval(py3eval("'."vim.eval('cmd_args[0]').startswith(vim.eval('a:a'))".'")'))
+            return py3eval("'."filter(lambda i: i.startswith(vim.eval('a:a')), sorted(pandoc_info.output_formats + ['pdf']))".'")
         endif
         if len(cmd_args) >= 2
-            let long_opts = eval(s:pyeval . '("'. "['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), [v for v in pandoc_info.get_options_list() if len(v) > 1])]".'")')
-            let short_opts = eval(s:pyeval . '("'. "['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), [v for v in pandoc_info.get_options_list() if len(v) == 1])]". '")')
+            let long_opts = eval(py3eval("'. "['--' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[2:]')), [v for v in pandoc_info.get_options_list() if len(v) > 1])]".'"))
+            let short_opts = eval(py3eval("'. "['-' + i for i in filter(lambda i: i.startswith(vim.eval('a:a[1:]')), [v for v in pandoc_info.get_options_list() if len(v) == 1])]". '"))
             return filter(uniq(extend(sort(short_opts), sort(long_opts))), 'v:val != "-:"')
         endif
     endif
@@ -128,8 +121,8 @@ endfunction
 " should_open: should we open the cretaed file?
 " returncode: the returncode value pandoc gave
 function! pandoc#command#PandocAsyncCallback(should_open, returncode)
-    exe s:python ."from vim_pandoc.command import pandoc"
-    exe s:python ."pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))"
+    py3 from vim_pandoc.command import pandoc
+    py3 pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))
 endfunction
 
 " PandocJobHandler(id, data, event): Callback for neovim {{{2
@@ -139,8 +132,8 @@ function! pandoc#command#JobHandler(id, data, event) dict
     elseif a:event == 'stderr'
         call writefile(a:data, 'pandoc.out', 'ab')
     else
-        exe s:python ."from vim_pandoc.command import pandoc"
-        exe s:python ."pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))"
+        py3 from vim_pandoc.command import pandoc
+        py3 pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))
     endif
 endfunction
 

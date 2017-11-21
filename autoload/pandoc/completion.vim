@@ -20,7 +20,7 @@ function! pandoc#completion#Init() "{{{1
     endif
 
     " set the correct omnifunc completion
-    if has("python") || has("python3")
+    if has("python3")
         setlocal omnifunc=pandoc#completion#Complete
     endif
 
@@ -38,7 +38,7 @@ function! pandoc#completion#Init() "{{{1
 endfunction
 
 function! pandoc#completion#Complete(findstart, base) "{{{1
-    if has("python") || has("python3")
+    if has("python3")
         if index(g:pandoc#modules#enabled, "bibliographies") >= 0
             if a:findstart
                 let l:line = getline('.')

@@ -40,23 +40,15 @@ function! pandoc#bibliographies#Init()
         endif
     endif
     " set up python
-    let s:python = {}
-    if has("python")
-        let s:python.cmd = "python"
-        let s:python.eval = "pyeval"
-    elseif has("python3")
-        let s:python.cmd = "python3"
-        let s:python.eval = "py3eval"
-    endif
-    if has("python") || has("python3")
-        exe s:python.cmd . " import vim_pandoc.bib.vim_completer"
+    if has("python3")
+        py3 import vim_pandoc.bib.vim_completer
     endif
 endfunction
 
 " Find_Bibliographies(): gives a list of bibliographies in g:pandoc#biblio#sources {{{1
 function! pandoc#bibliographies#Find_Bibliographies()
-    if has("python") || has("python3")
-        exe "return ".s:python.eval."('vim_pandoc.bib.vim_completer.find_bibfiles()')"
+    if has("python3")
+        return py3eval('vim_pandoc.bib.vim_completer.find_bibfiles()')
     endif
     return []
 endfunction
@@ -64,9 +56,8 @@ endfunction
 " GetSuggestions(partkey): returns bibliographic suggestions. {{{1
 " called by our omnifunc, if completion is enabled
 function! pandoc#bibliographies#GetSuggestions(partkey)
-    if has("python") || has("python3")
-        exe "let l:sugs = ".s:python.eval."('vim_pandoc.bib.vim_completer.VimCompleter()."
-                    \"get_suggestions(vim.eval(\"a:partkey\"))')"
+    if has("python3")
+        let l:sugs = py3eval('vim_pandoc.bib.vim_completer.VimCompleter().get_suggestions(vim.eval(\"a:partkey\"))')
         if len(l:sugs) > 0
             return l:sugs
         else
