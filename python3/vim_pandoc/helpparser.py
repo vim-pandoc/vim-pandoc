@@ -8,6 +8,8 @@ PandocOption = namedtuple('PandocOption', ['names', 'arg', 'optional_arg'])
 
 class PandocInfo(object):
     def __init__(self, pandoc='pandoc'):
+        if type(pandoc) == bytes:
+            pandoc = pandoc.decode()
         self.pandoc = pandoc
         self.update()
 
