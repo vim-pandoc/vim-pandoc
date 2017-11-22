@@ -13,6 +13,8 @@ class PandocInfo(object):
 
     def __raw_output(self, cmd, pattern=None):
         data = Popen([self.pandoc, cmd], stdout=PIPE).communicate()[0]
+        if type(data) == bytes:
+            data = data.decode()
         if pattern:
             return re.search(pattern, data, re.DOTALL).group(1)
         else:
@@ -26,46 +28,46 @@ class PandocInfo(object):
         self.output_formats = self.get_output_formats()
 
     def get_version(self):
-        return self.__raw_output('--version', pattern=b'pandoc (\d+\.\d+)').decode()
+        return self.__raw_output('--version', pattern='pandoc (\d+\.\d+)')
 
     def get_options(self):
         # first line describes pandoc usage
         data = self.__raw_output('--help').splitlines()[1:]
         data = [l.strip() for l in data]
         # options from --trace onwards are not meaningful for us
-        cutoff = data.index(b'--trace')
+        cutoff = data.index('--trace')
         data = data[:cutoff]
 
         options = []
 
         for line in data:
             # TODO: simplify if possible
-            if re.search(b',', line): # multiple variant options
-                if re.search(b'(?<![a-z])(?<!-)-(?!-)', line):
-                    if re.search(b'\[', line):
+            if re.search(',', line): # multiple variant options
+                if re.search('(?<![a-z])(?<!-)-(?!-)', line):
+                    if re.search('\[', line):
                         optional = True
                     else:
                         optional = False
-                    opts = re.findall(b'-+([a-zA-Z-]+)[[ =]', line)
+                    opts = re.findall('-+([a-zA-Z-]+)[[ =]', line)
                     if opts:
                         options.append(PandocOption(opts, True, optional))
 
                 else:
-                    opts = re.findall(b'--([a-z-]+)', line)
+                    opts = re.findall('--([a-z-]+)', line)
                     if opts:
                         options.append(PandocOption(opts, False, False))
             else:
-                if re.search(b'=', line): # take arguments
-                    if re.search(b'\[=', line): # arguments are optional
-                        optional = re.findall(b'--([a-z-]+)\[=', line)
+                if re.search('=', line): # take arguments
+                    if re.search('\[=', line): # arguments are optional
+                        optional = re.findall('--([a-z-]+)\[=', line)
                         if optional:
                             options.append(PandocOption(optional, True, True))
                     else:
-                        optarg_opts = re.findall(b'-+([a-zA-Z-]+)[ =][A-Za-z]+', line)
+                        optarg_opts = re.findall('-+([a-zA-Z-]+)[ =][A-Za-z]+', line)
                         if optarg_opts:
                             options.append(PandocOption(optarg_opts, True, False))
                 else: # flags
-                    flag_opts = re.findall(b'-+([a-z-]+(?![=]))', line)
+                    flag_opts = re.findall('-+([a-z-]+(?![=]))', line)
                     if flag_opts:
                         options.append(PandocOption(flag_opts, False, False))
 
@@ -76,16 +78,16 @@ class PandocInfo(object):
 
     def get_extensions(self):
         data = self.__raw_output('--list-extensions').\
-            replace(b' +', b'').replace(b' -', b'')
-        return [i.decode() for i in data.splitlines()]
+            replace(' +', '').replace(' -', '')
+        return data.splitlines()
 
     def get_input_formats(self):
         data = self.__raw_output('--list-input-formats')
-        return [i.decode() for i in data.splitlines()]
+        return data.splitlines()
 
     def get_output_formats(self):
         data = self.__raw_output('--list-output-formats')
-        return [i.decode() for i in data.splitlines()]
+        return data.splitlines()
 
     def is_valid_output_format(self, identifier):
         if not identifier.startswith("markdown") and identifier in self.output_formats:
@@ -103,11 +105,11 @@ class PandocInfo(object):
         parser = argparse.ArgumentParser()
         parser.add_argument('output_format')
         for opt in self.options:
-            flags = [wrap_flag(f.decode()) for f in opt.names]
+            flags = [wrap_flag(f) for f in opt.names]
             extra = {}
             extra['action'] = 'store_true' if not opt.arg else 'store'
             # some options can be given several times
-            if any(map(lambda x: x.isupper() and x != b'T' or x == b'bibliography', opt.names)):
+            if any(map(lambda x: x.isupper() and x != 'T' or x == 'bibliography', opt.names)):
                 extra['action'] = 'append'
 
             if opt.arg:
