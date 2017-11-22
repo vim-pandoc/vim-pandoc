@@ -55,9 +55,14 @@ class PandocCommand(object):
 
         # a) bibliographies
         if 'bibliographies' in plugin_enabled_modules():
-            c_vars['bibliography'] = vim.eval('b:pandoc_biblio_bibs')
-            if len(c_vars['bibliography']) < 1:
-                c_vars['bibliography'] = find_bibfiles()
+            local_bibs = vim.eval('b:pandoc_biblio_bibs')
+            found_bibs = find_bibfiles()
+            if local_bibs or found_bibs and not c_vars['bibliography']:
+                c_vars['bibliography'] = []
+            if local_bibs:
+                c_vars['bibliography'].extend(local_bibs)
+            if found_bibs:
+                c_vars['bibliography'].extend(found_bibs)
 
         # b) pdf engine
         if self.pandoc_info.version >= '2':
@@ -83,9 +88,12 @@ class PandocCommand(object):
         if output_format != 'pdf':
             c_vars['to'] = output_format
 
-        self._output_file_path = vim.eval('expand("%:r")') + '.' \
-            + self.formats_table[re.split("[-+]", output_format)[0]]
-        c_vars['output'] = self._output_file_path
+        if not c_vars['output']:
+            self._output_file_path = vim.eval('expand("%:r")') + '.' \
+                + self.formats_table[re.split("[-+]", output_format)[0]]
+            c_vars['output'] = self._output_file_path
+        else:
+            self._output_file_path = os.path.expanduser(c_vars['output'][0])
 
         input_arg = '"' + vim.eval('expand("%")') + '"'
 
