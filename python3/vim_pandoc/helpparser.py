@@ -3,6 +3,7 @@ import re
 from collections import namedtuple
 from itertools import chain
 import argparse
+from vim_pandoc.utils import ensure_string
 
 PandocOption = namedtuple('PandocOption', ['names', 'arg', 'optional_arg'])
 
@@ -14,9 +15,7 @@ class PandocInfo(object):
         self.update()
 
     def __raw_output(self, cmd, pattern=None):
-        data = Popen([self.pandoc, cmd], stdout=PIPE).communicate()[0]
-        if type(data) == bytes:
-            data = data.decode()
+        data = ensure_string(Popen([self.pandoc, cmd], stdout=PIPE).communicate()[0])
         if pattern:
             return re.search(pattern, data, re.DOTALL).group(1)
         else:

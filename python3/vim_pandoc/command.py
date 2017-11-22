@@ -8,7 +8,7 @@ import argparse
 import shlex
 from subprocess import Popen, PIPE
 from itertools import chain
-from vim_pandoc.utils import plugin_enabled_modules
+from vim_pandoc.utils import plugin_enabled_modules, ensure_string
 from vim_pandoc.bib.vim_completer import find_bibfiles
 from vim_pandoc.helpparser import PandocInfo
 
@@ -71,9 +71,9 @@ class PandocCommand(object):
             engine_option = 'latex_engine'
         if not c_vars[engine_option]:
             try: # try a buffer local engine
-                engine_var = vim.current.buffer.vars['pandoc_command_latex_engine']
+                engine_var = ensure_string(vim.current.buffer.vars['pandoc_command_latex_engine'])
             except: # use te global value
-                engine_var = vim.vars['pandoc#command#latex_engine']
+                engine_var = ensure_string(vim.vars['pandoc#command#latex_engine'])
             c_vars[engine_option] = str(engine_var)
 
         # Now, we must determine what are our input and output files
@@ -99,8 +99,8 @@ class PandocCommand(object):
 
         # Now, we reconstruct the pandoc call
         arglist = []
-        arglist.append(vim.vars['pandoc#compiler#command'])
-        arglist.append(vim.vars['pandoc#compiler#arguments'])
+        arglist.append(ensure_string(vim.vars['pandoc#compiler#command']))
+        arglist.append(ensure_string(vim.vars['pandoc#compiler#arguments']))
         # Only consider enabled flags and arguments with values
         extra_arg_vars_keys = [k for k in c_vars.keys() if c_vars[k] and k != 'output_format']
         for var in extra_arg_vars_keys:
