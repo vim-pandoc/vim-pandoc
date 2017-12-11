@@ -64,18 +64,6 @@ class PandocCommand(object):
             if found_bibs:
                 c_vars['bibliography'].extend(found_bibs)
 
-        # b) pdf engine
-        if self.pandoc_info.version >= '2':
-            engine_option = 'pdf_engine'
-        else:
-            engine_option = 'latex_engine'
-        if not c_vars[engine_option]:
-            try: # try a buffer local engine
-                engine_var = ensure_string(vim.current.buffer.vars['pandoc_command_latex_engine'])
-            except: # use te global value
-                engine_var = ensure_string(vim.vars['pandoc#command#latex_engine'])
-            c_vars[engine_option] = str(engine_var)
-
         # Now, we must determine what are our input and output files
 
         # a) First, let's see what is the desired output format...
@@ -87,6 +75,19 @@ class PandocCommand(object):
         # 'pdf' is not a valid output format, we pass it to -o instead)
         if output_format != 'pdf':
             c_vars['to'] = output_format
+
+        if output_format == 'pdf':
+            # pdf engine
+            if self.pandoc_info.version >= '2':
+                engine_option = 'pdf_engine'
+            else:
+                engine_option = 'latex_engine'
+            if not c_vars[engine_option]:
+                try: # try a buffer local engine
+                    engine_var = ensure_string(vim.current.buffer.vars['pandoc_command_latex_engine'])
+                except: # use te global value
+                    engine_var = ensure_string(vim.vars['pandoc#command#latex_engine'])
+                c_vars[engine_option] = str(engine_var)
 
         if not c_vars['output']:
             self._output_file_path = vim.eval('expand("%:r")') + '.' \
