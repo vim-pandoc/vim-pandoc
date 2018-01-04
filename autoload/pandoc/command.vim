@@ -1,5 +1,7 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
+let s:plugin_root = expand('<sfile>:p:h:h:h')
+
 " Init(): sets up defaults, creates the Pandoc command, requires python support {{{1
 function! pandoc#command#Init()
     " set up defaults {{{2
@@ -23,7 +25,7 @@ function! pandoc#command#Init()
     endif
     " file where to save command templates {{{3
     if !exists("g:pandoc#command#templates_file")
-        let g:pandoc#command#templates_file = split(&runtimepath, ",")[0] . "/vim-pandoc-templates"
+        let g:pandoc#command#templates_file = s:plugin_root . "/templates"
     endif
     " auto-execute pandoc on writes {{{3
     if !exists("g:pandoc#command#autoexec_on_writes")
