@@ -75,6 +75,8 @@ class PandocCommand(object):
         # 'pdf' is not a valid output format, we pass it to -o instead)
         if output_format != 'pdf':
             c_vars['to'] = output_format
+        else:
+            c_vars['to'] = 'latex'
 
         if output_format == 'pdf':
             # pdf engine
