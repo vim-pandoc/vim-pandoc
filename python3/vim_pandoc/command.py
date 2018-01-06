@@ -226,6 +226,12 @@ class PandocCommand(object):
             if vim.eval('has("nvim")') == '1':
                 os.chdir(vim.eval('expand("%:p:h")'))
 
+            if vim.eval("g:pandoc#command#prefer_pdf") == "1":
+                maybe_pdf = os.path.splitext(self._output_file_path)[0] + ".pdf"
+                if os.path.splitext(self._output_file_path)[1] in [".tex", "*.latex"] \
+                    and os.path.exists(maybe_pdf):
+                        self._output_file_path = maybe_pdf
+
             if os.path.exists(os.path.abspath(self._output_file_path)) and should_open:
                 # if g:pandoc#command#custom_open is defined and is a valid funcref
                 if vim.eval("g:pandoc#command#custom_open") != "" \
