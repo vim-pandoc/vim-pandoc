@@ -23,6 +23,10 @@ function! pandoc#command#Init()
     if !exists("g:pandoc#command#custom_open")
         let g:pandoc#command#custom_open = ""
     endif
+    " open pdf files preferrably? {{{3
+    if !exists("g:pandoc#command#prefer_pdf")
+        let g:pandoc#command#prefer_pdf = 0
+    endif
     " file where to save command templates {{{3
     if !exists("g:pandoc#command#templates_file")
         let g:pandoc#command#templates_file = s:plugin_root . "/templates"

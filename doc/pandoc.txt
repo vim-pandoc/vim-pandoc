@@ -288,7 +288,9 @@ it can be checked using |:messages|.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
 the created file in its associated program. This behavior can be customized
-through the |g:pandoc#command#custom_open| variable.
+through the |g:pandoc#command#custom_open| variable. The
+ |g:pandoc#command#prefer_pdf| variable controls whether to prefer pdf files,
+ if they exist.
 
 Note: The pandoc execution is performed asynchronously if vim supports the
 |clientserver| feature and the running instance is a valid server (this is the
@@ -692,6 +694,11 @@ A description of the available configuration variables follows:
     function! MyPandocOpen(file)
         return 'xdg-open ' . shellescape(expand(a:file,':p'))
     endfunction
+
+- *g:pandoc#command#prefer_pdf*
+   default = 0
+
+   Open a pdf file preferrably, if it exists.
 
 - *g:pandoc#command#autoexec_on_writes*
   default = 0
