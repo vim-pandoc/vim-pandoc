@@ -46,8 +46,8 @@ class PandocCommand(object):
 
     def __call__(self, args, should_open):
         largs = shlex.split(args)
-        if largs == []:
-            largs = ['html'] # make sure we pass an output format
+        if largs == [] or largs[0].startswith('-'):
+            largs = ['html'] + largs # make sure we pass an output format
         p = self.pandoc_info.build_argument_parser()
         c_vars = vars(p.parse_args(largs))
 
