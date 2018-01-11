@@ -99,7 +99,7 @@ function! pandoc#command#PandocComplete(a, c, pos)
         py3 from vim_pandoc.helpparser import PandocInfo
         py3 pandoc_info = PandocInfo()
         let cmd_args = split(a:c, " ", 1)[1:]
-        if len(cmd_args) == 1 && (cmd_args[0] == '' || eval(py3eval('vim.eval("cmd_args[0]").startswith(vim.eval("a:a:))')))
+        if len(cmd_args) == 1 && (cmd_args[0] == '' || py3eval('vim.eval("cmd_args[0]").startswith(vim.eval("a:a"))'))
             return py3eval('list(filter(lambda i: i.startswith(vim.eval("a:a")), sorted(pandoc_info.output_formats + ["pdf"])))')
         endif
         if len(cmd_args) >= 2
