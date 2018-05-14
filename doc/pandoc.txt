@@ -692,7 +692,31 @@ A description of the available configuration variables follows:
     let g:pandoc#command#custom_open = "MyPandocOpen"
 
     function! MyPandocOpen(file)
-        return 'xdg-open ' . shellescape(expand(a:file,':p'))
+	let file = shellescape(fnamemodify(a:file, ':p'))
+	let file_extension = fnamemodify(a:file, ':e')
+	if file_extension is? 'pdf'
+	  if !empty($PDFVIEWER)
+	    return expand('$PDFVIEWER') . ' ' . file
+	  elseif executable('zathura')
+	    return 'zathura ' . file
+	  elseif executable('mupdf')
+	    return 'mupdf ' . file
+	  endif
+	elseif file_extension is? 'html' 
+	  if !empty($BROWSER)
+	    return expand('$BROWSER') . ' ' . file
+	  elseif executable('firefox')
+	    return 'firefox ' . file
+	  elseif executable('chromium')
+	    return 'chromium ' . file
+	  endif
+	elseif file_extension is? 'odt' && executable('okular')
+	  return 'okular ' . file
+	elseif file_extension is? 'epub' && executable('okular')
+	  return 'okular ' . file
+	else
+	  return 'xdg-open ' . file
+	endif
     endfunction
 
 - *g:pandoc#command#prefer_pdf*
