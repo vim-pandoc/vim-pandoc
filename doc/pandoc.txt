@@ -108,7 +108,7 @@ separatedly. It also allows users not to use this syntax file if they want to
 FILETYPES					          *vim-pandoc-filetypes*
 
 vim-pandoc is not a regular filetype plugin. Although it does define a
-`pandoc` filetype, vim-pandoc can also attach to other filestypes, like
+`pandoc` filetype, vim-pandoc can also attach to other filetypes, like
 `markdown`, `rst` and `textile`. In that case, vim-pandoc uses the
 appropiate filetype syntax file, but creates the Pandoc command and loads the
 extra utilities. What filetypes to attach to is determined by the value of the
