@@ -49,7 +49,7 @@ class PandocInfo(object):
                         optional = True
                     else:
                         optional = False
-                    opts = re.findall('-+([a-zA-Z-]+)[[ =]', line)
+                    opts = re.findall("-+([a-zA-Z-]+)[\[ =]", line)
                     if opts:
                         options.append(PandocOption(opts, True, optional))
 
