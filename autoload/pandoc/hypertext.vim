@@ -283,11 +283,26 @@ endfunction
 function! pandoc#hypertext#OpenLink(cmd)
     let url = pandoc#hypertext#GetLinkAddress()
     let ext = fnamemodify(url, ":e")
+    let hashnum = match(url, "#")
+    let sname = synIDattr(synID(line('.'), col('.'), 0), 'name')
+    let curpos = getcurpos()
+    let pos = getpos('.')
+    let curfile = expand('%:p')
+
+    if hashnum != -1 && hashnum != 0
+        let id = url[hashnum + 1:]
+        let url = url[:hashnum - 1]
+        let ext = fnamemodify(url, ":e") 
+    endif
 
     if '#' == url[:0]
-        call pandoc#hypertext#GotoID(url[1:])
+        call pandoc#hypertext#GotoID(url[1:], sname, curpos, pos)
     elseif ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
         call pandoc#hypertext#OpenLocal(url, a:cmd)
+        if hashnum != -1
+            call pandoc#hypertext#GotoID(id, sname, curpos, pos)
+            call pandoc#hypertext#PushLink( ['file', curfile] )
+        endif
     else
         call pandoc#hypertext#OpenSystem(url)
     endif
@@ -314,7 +329,7 @@ function! pandoc#hypertext#BackFromFile()
 endfunction
 
 function! pandoc#hypertext#GotoID(...)
-    if synIDattr(synID(line('.'), col('.'), 0), 'name') != 'pandocHeaderID'
+    if a:2 != 'pandocHeaderID'
         if exists('a:1')
             let id = a:1
         else
@@ -322,9 +337,11 @@ function! pandoc#hypertext#GotoID(...)
         endif
         
         try
-            call pandoc#hypertext#PushLink( ['position',getcurpos()] )
+            " call pandoc#hypertext#PushLink( ['position',getcurpos()] )
+            call pandoc#hypertext#PushLink( ['position',a:3] )
         catch /E117/
-            call pandoc#hypertext#PushLink( ['position',getpos('.')] )
+            " call pandoc#hypertext#PushLink( ['position',getpos('.')] )
+            call pandoc#hypertext#PushLink( ['position', a:4] )
         endtry
         " header indentifier
         let header_pos = markdown#headers#GetAllIDs()
