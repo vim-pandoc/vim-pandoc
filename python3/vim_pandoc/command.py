@@ -150,12 +150,15 @@ class PandocCommand(object):
                 except:
                     should_open_s = '0'
 
-                vim.command("call jobstart(" + \
+                vim.command("botright 5new")
+                vim.command("map q <Esc>:close<Enter>")
+                vim.command("call termopen(" + \
                             "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
                             " extend({'should_open': '" + should_open_s + "'}," +\
                             " {'on_exit': 'pandoc#command#JobHandler'," + \
                             "'on_stdout': 'pandoc#command#JobHandler'," + \
                             "'on_stderr': 'pandoc#command#JobHandler'}))")
+                vim.command("normal G")
 
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
@@ -183,7 +186,7 @@ class PandocCommand(object):
     def on_done(self, should_open, returncode):
         if self._run_command and self._output_file_path:
             vim.command("echohl Statement")
-            vim.command("echom 'vim-pandoc:ran " + self._run_command + "'")
+            vim.command("echom strftime('%Y%m%d %T') . ' vim-pandoc:ran " + self._run_command + "'")
             vim.command("echohl None")
 
             if vim.eval("g:pandoc#command#use_message_buffers") == '1' \
@@ -223,8 +226,11 @@ class PandocCommand(object):
             # open file if needed
 
             # nvim's python host doesn't change the directory the same way vim does
-            if vim.eval('has("nvim")') == '1':
-                os.chdir(vim.eval('expand("%:p:h")'))
+            try:
+                if vim.eval('has("nvim")') == '1':
+                    os.chdir(vim.eval('expand("%:p:h")'))
+            except:
+                pass
 
             if vim.eval("g:pandoc#command#prefer_pdf") == "1":
                 maybe_pdf = os.path.splitext(self._output_file_path)[0] + ".pdf"

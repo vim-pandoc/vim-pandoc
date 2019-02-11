@@ -280,10 +280,13 @@ will create an incantation like:
 :Pandoc will also use the value of |b:pandoc_biblio_bibs| to pass
 `--bibliography` arguments, so the user shouldn't do that himself.
 
-Once pandoc runs, depending on the value of
-|g:pandoc#command#use_message_buffers| and if some error occurred, a buffer
-will open displaying the command output. You can dismiss this buffer pressing
-'q'. Regardless of pandoc's execution status, the invocation used will be logged so
+In nvim, vim-pandoc will open a terminal buffer and execute pandoc. If the
+value of |g:pandoc#command#use_message_buffers| is 1 and some error occurred,
+a buffer will open displaying the command output (this is unnecessary in nvim,
+because it will always display the command output, so the defalt for
+`use_message_buffers' there is 0). You can dismiss these buffers pressing 'q'.
+
+Regardless of pandoc's execution status, the invocation used will be logged so
 it can be checked using |:messages|.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
