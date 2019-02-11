@@ -32,6 +32,13 @@ CONTENTS
     - KEYBOARD |vim-pandoc-keyboard-module|
     - BIBLIOGRAPHIES |vim-pandoc-bibliographies-module|
     - COMPLETION |vim-pandoc-completion-module|
+      --  AUTOCOMPLETE |vim-pandoc-complete-auto|
+        -- DEOPLETE |vim-pandoc-complete-deoplete|
+        -- NEOCOMPLETE |vim-pandoc-complete-neocomplete|
+        -- NCM2 |vim-pandoc-complete-ncm2|
+        -- NVIM-COMPLETION-MANAGER |vim-pandoc-complete-ncm|
+        -- YOUCOMPLETEME |vim-pandoc-complete-youcompleteme|
+        -- VIMCOMPLETESME |vim-pandoc-complete-vcm|
     - TOC |vim-pandoc-toc-module|
     - CHDIR |vim-pandoc-chdir-module|
     - SPELL |vim-pandoc-spell-module|
@@ -537,6 +544,151 @@ If the 'citeproc' backend is used, extra information can be displayed in the
 preview window, depending on the value of
 |g:pandoc#completion#bib#use_preview|.
 
+-- AUTOCOMPLETE                                        *vim-pandoc-complete-auto*
+
+Vim does not provide automatic completion by itself, but there exist several
+plugins that provide this: |deoplete|, |neocomplete|, |ncm2|,
+|nvim-completion-manager|, and |youcompleteme|. There is also |vimcompletesme|
+that overrides <tab> to trigger different built-in completions, such as
+the omni-completion by |vim-pandoc|, depending on the context. See below for
+descriptions on how to set some of these up with |vim-pandoc|.
+
+-- DEOPLETE                                        *vim-pandoc-complete-deoplete*
+
+|deoplete| is a moder remake of |neocomplete|, and was originally written
+specifically for Neovim, see here: https://github.com/Shougo/deoplete.nvim. It
+is a highly customizable and flexible completion manager.
+
+To configure for `vim-pandoc`, on may use: >
+
+  " This is new style
+  call deoplete#custom#var('omni', 'input_patterns', {
+    \ 'pandoc': '@'
+    \})
+
+  " This is old style (deprecated)
+  if !exists('g:deoplete#omni#input_patters')
+    let g:deoplete#omni#input_patters = {}
+  endif
+  let g:deoplete#omni#input_patters.pandoc = ['@']
+<
+
+-- NEOCOMPLETE                                  *vim-pandoc-complete-neocomplete*
+
+|neocomplete| is also a flexible automatic completion engine for vim, although
+active development has been stopped. Users are recommended to change to
+|deoplete|, see also |vim-pandoc-complete-deoplete|. The plugin is available
+here: https://github.com/Shougo/neovomplete.vim.
+
+The following options may be used to enable automatic completion for pandoc
+documents with |neocomplete| and `vim-pandoc`s omni completion function: >
+
+  if !exists('g:neocomplete#sources#omni#input_pattersn')
+    let g:neocomplete#sources#omni#input_patters = {}
+  endif
+  let g:neocomplete#sources#omni#input_patters.pandoc =
+    \ '@'
+
+<
+
+-- NCM2                                                *vim-pandoc-complete-ncm2*
+
+|ncm2| is a modern remake and replacement of |nvim-completion-manager| and is
+supposed to be a "Slim, Fast and Hackable Completion Framework for Neovim":
+https://github.com/ncm2/ncm2
+
+The following simple configuration should work well with `vim-pandoc`: >
+
+  " include the following plugins (here using junnegun/vim-plug)
+  Plug 'roxma/nvim-yarp'
+  Plug 'ncm2/ncm2'
+
+  augroup my_cm_setup
+    autocmd!
+    autocmd BufEnter * call ncm2#enable_for_buffer()
+    autocmd Filetype pandoc call ncm2#register_source({
+      \ 'name': 'pandoc',
+      \ 'priority': 8,
+      \ 'scope': ['pandoc'],
+      \ 'mark': 'md',
+      \ 'word_pattern': '\w+',
+      \ 'complete_pattern': ['@'],
+      \ 'on_complete': ['ncm2#on_complete#omni', 'pandoc#completion#Complete'],
+      \ })
+  augroup END
+
+<
+
+-- NVIM-COMPLETION-MANAGER                              *vim-pandoc-complete-ncm*
+
+Note: |nvim-completion-manager| has been replaced by |ncm2|, and users are
+recommended to change. See |vim-pandoc-compete-ncm2| for hints on how to setup
+|ncm2| for |vim-pandoc|.
+
+|nvim-completion-manager| is a fast, extensible, async completion framework
+for neovim (and Vim version 8.0 and above). The project is available here:
+https://github.com/roxma/nvim-completion-manager
+
+To configure for `vim-pandoc`, one can use the following code: >
+
+  augroup my_cm_setup
+    autocmd!
+    autocmd User CmSetup call cm#register_source({
+      \ 'name': 'pandoc',
+      \ 'priority': 8,
+      \ 'scoping': 1,
+      \ 'scopes': ['pandoc'],
+      \ 'abbreviation', 'md',
+      \ 'cm_refresh_patterns': ['@'],
+      \ 'cm_refresh: {'omnifunc': 'pandoc#completion#Complete'},
+      \ })
+  augroup END
+
+<
+
+-- YOUCOMPLETEME                              *vim-pandoc-complete-youcompleteme*
+
+|youcompleteme| is probably the most popular code-completion engine for Vim.
+The github repository is here: https://github.com/Valloric/YouCompleteMe.
+It is described as:
+
+> YouCompleteMe is a fast, as-you-type, fuzzy-search code completion engine
+> for Vim. It has several completion engines: an identifier-based engine that
+> works with every programming language, a semantic, Clang [3]-based engine
+> that provides native semantic code completion for the C-family languages,
+> a Jedi [4]-based completion engine for Python, an OmniSharp [5]-based
+> completion engine for C# and an omnifunc-based completer that uses data from
+> Vim's omnicomplete system to provide semantic completions for many other
+> languages (Ruby, PHP etc.).
+
+To enable automatic completion with |youcompleteme| for `vim-pandoc`, use the
+following options: >
+
+  if !exists('g:ycm_semantic_triggers')
+    let g:ycm_semantic_triggers = {}
+  endif
+  let g:ycm_semantic_triggers.tex = ['@']
+
+<
+
+-- VIMCOMPLETESME                                       *vim-pandoc-complete-vcm*
+
+A plugin that maps <tab> to trigger the built-in completion that is most
+suitable to the current context. The plugin is available here:
+https://github.com/ajh17/VimCompletesMe.
+
+The following options may be used to enable completion with the <tab> trigger
+for pandoc documents with |vimcompletesme| and `vim-pandoc`s omni completion
+function: >
+
+  augroup VimCompletesMePandoc
+    autocmd!
+    autocmd FileType pandoc
+      \ let b:vcm_omni_pattern = '@'
+  augroup END
+
+<
+
 - TOC                                                     *vim-pandoc-toc-module*
 
 Provides the *:TOC* command, which displays a table of contents for the
@@ -705,7 +857,7 @@ A description of the available configuration variables follows:
 	  elseif executable('mupdf')
 	    return 'mupdf ' . file
 	  endif
-	elseif file_extension is? 'html' 
+	elseif file_extension is? 'html'
 	  if !empty($BROWSER)
 	    return expand('$BROWSER') . ' ' . file
 	  elseif executable('firefox')
