@@ -151,7 +151,7 @@ class PandocCommand(object):
                     should_open_s = '0'
 
                 vim.command("botright 5new")
-                vim.command("map q <Esc>:close<Enter>")
+                vim.command("map <buffer> q <Esc>:close<Enter>")
                 vim.command("call termopen(" + \
                             "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
                             " extend({'should_open': '" + should_open_s + "'}," +\
