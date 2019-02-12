@@ -559,7 +559,7 @@ descriptions on how to set some of these up with |vim-pandoc|.
 specifically for Neovim, see here: https://github.com/Shougo/deoplete.nvim. It
 is a highly customizable and flexible completion manager.
 
-To configure for `vim-pandoc`, on may use: >
+To configure for `vim-pandoc`, one may use: >
 
   " This is new style
   call deoplete#custom#var('omni', 'input_patterns', {
@@ -567,10 +567,10 @@ To configure for `vim-pandoc`, on may use: >
     \})
 
   " This is old style (deprecated)
-  if !exists('g:deoplete#omni#input_patters')
-    let g:deoplete#omni#input_patters = {}
+  if !exists('g:deoplete#omni#input_patterns')
+    let g:deoplete#omni#input_patterns = {}
   endif
-  let g:deoplete#omni#input_patters.pandoc = ['@']
+  let g:deoplete#omni#input_patterns.pandoc = ['@']
 <
 
 -- NEOCOMPLETE                                  *vim-pandoc-complete-neocomplete*
@@ -583,10 +583,10 @@ here: https://github.com/Shougo/neovomplete.vim.
 The following options may be used to enable automatic completion for pandoc
 documents with |neocomplete| and `vim-pandoc`s omni completion function: >
 
-  if !exists('g:neocomplete#sources#omni#input_pattersn')
-    let g:neocomplete#sources#omni#input_patters = {}
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
   endif
-  let g:neocomplete#sources#omni#input_patters.pandoc =
+  let g:neocomplete#sources#omni#input_patterns.pandoc =
     \ '@'
 
 <
