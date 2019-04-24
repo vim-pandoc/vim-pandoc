@@ -150,7 +150,11 @@ class PandocCommand(object):
                 except:
                     should_open_s = '0'
 
-                vim.command("botright 5new")
+                if int(vim.eval("bufloaded('pandoc-execute')")):
+                    wnr = vim.eval("bufwinnr('pandoc-execute')")
+                    vim.command(wnr + "wincmd c")
+
+                vim.command("botright 5new pandoc-execute")
                 vim.command("map <buffer> q <Esc>:close<Enter>")
                 vim.command("call termopen(" + \
                             "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
@@ -158,7 +162,9 @@ class PandocCommand(object):
                             " {'on_exit': 'pandoc#command#JobHandler'," + \
                             "'on_stdout': 'pandoc#command#JobHandler'," + \
                             "'on_stderr': 'pandoc#command#JobHandler'}))")
+                vim.command("file pandoc-execute")
                 vim.command("normal G")
+                vim.command("normal <C-W><C-p>")
 
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
