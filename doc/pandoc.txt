@@ -159,7 +159,8 @@ recommended to leave this module enabled.
 
 The module behavior is configured through the |g:pandoc#formatting#mode|
 variable. For example, giving it the value 'ha' will enable hard breaks, and
-autoformatting. The default is to use soft wraps.
+autoformatting. The default is to use soft wraps. Some key maps are different
+in soft and hard wrapping modes, see the info on the KEYBOARD module below.
 
 If you use the hard wraps mode, you could want to adjust the textwidth value.
 This can be done through the |g:pandoc#formatting#textwidth| variable, or
@@ -438,6 +439,11 @@ Some of the reference-related mappings use |mark-motions|. You can configure
 what mark to use by setting the value of |g:pandoc#keyboard#references#mark|,
 in case the default ("r") is not suitable or needs to serve a different
 purpose.
+
+Some key mappings are affected by the editing mode (soft/hard wraps). In soft
+mode, vim-pandoc maps j and k to move across visible lines, not real ones, to
+ease navigation. This is controlled by the |g:pandoc#keyboard#display_motions|
+variable.
 
 - BIBLIOGRAPHIES                               *vim-pandoc-bibliographies-module*
 
