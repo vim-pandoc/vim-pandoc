@@ -97,9 +97,9 @@ endif
 " augroup pandoc {{{2
 " this sets the filetype for pandoc files
 augroup pandoc
-    au BufNewFile,BufRead *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
+    au BufNewFile,BufRead,BufFilePost *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
     if g:pandoc#filetypes#pandoc_markdown == 1
-        au BufNewFile,BufRead *.markdown,*.mkd,*.md set filetype=pandoc
+        au BufNewFile,BufRead,BufFilePost *.markdown,*.mkd,*.md set filetype=pandoc
     endif
 augroup END
 "}}}
@@ -110,7 +110,7 @@ augroup pandoc_attach
     for ext in g:pandoc#filetypes#handled
         call extend(s:exts, map(g:pandoc_extensions_table[ext], '"*." . v:val'))
     endfor
-    execute 'au BufRead,BufNewFile ' . join(s:exts, ",") . ' runtime ftplugin/pandoc.vim'
+    execute 'au BufRead,BufNewFile,BufFilePost ' . join(s:exts, ",") . ' runtime ftplugin/pandoc.vim'
 augroup END
 "}}}
 " }}}1
