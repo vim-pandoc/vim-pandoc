@@ -7,7 +7,11 @@ function! pandoc#command#Init()
     " set up defaults {{{2
     " use message buffers? {{{3
     if !exists("g:pandoc#command#use_message_buffers")
-        let g:pandoc#command#use_message_buffers = 1
+        if has("nvim") == 1
+            let g:pandoc#command#use_message_buffers = 0
+        else
+            let g:pandoc#command#use_message_buffers = 1
+        endif
     endif
 
     " LaTeX engine to use to produce PDFs with pandoc (xelatex, pdflatex, lualatex) {{{3

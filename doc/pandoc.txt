@@ -32,6 +32,13 @@ CONTENTS
     - KEYBOARD |vim-pandoc-keyboard-module|
     - BIBLIOGRAPHIES |vim-pandoc-bibliographies-module|
     - COMPLETION |vim-pandoc-completion-module|
+      --  AUTOCOMPLETE |vim-pandoc-complete-auto|
+        -- DEOPLETE |vim-pandoc-complete-deoplete|
+        -- NEOCOMPLETE |vim-pandoc-complete-neocomplete|
+        -- NCM2 |vim-pandoc-complete-ncm2|
+        -- NVIM-COMPLETION-MANAGER |vim-pandoc-complete-ncm|
+        -- YOUCOMPLETEME |vim-pandoc-complete-youcompleteme|
+        -- VIMCOMPLETESME |vim-pandoc-complete-vcm|
     - TOC |vim-pandoc-toc-module|
     - CHDIR |vim-pandoc-chdir-module|
     - SPELL |vim-pandoc-spell-module|
@@ -108,9 +115,9 @@ separatedly. It also allows users not to use this syntax file if they want to
 FILETYPES					          *vim-pandoc-filetypes*
 
 vim-pandoc is not a regular filetype plugin. Although it does define a
-`pandoc` filetype, vim-pandoc can also attach to other filestypes, like
+`pandoc` filetype, vim-pandoc can also attach to other filetypes, like
 `markdown`, `rst` and `textile`. In that case, vim-pandoc uses the
-appropiate filetype syntax file, but creates the Pandoc command and loads the
+appropriate filetype syntax file, but creates the Pandoc command and loads the
 extra utilities. What filetypes to attach to is determined by the value of the
 |g:pandoc#filetypes#handled| variable.
 
@@ -152,7 +159,8 @@ recommended to leave this module enabled.
 
 The module behavior is configured through the |g:pandoc#formatting#mode|
 variable. For example, giving it the value 'ha' will enable hard breaks, and
-autoformatting. The default is to use soft wraps.
+autoformatting. The default is to use soft wraps. Some key maps are different
+in soft and hard wrapping modes, see the info on the KEYBOARD module below.
 
 If you use the hard wraps mode, you could want to adjust the textwidth value.
 This can be done through the |g:pandoc#formatting#textwidth| variable, or
@@ -280,10 +288,13 @@ will create an incantation like:
 :Pandoc will also use the value of |b:pandoc_biblio_bibs| to pass
 `--bibliography` arguments, so the user shouldn't do that himself.
 
-Once pandoc runs, depending on the value of
-|g:pandoc#command#use_message_buffers| and if some error occurred, a buffer
-will open displaying the command output. You can dismiss this buffer pressing
-'q'. Regardless of pandoc's execution status, the invocation used will be logged so
+In nvim, vim-pandoc will open a terminal buffer and execute pandoc. If the
+value of |g:pandoc#command#use_message_buffers| is 1 and some error occurred,
+a buffer will open displaying the command output (this is unnecessary in nvim,
+because it will always display the command output, so the defalt for
+`use_message_buffers' there is 0). You can dismiss these buffers pressing 'q'.
+
+Regardless of pandoc's execution status, the invocation used will be logged so
 it can be checked using |:messages|.
 
 If you write a bang ('!') after the command, vim-pandoc will try to open
@@ -429,6 +440,11 @@ what mark to use by setting the value of |g:pandoc#keyboard#references#mark|,
 in case the default ("r") is not suitable or needs to serve a different
 purpose.
 
+Some key mappings are affected by the editing mode (soft/hard wraps). In soft
+mode, vim-pandoc maps j and k to move across visible lines, not real ones, to
+ease navigation. This is controlled by the |g:pandoc#keyboard#display_motions|
+variable.
+
 - BIBLIOGRAPHIES                               *vim-pandoc-bibliographies-module*
 
 Note: This module requires python support.
@@ -533,6 +549,151 @@ Then, you can complete from this list by pressing CTRL-X CTRL-K.
 If the 'citeproc' backend is used, extra information can be displayed in the
 preview window, depending on the value of
 |g:pandoc#completion#bib#use_preview|.
+
+-- AUTOCOMPLETE                                        *vim-pandoc-complete-auto*
+
+Vim does not provide automatic completion by itself, but there exist several
+plugins that provide this: |deoplete|, |neocomplete|, |ncm2|,
+|nvim-completion-manager|, and |youcompleteme|. There is also |vimcompletesme|
+that overrides <tab> to trigger different built-in completions, such as
+the omni-completion by |vim-pandoc|, depending on the context. See below for
+descriptions on how to set some of these up with |vim-pandoc|.
+
+-- DEOPLETE                                        *vim-pandoc-complete-deoplete*
+
+|deoplete| is a moder remake of |neocomplete|, and was originally written
+specifically for Neovim, see here: https://github.com/Shougo/deoplete.nvim. It
+is a highly customizable and flexible completion manager.
+
+To configure for `vim-pandoc`, one may use: >
+
+  " This is new style
+  call deoplete#custom#var('omni', 'input_patterns', {
+    \ 'pandoc': '@'
+    \})
+
+  " This is old style (deprecated)
+  if !exists('g:deoplete#omni#input_patterns')
+    let g:deoplete#omni#input_patterns = {}
+  endif
+  let g:deoplete#omni#input_patterns.pandoc = ['@']
+<
+
+-- NEOCOMPLETE                                  *vim-pandoc-complete-neocomplete*
+
+|neocomplete| is also a flexible automatic completion engine for vim, although
+active development has been stopped. Users are recommended to change to
+|deoplete|, see also |vim-pandoc-complete-deoplete|. The plugin is available
+here: https://github.com/Shougo/neovomplete.vim.
+
+The following options may be used to enable automatic completion for pandoc
+documents with |neocomplete| and `vim-pandoc`s omni completion function: >
+
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+  let g:neocomplete#sources#omni#input_patterns.pandoc =
+    \ '@'
+
+<
+
+-- NCM2                                                *vim-pandoc-complete-ncm2*
+
+|ncm2| is a modern remake and replacement of |nvim-completion-manager| and is
+supposed to be a "Slim, Fast and Hackable Completion Framework for Neovim":
+https://github.com/ncm2/ncm2
+
+The following simple configuration should work well with `vim-pandoc`: >
+
+  " include the following plugins (here using junnegun/vim-plug)
+  Plug 'roxma/nvim-yarp'
+  Plug 'ncm2/ncm2'
+
+  augroup my_cm_setup
+    autocmd!
+    autocmd BufEnter * call ncm2#enable_for_buffer()
+    autocmd Filetype pandoc call ncm2#register_source({
+      \ 'name': 'pandoc',
+      \ 'priority': 8,
+      \ 'scope': ['pandoc'],
+      \ 'mark': 'md',
+      \ 'word_pattern': '\w+',
+      \ 'complete_pattern': ['@'],
+      \ 'on_complete': ['ncm2#on_complete#omni', 'pandoc#completion#Complete'],
+      \ })
+  augroup END
+
+<
+
+-- NVIM-COMPLETION-MANAGER                              *vim-pandoc-complete-ncm*
+
+Note: |nvim-completion-manager| has been replaced by |ncm2|, and users are
+recommended to change. See |vim-pandoc-compete-ncm2| for hints on how to setup
+|ncm2| for |vim-pandoc|.
+
+|nvim-completion-manager| is a fast, extensible, async completion framework
+for neovim (and Vim version 8.0 and above). The project is available here:
+https://github.com/roxma/nvim-completion-manager
+
+To configure for `vim-pandoc`, one can use the following code: >
+
+  augroup my_cm_setup
+    autocmd!
+    autocmd User CmSetup call cm#register_source({
+      \ 'name': 'pandoc',
+      \ 'priority': 8,
+      \ 'scoping': 1,
+      \ 'scopes': ['pandoc'],
+      \ 'abbreviation', 'md',
+      \ 'cm_refresh_patterns': ['@'],
+      \ 'cm_refresh: {'omnifunc': 'pandoc#completion#Complete'},
+      \ })
+  augroup END
+
+<
+
+-- YOUCOMPLETEME                              *vim-pandoc-complete-youcompleteme*
+
+|youcompleteme| is probably the most popular code-completion engine for Vim.
+The github repository is here: https://github.com/Valloric/YouCompleteMe.
+It is described as:
+
+> YouCompleteMe is a fast, as-you-type, fuzzy-search code completion engine
+> for Vim. It has several completion engines: an identifier-based engine that
+> works with every programming language, a semantic, Clang [3]-based engine
+> that provides native semantic code completion for the C-family languages,
+> a Jedi [4]-based completion engine for Python, an OmniSharp [5]-based
+> completion engine for C# and an omnifunc-based completer that uses data from
+> Vim's omnicomplete system to provide semantic completions for many other
+> languages (Ruby, PHP etc.).
+
+To enable automatic completion with |youcompleteme| for `vim-pandoc`, use the
+following options: >
+
+  if !exists('g:ycm_semantic_triggers')
+    let g:ycm_semantic_triggers = {}
+  endif
+  let g:ycm_semantic_triggers.tex = ['@']
+
+<
+
+-- VIMCOMPLETESME                                       *vim-pandoc-complete-vcm*
+
+A plugin that maps <tab> to trigger the built-in completion that is most
+suitable to the current context. The plugin is available here:
+https://github.com/ajh17/VimCompletesMe.
+
+The following options may be used to enable completion with the <tab> trigger
+for pandoc documents with |vimcompletesme| and `vim-pandoc`s omni completion
+function: >
+
+  augroup VimCompletesMePandoc
+    autocmd!
+    autocmd FileType pandoc
+      \ let b:vcm_omni_pattern = '@'
+  augroup END
+
+<
 
 - TOC                                                     *vim-pandoc-toc-module*
 
@@ -692,7 +853,31 @@ A description of the available configuration variables follows:
     let g:pandoc#command#custom_open = "MyPandocOpen"
 
     function! MyPandocOpen(file)
-        return 'xdg-open ' . shellescape(expand(a:file,':p'))
+	let file = shellescape(fnamemodify(a:file, ':p'))
+	let file_extension = fnamemodify(a:file, ':e')
+	if file_extension is? 'pdf'
+	  if !empty($PDFVIEWER)
+	    return expand('$PDFVIEWER') . ' ' . file
+	  elseif executable('zathura')
+	    return 'zathura ' . file
+	  elseif executable('mupdf')
+	    return 'mupdf ' . file
+	  endif
+	elseif file_extension is? 'html'
+	  if !empty($BROWSER)
+	    return expand('$BROWSER') . ' ' . file
+	  elseif executable('firefox')
+	    return 'firefox ' . file
+	  elseif executable('chromium')
+	    return 'chromium ' . file
+	  endif
+	elseif file_extension is? 'odt' && executable('okular')
+	  return 'okular ' . file
+	elseif file_extension is? 'epub' && executable('okular')
+	  return 'okular ' . file
+	else
+	  return 'xdg-open ' . file
+	endif
     endfunction
 
 - *g:pandoc#command#prefer_pdf*
