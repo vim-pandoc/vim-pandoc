@@ -40,7 +40,6 @@ CONTENTS
         -- YOUCOMPLETEME |vim-pandoc-complete-youcompleteme|
         -- VIMCOMPLETESME |vim-pandoc-complete-vcm|
     - TOC |vim-pandoc-toc-module|
-    - CHDIR |vim-pandoc-chdir-module|
     - SPELL |vim-pandoc-spell-module|
     - HYPERTEXT |vim-pandoc-hypertext-module|
 - CONFIGURATION
@@ -707,11 +706,6 @@ buffer is closed after this, but this can be circumvented by pressing <C-CR>.
 This behavior can be reversed by setting |g:pandoc#toc#close_after_navigating|
 to 0.
 
-- CHDIR                                                *vim-pandoc-chdir-module*
-
-Changes the current window directory to the one the file is in
-("%:h"). Enabled by default.
-
 - SPELL                                                *vim-pandoc-spell-module*
 
 Sets up spelling for files handled by vim-pandoc. Spelling is on by default,
@@ -776,7 +770,7 @@ A description of the available configuration variables follows:
 - *g:pandoc#modules#enabled*
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "metadata", "menu", "executors", "keyboard", "toc", "chdir", "spell", "hypertext"]
+  "metadata", "menu", "executors", "keyboard", "toc", "spell", "hypertext"]
 
   A list of the modules to enable on the files determined by
   |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
@@ -1153,6 +1147,20 @@ A description of the available configuration variables follows:
   default = 1
 
   Use default mappings.
+
+FAQ                                                           *vim-pandoc-faq*
+
+Q: On opening a pandoc file the current work dir is not that of the file,
+   what's wrong?
+
+A: Add to your `vimrc` the line
+>
+  autocmd FileType pandoc :lchdir %:p:h
+<
+  As a possible alternative, see also *autochdir* and the plug-in
+>
+  https://github.com/fmoralesc/vim-extended-autochdir
+<
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
