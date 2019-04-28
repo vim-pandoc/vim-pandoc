@@ -99,7 +99,9 @@ endif
 augroup pandoc
     au BufNewFile,BufRead,BufFilePost *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
     if g:pandoc#filetypes#pandoc_markdown == 1
-        au BufNewFile,BufRead,BufFilePost *.markdown,*.mkd,*.md set filetype=pandoc
+        " skip loading of /markdown/ftplugin.vim
+        au BufNewFile,BufRead,BufFilePost *.markdown,*.mdown,*.mkd,*.mkdn,*.mdwn,*.md 
+                    \ let b:did_ftplugin=1 | setlocal filetype=pandoc
     endif
 augroup END
 "}}}
