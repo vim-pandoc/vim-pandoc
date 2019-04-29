@@ -219,7 +219,9 @@ The "relative" mode counts the number of parents the header has, so
 The "stacked" mode counts all headers as first level, and it can be used to
 view all the headers at once.
 
-The mode can be changed on the fly using the *:PandocFolding* command.
+The mode can be changed on the fly using the *:PandocFolding* command which
+takes as argument the options "syntax", "relative" and "stacked". If no
+argument is given, then automatic folding will be disabled.
 
 Besides this, some extensions are provided:
 
