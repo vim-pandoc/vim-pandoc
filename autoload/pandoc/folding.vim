@@ -42,6 +42,10 @@ function! pandoc#folding#Init()
     if !exists('g:pandoc#folding#use_foldtext')
         let g:pandoc#folding#use_foldtext = 1
     endif
+    " Use fastfolds? {{{3
+    if !exists('g:pandoc#folding#fastfolds')
+        let g:pandoc#folding#fastfolds = 0
+    endif
     " Use basic folding fot this buffer? {{{3
     if !exists("b:pandoc_folding_basic")
         let b:pandoc_folding_basic = 0
