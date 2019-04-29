@@ -51,11 +51,13 @@ function! pandoc#folding#Init()
     exe "setlocal foldlevel=".g:pandoc#folding#level
     setlocal foldmethod=expr
     " might help with slowness while typing due to syntax checks
-    augroup EnableFastFolds
-        au!
-        autocmd InsertEnter <buffer> setlocal foldmethod=manual
-        autocmd InsertLeave <buffer> setlocal foldmethod=expr
-    augroup end
+    if g:pandoc#folding#fastfolds
+        augroup EnableFastFolds
+            au!
+            autocmd InsertEnter <buffer> setlocal foldmethod=manual
+            autocmd InsertLeave <buffer> setlocal foldmethod=expr
+        augroup end
+    endif
     setlocal foldexpr=pandoc#folding#FoldExpr()
     if g:pandoc#folding#use_foldtext
         setlocal foldtext=pandoc#folding#FoldText()
@@ -73,8 +75,10 @@ function! pandoc#folding#Disable()
     setlocal foldcolumn&
     setlocal foldlevel&
     setlocal foldexpr&
-    au! InsertEnter
-    au! InsertLeave
+    if g:pandoc#folding#fastfolds
+        au! InsertEnter
+        au! InsertLeave
+    endif
     if exists(':PandocFolding')
         delcommand PandocFolding
     endif

@@ -219,7 +219,9 @@ The "relative" mode counts the number of parents the header has, so
 The "stacked" mode counts all headers as first level, and it can be used to
 view all the headers at once.
 
-The mode can be changed on the fly using the *:PandocFolding* command.
+The mode can be changed on the fly using the *:PandocFolding* command which
+takes as argument the options "syntax", "relative" and "stacked". If no
+argument is given, then automatic folding will be disabled.
 
 Besides this, some extensions are provided:
 
@@ -257,6 +259,10 @@ Besides this, some extensions are provided:
 
 * Fold fenced codeblocks. By default, this is disabled, but can be turned on
   by setting |g:pandoc#folding#fold_fenced_codeblocks| to 1.
+* To avoid the continuous recomputation of folds, in particular in insert mode,
+  set |g:pandoc#folding#fastfolds| to 1 to defer it to the switches between
+  insert and normal mode. For a plug-in that will make Vim recompute the folds
+  only when need be, see https://github.com/konfekt/fastfold .
 
 NOTE: when using split windows, the foldexpr function can get called many more
 times than usual, so in this case the folding function is disabled for
@@ -1052,6 +1058,13 @@ A description of the available configuration variables follows:
       test
       </div foldend>
 
+- *g:pandoc#folding#fastfolds*
+  default = 0
+
+  Defer recomputation of folds to the switches between insert and normal mode.
+  For a plug-in that will make Vim recompute the folds only when need be, see
+  https://github.com/konfekt/fastfold
+
 - *g:pandoc#folding#fold_vim_markers*
   default = 1
 
@@ -1161,6 +1174,9 @@ A: Add to your `vimrc` the line
 >
   https://github.com/fmoralesc/vim-extended-autochdir
 <
+Q: Editing text is laggy. What's wrong?
+
+A: See |g:pandoc#folding#fastfolds|.
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
