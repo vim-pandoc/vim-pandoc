@@ -1,10 +1,8 @@
-*vim-pandoc-devel*
+DEVELOPING FOR VIM-PANDOC                                    *vim-pandoc-devel*
 
-                           DEVELOPING FOR VIM-PANDOC
+HOW TO CREATE A NEW MODULE                              *vim-pandoc-new-module*
 
-- HOW TO CREATE A NEW MODULE                            *vim-pandoc-new-module*
-
-This is a guide to developing modules for vim-pandoc. It is aimed at anyone
+This is a guide to developing modules for |vim-pandoc|. It is aimed at anyone
 who wants to customize vim-pandoc further (or contribute some feature), and it
 doesn't presuppose much knowledge on the reader's part.
 
@@ -13,41 +11,42 @@ directory, which are called by the pandoc filetype plugin depending on the
 value of |g:pandoc#modules#enabled| and |g:pandoc#modules#disabled|.
 
                                                          *pandoc#MODULE#Init()*
+
 Every module must export a function called |pandoc#MODULE#Init()|, which
 should handle the module initial configuration (setting up defaults), and any
-functionality definition. MODULE here stands for the module filename. For example,
-for the module defined in `autoload/toc.vim`, this function is called
+functionality definition. MODULE here stands for the module filename. For
+example, for the module defined in `autoload/toc.vim`, this function is called
 `pandoc#toc#Init()`. 
 
 Let's suppose we want to create a new module for fancy stuff. We should create
 a file called `autoload/fancy.vim`. This file should contain something like
-this:
+this: >
 
      function! pandoc#fancy#Init()
      endfunction
-
-Now, we want it to export a command, `:PandocFancy`. This command simply
-calls this function (defined in the same file):
+<
+Now, we want it to export a command, `:PandocFancy`. This command simply calls
+this function (defined in the same file): >
 
     function! pandoc#fancy#Fancy()
 	echom "this is so fancy!"
     endfunction
-
-We should modify Init() so it reads
+<
+We should modify Init() so it reads: >
 
      function! pandoc#fancy#Init()
 	command! -buffer PandocFancy call pandoc#fancy#Fancy()
      endfunction
+<
+Note the `command!` command passes the `-buffer` arg. This means this command
+will only be available in the current buffer. If a vim-pandoc module exports
+a command, it SHOULD be buffer-local. See |:command-buffer| 
 
-Note the `command!` command passes the `-buffer` arg. This means this
-command will only be available in the current buffer. If a vim-pandoc module
-exports a command, it SHOULD be buffer-local. See |:command-buffer| 
+This is probably not fancy enough! We want to be able to change the message
+`PandocFancy` outputs through a setting. We will provide a default message,
+and a configuration variable so we can override it.
 
-This is probably not fancy enough! We want to be able to change the
-message `PandocFancy` outputs through a setting. We will provide a default
-message, and a configuration variable so we can override it.
-
-First, we define the default message modifying the Init() function
+First, we define the default message modifying the Init() function: >
 
     function! pandoc#fancy#Init()
 	if !exists("g:pandoc#fancy#message")
@@ -56,21 +55,21 @@ First, we define the default message modifying the Init() function
 
 	command! -buffer PandocFancy call pandoc#fancy#Fancy()
     endfunction
-
+<
 Note the configuration variable name follows the g:pandoc#MODULE#VARIABLE
 schema.
 
-We must change the Fancy() function so it picks up the configuration
+We must change the Fancy() function so it picks up the configuration: >
 
     function! pandoc#fancy#Fancy()
 	echom g:pandoc#fancy#message
     endfunction
-
+<
 Now the behavior of the Fancy function changes depending on the value of
 `g:pandoc#fancy#message`. 
 
 We can also support buffer-local configuration variables that override the
-global configuration variable
+global configuration variable: >
 
     function! pandoc#fancy#Fancy()
 	if exists("b:pandoc_fancy_message")
@@ -79,18 +78,19 @@ global configuration variable
 	    echom g:pandoc#fancy#message
 	endif
     endfunction
-
+<
 Note the buffer-scoped variable uses underscores instead of hashes (b:
 variables' names can't contain them).
 
 If we wanted to add a keyboard mapping to call the :PandocFancy command more
-easily, we should add something like
+easily, we should add something like: >
 
     noremap <buffer> <LocalLeader>ff :PandocFancy<cr>
-
+<
 to the Init() function.
 
 Note the mapping is buffer-local.
+
 Note the mapping uses <LocalLeader>. This is recommended so the mapping
 doesn't interfere with others.
 
@@ -98,3 +98,5 @@ Note If you need to change a vim setting, use |:setlocal|. Changing the global
 values of vim settings (or vim settings which are global only) is not
 recommended. If you must, save the original value and restore it after using
 it.
+
+vim:tw=78:ts=8:noet:ft=help:fdm=marker

@@ -138,7 +138,7 @@ filetype and syntax, use
 Note: vim-pandoc's developers mostly use pandoc's markdown syntax, so
 coverage for it is more complete than for the other filetypes.
 
-MODULES                         l                          *vim-pandoc-modules*
+MODULES                                                    *vim-pandoc-modules*
 
 vim-pandoc is split in several modules. They can be enabled and disabled
 independently at startup, by adjusting the values of the
@@ -1185,9 +1185,9 @@ A: See |g:pandoc#folding#fastfolds|.
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
 vim-pandoc welcomes any contribution, in the form of bug reports, patches,
-code, suggestions, etc. To do so, please open an issue in our issue tracker in
-github, at https://github.com/vim-pandoc/vim-pandoc/issues, or email the
-maintainer (see below).
+code, suggestions, etc. To do so, please open an issue in our issue tracker on
+Github at https://github.com/vim-pandoc/vim-pandoc/issues or email the
+maintainer (see below). See also |vim-pandoc-devel| for documentation.
 
 WHO                                                            *vim-pandoc-who*
 
