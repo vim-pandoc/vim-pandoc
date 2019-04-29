@@ -43,7 +43,6 @@ if !exists("g:pandoc#modules#enabled")
                 \"metadata",
                 \"keyboard" ,
                 \"toc",
-                \"chdir",
                 \"spell",
                 \"hypertext"]
 endif
@@ -113,8 +112,7 @@ augroup pandoc_attach
     for ext in g:pandoc#filetypes#handled
         call extend(s:exts, map(g:pandoc_extensions_table[ext], '"*." . v:val'))
     endfor
-    execute 'au BufRead,BufNewFile '.join(s:exts, ",").' runtime ftplugin/pandoc.vim'
-    execute 'au BufEnter '.join(s:exts,",").' if index(g:pandoc#modules#disabled, "chdir") == -1 | call pandoc#chdir#Init() | endif'
+    execute 'au BufRead,BufNewFile,BufFilePost ' . join(s:exts, ",") . ' runtime ftplugin/pandoc.vim'
 augroup END
 "}}}
 " }}}1
