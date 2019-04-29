@@ -259,6 +259,10 @@ Besides this, some extensions are provided:
 
 * Fold fenced codeblocks. By default, this is disabled, but can be turned on
   by setting |g:pandoc#folding#fold_fenced_codeblocks| to 1.
+* To avoid the continuous recomputation of folds, in particular in insert mode,
+  set |g:pandoc#folding#fastfolds| to 1 to defer it to the switches between
+  insert and normal mode. For a plug-in that will make Vim recomupute the folds
+  only when need be, see https://github.com/konfekt/fastfold .
 
 NOTE: when using split windows, the foldexpr function can get called many more
 times than usual, so in this case the folding function is disabled for
