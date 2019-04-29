@@ -267,11 +267,9 @@ Besides this, some extensions are provided:
 * To avoid the continuous recomputation of folds, in particular in insert mode,
   set |g:pandoc#folding#fastfolds| to 1 to defer it to the switches between
   insert and normal mode. For a plug-in that will make Vim recompute the folds
-  only when need be, see https://github.com/konfekt/fastfold .
-
-NOTE: when using split windows, the foldexpr function can get called many more
-times than usual, so in this case the folding function is disabled for
-performance reasons.
+  only when need be, see https://github.com/konfekt/fastfold . This also
+  disables the calculation of folds when using split windows, where the foldexpr
+  function can get called many more times than usual.
 
 - COMMAND                                            *vim-pandoc-command-module*
 
