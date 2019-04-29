@@ -1,24 +1,27 @@
-*vim-pandoc* pandoc integration for Vim
+*pandoc.txt* Pandoc integration and utilities
 
-|vim-pandoc| provides facilities to integrate Vim with the |pandoc| document
-converter and work with documents written in |pandocs-markdown-variant|
+Vim-pandoc provides facilities to integrate Vim with the |pandoc| document
+converter and work with documents written in |pandoc's-markdown-variant|
 variant (although textile documents are also supported). It is the main item
 in |vim-pandoc-project|.
 
- *pandoc*
+- *pandoc*:
     http://johnmacfarlane.net/pandoc/
- *pandoc-markdown-variant*
+
+- *pandoc's-markdown-variant*:
     http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
-  *vim-pandoc-project*
+
+- *vim-pandoc-project*:
     http://github.com/vim-pandoc
 
-vim-pandoc's goals are
+Vim-pandoc's goals are
 
  1) to provide advanced integration with pandoc,
  2) to offer a comfortable document writing environment,
  3) to allow great configurability.
 
-CONTENTS
+
+CONTENTS                                                           *vim-pandoc*
 
 - REQUIREMENTS |vim-pandoc-requirements|
 - INSTALLATION |vim-pandoc-installation|
@@ -46,7 +49,7 @@ CONTENTS
     - SETTINGS |vim-pandoc-settings|
 
 
-REQUIREMENTS			                      *vim-pandoc-requirements*
+REQUIREMENTS                                          *vim-pandoc-requirements*
 
 * Vim 7.4
   Note: On vim versions < 7.4, some modules are automatically disabled (see
@@ -55,8 +58,8 @@ REQUIREMENTS			                      *vim-pandoc-requirements*
 * python 3 support.
   Note: If python is not available, the features that require it are
   automatically disabled, allowing vim-pandoc to run in a degraded mode.
-  However, vim-pandoc uses the new python API, so in versions under 7.4,
-  even if python is available, some functions might not.
+  However, vim-pandoc uses the new python API, so in versions under 7.4, even
+  if python is available, some functions might not.
 
 To check if the requirements are satisfied, check if
 
@@ -96,7 +99,8 @@ NeoBundle users should replace `Plugin` in these instructions with
 
 - The repo is pathogen compatible and you can also just drop it in runtimepath.
 
-SYNTAX                                            *vim-pandoc-pandoc-syntax*
+
+SYNTAX                                               *vim-pandoc-pandoc-syntax*
 
 vim-pandoc doesn't provide a syntax file for pandoc markdown files. Please
 use https://github.com/vim-pandoc/vim-pandoc-syntax for this:
@@ -111,7 +115,8 @@ The reason we split the syntax file is it is much cleaner to track issues
 separatedly. It also allows users not to use this syntax file if they want to
 (notice that vim-pandoc-syntax is also configurable).
 
-FILETYPES					          *vim-pandoc-filetypes*
+
+FILETYPES                                                *vim-pandoc-filetypes*
 
 vim-pandoc is not a regular filetype plugin. Although it does define a
 `pandoc` filetype, vim-pandoc can also attach to other filetypes, like
@@ -133,7 +138,7 @@ filetype and syntax, use
 Note: vim-pandoc's developers mostly use pandoc's markdown syntax, so
 coverage for it is more complete than for the other filetypes.
 
-MODULES                                                     *vim-pandoc-modules*
+MODULES                         l                          *vim-pandoc-modules*
 
 vim-pandoc is split in several modules. They can be enabled and disabled
 independently at startup, by adjusting the values of the
@@ -147,11 +152,11 @@ cases. To disable the module they should put
 
 in their .vimrc.
 
-                                                       *vim-pandoc-modules-list*
+                                                      *vim-pandoc-modules-list*
 
 Now, a description of the available modules
 
-- FORMATTING                                      *vim-pandoc-formatting-module*
+- FORMATTING                                     *vim-pandoc-formatting-module*
 
 Handles basic writing settings, like the use of hard or soft line wraps. It is
 recommended to leave this module enabled.
@@ -336,7 +341,7 @@ setting.
 Notice that vim-pandoc also defines and sets a 'compiler' pandoc that can be
 started by ':make' or ':lmake' and compiles the current file by pandoc.
 
-						                 *Pandoc-native*
+                                                                *Pandoc-native*
 If you vim doesn't have support for python, you can still use a limited
 version of the Pandoc command, however this will not support autocompletion,
 the convenience abbreviations or the ability to open the file after compiling
@@ -349,7 +354,7 @@ you would need to issue
     Pandoc -o myfile.pdf
 
 
--- TEMPLATES                                       *vim-pandoc-command-templates*
+-- TEMPLATES                                     *vim-pandoc-command-templates*
 
 It might get tedious to reuse the same arguments over and over. For example,
 the user might frequently execute
@@ -364,7 +369,7 @@ Note: templates don't record if a bang was used for the Pandoc command, so once
 #my_usual_article is defined, both ':Pandoc #my_usual_article' and ':Pandoc!
 #my_usual_article' are possible.
 
-                                                                *:PandocTemplate*
+                                                              *:PandocTemplate*
 To save the latest :Pandoc incantation as a template, the user should execute
 
     :PandocTemplate save my_usual_article
@@ -498,12 +503,12 @@ setting the |g:pandoc#biblio#use_bibtool| variable to 1.
 
 TIP: If you use unite.vim, you might want to check https://github.com/msprev/unite-bibtex
 
-- YAML						  *vim-pandoc-yaml-module*
+- YAML                                                 *vim-pandoc-yaml-module*
 
 This module gathers data from YAML headers, if present, and keeps it in the
 *b:pandoc_yaml_data* variable. Other modules might be configured using this.
 
-- COMPLETION                                       *vim-pandoc-completion-module*
+- COMPLETION                                     *vim-pandoc-completion-module*
 
 Provides |omni-completion|. If the `bibliographies` module is active, it will
 complete bibliographic references from the bibliography sources defined in
@@ -848,38 +853,38 @@ A description of the available configuration variables follows:
 
   A function to be used to open the created file. This function must take an
   argument, for the path of the file created, and return a string with the
-  command that should open the file. For example:
+  command that should open the file. For example: >
 
     let g:pandoc#command#custom_open = "MyPandocOpen"
 
-    function! MyPandocOpen(file)
-	let file = shellescape(fnamemodify(a:file, ':p'))
-	let file_extension = fnamemodify(a:file, ':e')
-	if file_extension is? 'pdf'
-	  if !empty($PDFVIEWER)
-	    return expand('$PDFVIEWER') . ' ' . file
-	  elseif executable('zathura')
-	    return 'zathura ' . file
-	  elseif executable('mupdf')
-	    return 'mupdf ' . file
-	  endif
-	elseif file_extension is? 'html'
-	  if !empty($BROWSER)
-	    return expand('$BROWSER') . ' ' . file
-	  elseif executable('firefox')
-	    return 'firefox ' . file
-	  elseif executable('chromium')
-	    return 'chromium ' . file
-	  endif
-	elseif file_extension is? 'odt' && executable('okular')
-	  return 'okular ' . file
-	elseif file_extension is? 'epub' && executable('okular')
-	  return 'okular ' . file
-	else
-	  return 'xdg-open ' . file
-	endif
-    endfunction
-
+	function! MyPandocOpen(file)
+		let file = shellescape(fnamemodify(a:file, ':p'))
+		let file_extension = fnamemodify(a:file, ':e')
+		if file_extension is? 'pdf'
+			if !empty($PDFVIEWER)
+				return expand('$PDFVIEWER') . ' ' . file
+			elseif executable('zathura')
+				return 'zathura ' . file
+			elseif executable('mupdf')
+				return 'mupdf ' . file
+			endif
+		elseif file_extension is? 'html'
+			if !empty($BROWSER)
+				return expand('$BROWSER') . ' ' . file
+			elseif executable('firefox')
+				return 'firefox ' . file
+			elseif executable('chromium')
+				return 'chromium ' . file
+			endif
+		elseif file_extension is? 'odt' && executable('okular')
+			return 'okular ' . file
+		elseif file_extension is? 'epub' && executable('okular')
+			return 'okular ' . file
+		else
+			return 'xdg-open ' . file
+		endif
+	endfunction
+<
 - *g:pandoc#command#prefer_pdf*
    default = 0
 
@@ -913,18 +918,18 @@ A description of the available configuration variables follows:
   if the program is not located in the $PATH.
 
   The difference to |g:pandoc#command#path| is that the latter is used for
-  internal purposes. For example, if you want to use Panzer:
+  internal purposes. For example, if you want to use Panzer: >
 
     let g:pandoc#compiler#command = "panzer"
-
+<
 - *g:pandoc#compiler#arguments*
   default = ''
 
   Additional arguments for the command invoked in |:Pandoc|.
-  For example, if you're using Panzer this setting is recommended:
+  For example, if you're using Panzer this setting is recommended: >
 
     let g:pandoc#compiler#arguments = "---quiet ---strict"
-
+<
 - *g:pandoc#biblio#sources*
   default = "bcg"
 
@@ -1027,7 +1032,7 @@ A description of the available configuration variables follows:
 
   How to decide what level the headers are. Default value follows syntax
   rules, 'relative' uses information about the header parents. For example, in
-  this document
+  this document >
 
       ## header
 
@@ -1036,7 +1041,7 @@ A description of the available configuration variables follows:
       #### header
 
       blah blah blah
-
+<
   the level of "## header" is 2 using the default method, but 1 using
   relative, and the level of "#### header" is 4 using the default method, but
   2 using relative.
@@ -1052,12 +1057,12 @@ A description of the available configuration variables follows:
   default = ["notes"]
 
   What div classes to fold. NOTE: you need to end the folds using the
-  `foldend` attribute in the closing tag, like so:
+  `foldend` attribute in the closing tag, like so: >
 
       <div class="notes">
       test
       </div foldend>
-
+<
 - *g:pandoc#folding#fastfolds*
   default = 0
 
@@ -1155,7 +1160,6 @@ A description of the available configuration variables follows:
   To use this for alternate files, the value of
   |g:pandoc#hypertext#open_editable_alternates| should be 1.
 
-
 - *g:pandoc#hypertext#use_default_mappings*
   default = 1
 
@@ -1197,4 +1201,4 @@ felixSchl, zmanji, lmullen, Propatsch, ivotron, tpoisot, 00Davo. We have
 borrowed from Jeremy Schultz, plasticboy and cirosantilli, too. Many thanks to
 all of them.
 
-vim: set ft=help :
+vim:tw=78:ts=8:noet:ft=help:fdm=marker
