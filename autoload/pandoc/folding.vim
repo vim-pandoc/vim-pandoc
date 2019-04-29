@@ -109,9 +109,12 @@ endfunction
 function! pandoc#folding#FoldExpr()
     " with multiple splits in the same buffer, the folding code can be called
     " way too many times too often, so it's best to disable it to keep good
-    " performance.
-    if count(map(range(1, winnr('$')), 'bufname(winbufnr(v:val))'), bufname("")) > 1
-        return
+    " performance. Only enable when using the built-in method of improving
+    " performance of folds.
+    if g:pandoc#folding#fastfolds == 1
+        if count(map(range(1, winnr('$')), 'bufname(winbufnr(v:val))'), bufname("")) > 1
+            return
+        endif
     endif
 
     let vline = getline(v:lnum)
