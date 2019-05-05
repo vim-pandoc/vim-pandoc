@@ -761,7 +761,8 @@ cluttered with unused variables for users who have disabled some modules.
 A description of the available configuration variables follows:
 
 - *g:pandoc#filetypes#handled*
-  default = ["markdown", "rst", "textile"]
+  default = ["pandoc", "rst", "textile"]
+  	     + ["markdown"] (if |g:pandoc#filetypes#pandoc_markdown| is 1)
 
   A list of the kinds of files vim-pandoc will attach to. 'extra' includes
   .text and .txt files. For what values are valid here, see the
@@ -774,7 +775,7 @@ A description of the available configuration variables follows:
   markdown extensions (*.md, *.mkd, etc)? Since regular markdown and pandoc's
   markdown variant differ, someone might want to restrict those extensions to
   regular markdown. In that case, we use vim's default syntax highlighting for
-  markdown.
+  markdown. See |g:pandoc#filetypes#handled| above.
 
 - *g:pandoc#modules#enabled*
 
