@@ -328,7 +328,7 @@ function! pandoc#formatting#UseSoftWraps() abort "{{{1
 
     " soft wrapping
     setlocal wrap
-    setlocal formatoptions=1
+    setlocal formatoptions=1n
 
     " Show partial wrapped lines
     setlocal display=lastline
