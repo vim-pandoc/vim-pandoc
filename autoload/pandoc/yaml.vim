@@ -47,8 +47,10 @@ function! pandoc#yaml#Parse(...)
 	let val = ''
 	try
 	    let [key, val] = matchlist(line,
-			\ '\s*\([[:graph:]]\+\)\s*:\s*\([[:graph:]]\+\)\s*')[1:2]
+			\ '\s*\([[:graph:]]\+\)\s*:\s*\(.*\)')[1:2]
 	    let key = substitute(key, '[ -]', '_', 'g')
+	    " trim "s at the beggining and end of values
+	    let val = substitute(val, '\(^"\|"$\)', '', 'g')
 	    let yaml_dict[key] = val
         catch
 	endtry
