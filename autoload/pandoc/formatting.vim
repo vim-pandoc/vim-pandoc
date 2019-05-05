@@ -246,16 +246,6 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
     setlocal formatoptions&
     setlocal display&
     setlocal wrap&
-    " save j, k mappings in case user remapped them
-    if !empty(maparg('j', '', 0, 1))
-        let l:save_j = maparg('j', 'n', 0, 1)
-    endif
-    if !empty(maparg('k', '', 0, 1))
-        let l:save_k = maparg('k', 'n', 0, 1)
-    endif
-    silent! unmap j
-    silent! unmap k
-
     " textwidth
     exec "setlocal textwidth=".g:pandoc#formatting#textwidth
 
@@ -281,42 +271,6 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
             au CursorMovedI <buffer> call pandoc#formatting#AutoFormat(0)
         endif
         augroup END
-    endif
-    " restore j and k
-    " based on http://vi.stackexchange.com/a/7735/6682
-    if exists('l:save_j')
-        " restore normal mode mapping for j
-        exec (l:save_j.noremap ? 'nnoremap' : 'nmap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_j.lhs . ' ' .
-             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
-        " restore visual mode mapping for j
-        exec (l:save_j.noremap ? 'vnoremap' : 'vmap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_j.lhs . ' ' .
-             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
-        " restore operation-pending mode mapping for j
-        exec (l:save_j.noremap ? 'onoremap' : 'omap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_j[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_j.lhs . ' ' .
-             \ substitute(l:save_j.rhs, '<SID>', '<SNR>' . l:save_j.sid . '_', 'g')
-    endif
-    if exists('l:save_k')
-        " restore normal mode mapping for k
-        exec (l:save_k.noremap ? 'nnoremap' : 'nmap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_k.lhs . ' ' .
-             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
-        " restore visual mode mapping for k
-        exec (l:save_k.noremap ? 'vnoremap' : 'vmap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_k.lhs . ' ' .
-             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
-        " restore operation-pending mode mapping for k
-        exec (l:save_k.noremap ? 'onoremap' : 'omap') .
-             \ join(map(['buffer', 'expr', 'nowait', 'silent'], 'l:save_k[v:val] ? "<" . v:val . ">": ""')) .
-             \ l:save_k.lhs . ' ' .
-             \ substitute(l:save_k.rhs, '<SID>', '<SNR>' . l:save_k.sid . '_', 'g')
     endif
 endfunction
 
