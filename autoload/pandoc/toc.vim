@@ -58,7 +58,7 @@ function! pandoc#toc#Update()
     endtry
 endfunction
 
-" ReDisplay(bufname): Prepare the location list window four our uses {{{1
+" ReDisplay(bufname): Prepare the location list window for our uses {{{1
 function! pandoc#toc#ReDisplay(bufname)
     if len(getloclist(0)) == 0
         lclose

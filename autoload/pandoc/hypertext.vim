@@ -124,7 +124,7 @@ endfunction
 
 " MatchstrAtCursor(pattern)
 " Returns part of the line that matches pattern at cursor
-" Copyed from vimwiki plugin: autoload/base.vim
+" Copied from vimwiki plugin: autoload/base.vim
 function! s:MatchstrAtCursor(pattern) " {{{1
     let col = col('.') - 1
     let line = getline('.')
