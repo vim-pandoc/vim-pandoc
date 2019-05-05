@@ -82,11 +82,14 @@ endfunction
 function! pandoc#command#Pandoc(args, bang)
     if has("python3") || has("python3/dyn")
         py3 from vim_pandoc.command import pandoc
-        let templatized_args = substitute(a:args, '#\(\S\+\)',
-                    \'\=pandoc#command#GetTemplate(submatch(1))', 'g')
+        let expanded_args = substitute(a:args, '%\(:[phtre]\)\+',
+                    \'\=expand(submatch(0))', 'g') " expand placeholders
+        let templatized_args = substitute(expanded_args, '#\(\S\+\)',
+                    \'\=pandoc#command#GetTemplate(submatch(1))', 'g') " expand templates
         py3 pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')
     endif
 endfunction
+
 
 function! pandoc#command#PandocNative(args)
     let l:cmd = g:pandoc#compiler#command.' '.g:pandoc#compiler#arguments.' '.a:args.' '.fnameescape(expand('%'))
