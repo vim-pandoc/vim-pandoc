@@ -683,6 +683,7 @@ following options: >
   endif
   let g:ycm_semantic_triggers.tex = ['@']
 
+  let g:ycm_filetype_blacklist = {}
 <
 
 -- VIMCOMPLETESME                                       *vim-pandoc-complete-vcm*
