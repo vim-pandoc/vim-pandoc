@@ -44,7 +44,8 @@ if !exists("g:pandoc#modules#enabled")
                 \"keyboard" ,
                 \"toc",
                 \"spell",
-                \"hypertext"]
+                \"hypertext",
+                \"table"]
 endif
 
 " Auxiliary module blacklist. {{{3

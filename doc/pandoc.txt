@@ -45,6 +45,7 @@ CONTENTS                                                           *vim-pandoc*
     - TOC |vim-pandoc-toc-module|
     - SPELL |vim-pandoc-spell-module|
     - HYPERTEXT |vim-pandoc-hypertext-module|
+    - TABLE |vim-pandoc-table-module|
 - CONFIGURATION
     - SETTINGS |vim-pandoc-settings|
 
@@ -753,6 +754,30 @@ After moving, you can use |<localleader>gb| to move back to that link.
 
 See |vim-pandoc-keyboard-module| ro detail.
 
+- TABLE                                                *vim-pandoc-table-module*
+
+Module for editing pandoc tables with auto-format features. Use `:PandocTable`
+to create a default table of 5 columns and 2 rows, or `:PandocTable n m` to
+create a table with `n` columns and `m` rows. >
+
+ |   |   |   |   |   |
+ |---|---|---|---|---|
+ |   |   |   |   |   |
+<
+
+Tables are auto-formatable: whenever presss <TAB> or leave insert mode, the
+table will be formated automatically.
+
+A list of key-mappings for the table module:
+
+  - <TAB>    : move to the next cell; add a new row if at the end of table;
+  - <ALT-TAB>: move to the previous cell;
+  - *gqq*      : format a table (normal mode mapping). A table might become
+               unaligned because a user moves away from it using mouse.
+
+Only pandoc *pipe-table* format is supported as of now. There is no
+configuration for the table module.
+
 SETTINGS                                                   *vim-pandoc-settings*
 
 Module configuration variables defaults are initialized when the modules
@@ -781,7 +806,8 @@ A description of the available configuration variables follows:
 - *g:pandoc#modules#enabled*
 
   default = ["formatting", "folding", "bibliographies", "completion",
-  "metadata", "menu", "executors", "keyboard", "toc", "spell", "hypertext"]
+  "metadata", "menu", "executors", "keyboard", "toc", "spell", "hypertext",
+  "table"]
 
   A list of the modules to enable on the files determined by
   |g:pandoc#filetypes#handled|. See |vim-pandoc-modules|.
