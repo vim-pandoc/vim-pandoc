@@ -236,7 +236,7 @@ class PandocCommand(object):
             # nvim's python host doesn't change the directory the same way vim does
             try:
                 if vim.eval('has("nvim")') == '1':
-                    os.chdir(vim.eval('expand("%:p:h")'))
+                    os.chdir(vim.eval('getcwd()'))
             except:
                 pass
 
