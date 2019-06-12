@@ -154,7 +154,7 @@ class PandocCommand(object):
                     wnr = vim.eval("bufwinnr('pandoc-execute')")
                     vim.command(wnr + "wincmd c")
 
-                vim.command("botright 5new pandoc-execute")
+                vim.command("botright 0new pandoc-execute")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal bufhidden=wipe")
                 vim.command("map <buffer> q <Esc>:close<Enter>")
@@ -166,7 +166,7 @@ class PandocCommand(object):
                             "'on_stderr': 'pandoc#command#JobHandler'}))")
                 vim.command("file pandoc-execute")
                 vim.command("normal G")
-                vim.command("normal <C-W><C-p>")
+                vim.command("wincmd p")
 
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
@@ -277,5 +277,6 @@ class PandocCommand(object):
                 vim.command("echohl Statement")
                 vim.command("echom 'vim-pandoc:ran successfully.'")
                 vim.command("echohl None")
+
 
 pandoc = PandocCommand()
