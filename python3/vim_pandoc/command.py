@@ -157,6 +157,7 @@ class PandocCommand(object):
                 vim.command("botright 0new pandoc-execute")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal bufhidden=wipe")
+                vim.command("setlocal nobuflisted")
                 vim.command("map <buffer> q <Esc>:close<Enter>")
                 vim.command("call termopen(" + \
                             "['"+ "','".join(shlex.split(self._run_command)) + "'], " + \
