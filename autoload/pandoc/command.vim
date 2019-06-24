@@ -82,22 +82,26 @@ endfunction
 function! pandoc#command#Pandoc(args, bang)
     if has("python3") || has("python3/dyn")
         py3 from vim_pandoc.command import pandoc
-        let expanded_args = substitute(a:args, '%\(:[phtre]\)\+',
-                    \'\=expand(submatch(0))', 'g') " expand placeholders
-        let templatized_args = substitute(expanded_args, '#\(\S\+\)',
-                    \'\=pandoc#command#GetTemplate(submatch(1))', 'g') " expand templates
-        py3 pandoc(vim.eval('templatized_args'), vim.eval('a:bang') != '')
+        let l:expanded_args = s:ExpandArgs(a:args)
+        py3 pandoc(vim.eval('l:expanded_args'), vim.eval('a:bang') != '')
     endif
 endfunction
 
-
 function! pandoc#command#PandocNative(args)
-    let l:cmd = g:pandoc#compiler#command.' '.g:pandoc#compiler#arguments.' '.a:args.' '.fnameescape(expand('%'))
+    let l:cmd = g:pandoc#compiler#command.' '.g:pandoc#compiler#arguments.' '.s:ExpandArgs(a:args).' '.fnameescape(expand('%'))
     if has('job')
         call job_start(l:cmd)
     else
         call system(l:cmd)
     endif
+endfunction
+
+function! s:ExpandArgs(args)
+    let expanded_args = substitute(a:args, '%\(:[phtre]\)\+',
+                \'\=expand(submatch(0))', 'g') " expand placeholders
+    let templatized_args = substitute(expanded_args, '#\(\S\+\)',
+                \'\=pandoc#command#GetTemplate(submatch(1))', 'g') " expand templates
+    return eval('templatized_args')
 endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
