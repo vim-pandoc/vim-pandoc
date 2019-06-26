@@ -9,7 +9,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 CompilerSet makeprg=latexrun\ --color\ never\ %
-CompilerSet errorformat=%f:%l:\ %t%*[^:]:\ %m,%p^
+CompilerSet errorformat=%f:%l:\ %t%*[^:]:\ %m\,%f:\ %t%*[^:]:\ %m\,%f:\ %m
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
