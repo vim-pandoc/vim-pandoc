@@ -35,8 +35,8 @@ setlocal formatoptions+=n
 
 let b:undo_ftplugin = "setlocal formatoptions< formatlistpat<"
                 \ . "| unlet b:match_pairs b:match_words"
-if !empty(g:pandoc#formatting#equalprg)
-    let b:undo_ftplugin = . "| setlocal equalprg<"
+if exists('g:pandoc#formatting#equalprg') && !empty(g:pandoc#formatting#equalprg)
+    let b:undo_ftplugin .= "| setlocal equalprg<"
 endif
 
 let b:pandoc_loaded = 1
