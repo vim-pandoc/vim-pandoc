@@ -33,8 +33,8 @@ endif
 setlocal formatlistpat=\\C^\\s*[\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|^\\s*[-+o*]\\s\\+
 setlocal formatoptions+=n
 
-let b:undo_ftplugin = "setlocal formatoptions< formatlistpat<"
-                \ . "| unlet! b:match_pairs b:match_words"
+let b:undo_ftplugin = "setlocal formatoptions< formatlistpat< matchpairs<"
+                \ . "| unlet! b:match_words"
 if exists('g:pandoc#formatting#equalprg') && !empty(g:pandoc#formatting#equalprg)
     let b:undo_ftplugin .= "| setlocal equalprg<"
 endif
