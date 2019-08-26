@@ -475,10 +475,12 @@ the corresponding flag to give g:pandoc#biblio#sources):
 2) [c] Search for any bibliography in the current dir.
 3) [l] Search for default bibliographies (`default.bib`, `default.ris`, etc.) in pandoc's
     data dir ("$HOME/.pandoc/" in *nix, "%APPDATA%/pandoc/" in Windows)
-4) [t] Search for bibliographies in texmf (requires the `kpsewhich` program)
+4) [t] Search for bibliographies in the local texmf tree (requires the
+   `kpsewhich` program)
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
+6) [y] Add any bibliographies specified in a YAML header.
 
-The default flags are "bcg". For the 'c' and 'l' flags, the
+The default flags are "bcgy". For the 'c', 'l', and 't' flags, the
 |g:pandoc#biblio#bib_extensions| is taken into account. You can, of
 course, modify the value of |b:pandoc_biblio_bibs| at any time.
 
@@ -681,7 +683,7 @@ following options: >
   if !exists('g:ycm_semantic_triggers')
     let g:ycm_semantic_triggers = {}
   endif
-  let g:ycm_semantic_triggers.tex = ['@']
+  let g:ycm_semantic_triggers.pandoc = ['@']
 
   let g:ycm_filetype_blacklist = {}
 <
@@ -931,25 +933,27 @@ A description of the available configuration variables follows:
     let g:pandoc#compiler#arguments = "---quiet ---strict"
 <
 - *g:pandoc#biblio#sources*
-  default = "bcg"
+  default = "bcgy"
 
   Where to look for bibliographies:
 
     b: use files with the same name as the current file, in the working dir
     c: use any bibliography in the working dir
     l: look in pandoc's local dir
-    t: look in TeX's texmf
+    t: look in the local texmf tree
     g: append items in |g:pandoc#biblio#bibs|
+    y: look in the current file's YAML header
 
 - *g:pandoc#biblio#bib_extensions*
   default = ["bib", "bibtex", "ris", "mods", "enl", "wos", "medline", "copac"]
 
-  What extensions to look for 'c' and 'l' values in |g:pandoc#biblio#sources|.
+  What extensions to use for 'c', 'l', and 't' values in
+  |g:pandoc#biblio#sources|.
 
 - *g:pandoc#biblio#bibs*
   default = []
 
-  A list of bibliographies to use globally if `g` is in
+  A list of bibliographies to use globally if 'g' is in
   |g:pandoc#biblio#sources|.
 
 - *b:pandoc_biblio_bibs*
