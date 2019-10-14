@@ -48,6 +48,7 @@ comfortable document writing environment, and 3) great configurability.
 
 * Vim 7.4/Neovim (we make use of the new python API).
 * Python 3
+- Pandoc 2.x
 
 ## Installation
 
