@@ -21,7 +21,7 @@ function! markdown#codeblocks#InsideCodeblock(...)
     endif
 endfunction
 
-functio! markdown#codeblocks#Lang(...)
+function! markdown#codeblocks#Lang(...)
     let l:lang = ""
     let origin_pos = getpos(".")
     if a:0 > 0

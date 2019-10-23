@@ -31,7 +31,7 @@ function! pandoc#toc#Show()
     elseif g:pandoc#toc#position == "bottom"
         let toc_pos = "botright"
     else
-        let toc_pos == "vertical"
+        let toc_pos = "vertical"
     endif
     try
         exe toc_pos . " lopen"
