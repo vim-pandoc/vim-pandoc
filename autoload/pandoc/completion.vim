@@ -29,11 +29,11 @@ function! pandoc#completion#Init() "{{{1
         if stridx(&cot, "preview") > -1
             let b:pandoc_old_cot = &cot
             let &cot = &cot.",preview"
-            au! BufEnter,WinEnter <buffer> let &cot = b:pandoc_old_cot.".preview"
-            au! BufLeave,WinLeave <buffer> let &cot = b:pandoc_old_cot
+            au! VimPandoc BufEnter,WinEnter <buffer> let &cot = b:pandoc_old_cot.".preview"
+            au! VimPandoc BufLeave,WinLeave <buffer> let &cot = b:pandoc_old_cot
         endif
         " close the preview window when the completion has been inserted
-        au! CompleteDone <buffer> pclose
+        au! VimPandoc CompleteDone <buffer> pclose
     endif
 endfunction
 

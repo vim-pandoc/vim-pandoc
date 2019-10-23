@@ -80,8 +80,8 @@ function! pandoc#folding#Disable()
     setlocal foldlevel&
     setlocal foldexpr&
     if g:pandoc#folding#fastfolds
-        au! InsertEnter
-        au! InsertLeave
+        au! VimPandoc InsertEnter
+        au! VimPandoc InsertLeave
     endif
     if exists(':PandocFolding')
         delcommand PandocFolding

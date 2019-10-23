@@ -2,8 +2,8 @@
 
 function! pandoc#menu#Init()
     call pandoc#menu#CreateMenu()
-    au! BufEnter <buffer> call pandoc#menu#CreateMenu()
-    au! BufLeave <buffer> silent! aunmenu Pandoc
+    au! VimPandoc BufEnter <buffer> call pandoc#menu#CreateMenu()
+    au! VimPandoc BufLeave <buffer> silent! aunmenu Pandoc
 endfunction
 
 function! pandoc#menu#CreateMenu()

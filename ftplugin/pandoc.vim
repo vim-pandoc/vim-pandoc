@@ -8,6 +8,11 @@ if exists("b:pandoc_loaded") && b:pandoc_loaded == 1
     finish
 endif
 
+" Start a new auto command group for all this plugin's hooks
+augroup VimPandoc
+    autocmd!
+augroup END
+
 " Modules: {{{1
 " we initialize stuff depending on the values of g:pandoc#modules#enabled and
 " g:pandoc#modules#disabled so this ftplugin is simply a loader.
