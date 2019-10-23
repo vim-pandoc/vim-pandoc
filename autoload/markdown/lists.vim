@@ -29,22 +29,22 @@ function! markdown#lists#ListStart(...) "{{{1
     endif
     let orig_pos = getpos('.')[1:]
     call cursor(l:l, 0)
-    normal {
+    normal! {
     if getpos('.')[1:] == orig_pos && markdown#lists#ListItemStart() != 1
         return -1
     endif
-    normal w
+    normal! w
     let pos = markdown#lists#ListItemStart()
     if pos == 1
         let c_par_start = line('.')
-        normal 2{w
+        normal! 2{w
         let p_par_start = line('.')
         if c_par_start != p_par_start
             let check_prev = markdown#lists#ListItemStart()
             if check_prev == 1
                 let l:l = markdown#lists#ListStart()
             else
-                normal }w
+                normal! }w
                 let l:l = line('.')
             endif
         else
@@ -73,7 +73,7 @@ function! markdown#lists#ListEnd(...) "{{{1
         " the list just ended
         return l:l-1
     endif
-    normal }
+    normal! }
     let c_lnum = line('.')
     let c_par_end = c_lnum-1
     let next_par_start = c_lnum+1

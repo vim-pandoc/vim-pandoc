@@ -26,7 +26,7 @@ endfunction
 function! pandoc#keyboard#references#Insert_Ref()
     execute "normal m".g:pandoc#keyboard#references#mark
     let reg_save = getreg('*')
-    normal "*ya[
+    normal! "*ya[
     call search('\n\(\n\|\_$\)\@=')
     execute "normal! o\<cr>\<esc>0".'"*P'."$a: "
     call setreg('*', reg_save)
@@ -36,7 +36,7 @@ endfunction
 
 function! pandoc#keyboard#references#GOTO_Ref()
     let reg_save = getreg('*')
-    execute "normal m".g:pandoc#keyboard#references#mark
+    execute "normal! m".g:pandoc#keyboard#references#mark
     execute "silent normal! ?[\<cr>vf]".'"*y'
     call setreg('*', substitute(getreg('*'), '\[', '\\\[', 'g'))
     call setreg('*', substitute(getreg('*'), '\]', '\\\]', 'g'))
@@ -46,7 +46,7 @@ endfunction
 
 function! pandoc#keyboard#references#BACKFROM_Ref()
     try
-        execute 'normal  `'.g:pandoc#keyboard#references#mark
+        execute 'normal!  `'.g:pandoc#keyboard#references#mark
         " clean up
         execute 'delmark '.g:pandoc#keyboard#references#mark
     catch /E20/ "no mark set, we must search backwards.

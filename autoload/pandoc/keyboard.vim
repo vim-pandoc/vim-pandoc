@@ -58,7 +58,7 @@ function! pandoc#keyboard#MovetoLine(line)
     if a:line > 0
         call cursor(a:line, 1)
     endif
-    normal ^
+    normal! ^
 endfunction
 " }}}1
 
