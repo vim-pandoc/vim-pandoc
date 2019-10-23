@@ -2,7 +2,7 @@
 "
 " functions to handle sections not handled by headers.vim
 "
-function! markdown#sections#CurrentEndSection(...)
+function! markdown#sections#CurrentEndSection(...) abort
     if a:0 > 0
         return markdown#sections#NextEndSection(1, a:1)
     else
@@ -10,7 +10,7 @@ function! markdown#sections#CurrentEndSection(...)
     endif
 endfunction
 
-function! markdown#sections#NextEndSection(stop_at_current, ...)
+function! markdown#sections#NextEndSection(stop_at_current, ...) abort
     let origin_pos = getpos('.')
     if a:0 > 0
         let search_from = [0, a:1, 1, 0]
@@ -19,7 +19,7 @@ function! markdown#sections#NextEndSection(stop_at_current, ...)
     endif
     call cursor(search_from[1], 2)
     let next_sect_start = markdown#headers#NextHeader(search_from[1])
-    if synIDattr(synID(line('.')+1, 1, 0), "name") !~# 
+    if synIDattr(synID(line('.')+1, 1, 0), 'name') !~#
                 \'pandoc\(SetexHeader\|AtxStart\)'
         let lnum = next_sect_start - 1
     else
@@ -33,7 +33,7 @@ function! markdown#sections#NextEndSection(stop_at_current, ...)
     return lnum
 endfunction
 
-function! markdown#sections#PrevEndSection(...)
+function! markdown#sections#PrevEndSection(...) abort
     let origin_pos = getpos('.')
     if a:0 > 0
         let search_from = [0, a:1, 1, 0]
@@ -50,14 +50,14 @@ function! markdown#sections#PrevEndSection(...)
     return lnum
 endfunction
 
-function! markdown#sections#SectionRange(mode, ...)
+function! markdown#sections#SectionRange(mode, ...) abort
     let c_header = markdown#headers#CurrentHeader()
     if c_header == 0
         let start = 1
     else
-        if a:mode == 'inclusive'
-            let start = c_header 
-        elseif a:mode == 'exclusive'
+        if a:mode ==# 'inclusive'
+            let start = c_header
+        elseif a:mode ==# 'exclusive'
             let start = c_header + 1
         endif
     endif

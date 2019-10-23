@@ -1,6 +1,6 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! pandoc#keyboard#lists#Init() "{{{1
+function! pandoc#keyboard#lists#Init() abort "{{{1
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-next-li) :call pandoc#keyboard#lists#NextListItem()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-prev-li) :call pandoc#keyboard#lists#PrevListItem()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-cur-li) :call pandoc#keyboard#lists#CurrentListItem()<cr>
@@ -10,7 +10,7 @@ function! pandoc#keyboard#lists#Init() "{{{1
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-first-li-child) :call pandoc#keyboard#lists#FirstListItemChild()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-last-li-child) :call pandoc#keyboard#lists#LastListItemChild()<cr>
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-nth-li-child) :<C-U>call pandoc#keyboard#lists#GotoNthListItemChild(v:count1)<cr>
-    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "lists") == -1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, 'lists') == -1
         nmap <buffer> <localleader>ln <Plug>(pandoc-keyboard-next-li)
         nmap <buffer> <localleader>lp <Plug>(pandoc-keyboard-prev-li)
         nmap <buffer> <localleader>ll <Plug>(pandoc-keyboard-cur-li)
@@ -25,38 +25,38 @@ endfunction
 
 " Functions: {{{1
 
-function! pandoc#keyboard#lists#NextListItem() "{{{2
+function! pandoc#keyboard#lists#NextListItem() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#NextListItem())
 endfunction
 
-function! pandoc#keyboard#lists#PrevListItem() "{{{2
+function! pandoc#keyboard#lists#PrevListItem() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#PrevListItem())
 endfunction
 
-function! pandoc#keyboard#lists#CurrentListItem() "{{{2
+function! pandoc#keyboard#lists#CurrentListItem() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#CurrentListItem())
 endfunction
 
-function! pandoc#keyboard#lists#CurrentListItemParent() "{{{2
+function! pandoc#keyboard#lists#CurrentListItemParent() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#CurrentListItemParent())
 endfunction
 
-function! pandoc#keyboard#lists#NextListItemSibling() "{{{2
+function! pandoc#keyboard#lists#NextListItemSibling() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#NextListItemSibling())
 endfunction
 
-function! pandoc#keyboard#lists#PrevListItemSibling() "{{{2
-    call pandoc#keyboard#MovetoLine(markdown#lists#PrevListItemSibling())    
+function! pandoc#keyboard#lists#PrevListItemSibling() abort "{{{2
+    call pandoc#keyboard#MovetoLine(markdown#lists#PrevListItemSibling())
 endfunction
 
-function! pandoc#keyboard#lists#FirstListItemChild() "{{{2
+function! pandoc#keyboard#lists#FirstListItemChild() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#FirstChild())
 endfunction
 
-function! pandoc#keyboard#lists#LastListItemChild() "{{{2
+function! pandoc#keyboard#lists#LastListItemChild() abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#LastChild())
 endfunction
 
-function! pandoc#keyboard#lists#GotoNthListItemChild(count) "{{{2
+function! pandoc#keyboard#lists#GotoNthListItemChild(count) abort "{{{2
     call pandoc#keyboard#MovetoLine(markdown#lists#NthChild(a:count))
 endfunction
