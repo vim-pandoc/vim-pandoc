@@ -70,7 +70,7 @@ function! pandoc#toc#ReDisplay(bufname)
 
     " change the contents of the location-list buffer
     set modifiable
-    silent %s/\v^([^|]*\|){2,2} #//e
+    call substitute('%', '\v^([^|]*\|){2,2} #', '')
     for l in range(1, line("$"))
         " this is the location-list data for the current item
         let d = getloclist(0)[l-1]
