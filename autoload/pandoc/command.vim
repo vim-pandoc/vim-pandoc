@@ -83,7 +83,7 @@ function! pandoc#command#Pandoc(args, bang) abort
     if has('python3') || has('python3/dyn')
         py3 from vim_pandoc.command import pandoc
         let l:expanded_args = s:ExpandArgs(a:args)
-        py3 pandoc(vim.eval('l:expanded_args'), vim.eval('a:bang') !=# '')
+        py3 pandoc(vim.eval('l:expanded_args'), vim.eval('a:bang') != '')
     endif
 endfunction
 
@@ -147,7 +147,7 @@ endfunction
 " returncode: the returncode value pandoc gave
 function! pandoc#command#PandocAsyncCallback(should_open, returncode) abort
     py3 from vim_pandoc.command import pandoc
-    py3 pandoc.on_done(vim.eval('a:should_open') ==# '1', vim.eval('a:returncode'))
+    py3 pandoc.on_done(vim.eval('a:should_open') == '1', vim.eval('a:returncode'))
 endfunction
 
 " PandocJobHandler(id, data, event): Callback for neovim {{{2
@@ -158,7 +158,7 @@ function! pandoc#command#JobHandler(id, data, event) abort dict
         call writefile(a:data, 'pandoc.out', 'ab')
     else
         py3 from vim_pandoc.command import pandoc
-        py3 pandoc.on_done(vim.eval('self.should_open') ==# '1', vim.eval('a:data'))
+        py3 pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))
     endif
 endfunction
 
