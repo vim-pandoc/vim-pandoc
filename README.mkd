@@ -1,5 +1,7 @@
 # vim-pandoc
 
+[![Vint](https://github.com/vim-pandoc/vim-pandoc/workflows/Vint/badge.svg)](https://github.com/vim-pandoc/vim-pandoc/actions?workflow=Vint)
+
 `vim-pandoc` provides facilities to integrate Vim with the [pandoc][] document
 converter and work with documents written in [its markdown
 variant](http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown)

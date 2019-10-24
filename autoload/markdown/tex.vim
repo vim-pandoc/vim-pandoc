@@ -1,14 +1,14 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! markdown#tex#InsideTeXBlock(...)
-    let origin_pos = getpos(".")
+function! markdown#tex#InsideTeXBlock(...) abort
+    let origin_pos = getpos('.')
     if a:0 > 0
         let source_pos = a:1
     else
-        let source_pos = line(".")
+        let source_pos = line('.')
     endif
     call cursor(source_pos, 1)
-    if synIDattr(synID(source_pos, 1, 0), "name") =~? "^tex"
+    if synIDattr(synID(source_pos, 1, 0), 'name') =~? '^tex'
         return 1
     endif
     let prev_delim = searchpair('^$\{2}', '', '^$\{2}', 'bnW')
@@ -21,19 +21,19 @@ function! markdown#tex#InsideTeXBlock(...)
     endif
 endfunction
 
-function! markdown#tex#BodyRange(...)
+function! markdown#tex#BodyRange(...) abort
     let l:range = []
-    let origin_pos = getpos(".")
+    let origin_pos = getpos('.')
     if a:0 > 0
         let source_pos = a:1
     else
-        let source_pos = line(".")
+        let source_pos = line('.')
     endif
     call cursor(source_pos, 1)
     if markdown#tex#InsideTeXBlock(source_pos) == 1
         let start_delim = searchpair('^$\{2}', '', '^$\{2}', 'cnbW')
         let end_delim = search('^$\{2}', 'cnW')
-        if start_delim != line(".")
+        if start_delim != line('.')
             let l:range = [start_delim+1, end_delim-1]
         else
             " we are at the starting delimiter

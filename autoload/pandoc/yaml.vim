@@ -1,6 +1,6 @@
 " Parsing of YAML metadata blocks
 
-function! pandoc#yaml#Init()
+function! pandoc#yaml#Init() abort
     let b:pandoc_yaml_data = {}
     try
 	call extend(b:pandoc_yaml_data, pandoc#yaml#Parse())
@@ -11,12 +11,12 @@ endfunction
 " extract yaml header text from the current text, as a list of lines
 " TODO: multiple YAML metadata blocks can exist, and at any position in
 " the file, but this doesn't handle that yet.
-function! pandoc#yaml#Extract()
+function! pandoc#yaml#Extract() abort
     let l:tmp_lines = []
     let l:cline_n = 1
     while l:cline_n < 100 " arbitrary, but no sense in having huge yaml headers either
 	let l:cline = getline(l:cline_n)
-	let l:is_delim = l:cline =~ '^[-.]\{3}'
+	let l:is_delim = l:cline =~# '^[-.]\{3}'
 	if l:cline_n == 1 && !l:is_delim " assume no header, end early
 	    return []
 	elseif l:cline_n > 1 && l:is_delim " yield data as soon as we find a delimiter
@@ -31,7 +31,7 @@ function! pandoc#yaml#Extract()
     return [] " just in case
 endfunction
 
-function! pandoc#yaml#Parse(...)
+function! pandoc#yaml#Parse(...) abort
     if a:0 == 0 " if no arguments, extract from the current buffer
 	let l:block = pandoc#yaml#Extract()
     else
