@@ -66,7 +66,7 @@ function! pandoc#toc#ReDisplay(bufname) abort
         return
     endif
     let &winwidth=(&columns/3)
-    execute 'setlocal statusline=pandoc#TOC:'.escape(a:bufname, ' ')
+    execute 'setlocal statusline=Pandoc\ TOC:\ '.escape(a:bufname, ' ')
 
     " change the contents of the location-list buffer
     set modifiable
