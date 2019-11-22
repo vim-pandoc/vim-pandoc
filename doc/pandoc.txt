@@ -718,6 +718,9 @@ buffer is closed after this, but this can be circumvented by pressing <C-CR>.
 This behavior can be reversed by setting |g:pandoc#toc#close_after_navigating|
 to 0.
 
+The indentation in the TOC buffer can be tuned by |g:pandoc#toc#shift|
+variable, which definds the shift in number of spaces per level.
+
 - SPELL                                                *vim-pandoc-spell-module*
 
 Sets up spelling for files handled by vim-pandoc. Spelling is on by default,
@@ -1105,6 +1108,12 @@ A description of the available configuration variables follows:
   Must the TOC window close after selecting a location? This also controls the
   behavior of the <CR> key. If '1', <CR> navigates and closes the TOC, <C-CR>
   simply navigates. If '0', this behavior is reversed.
+
+- *g:pandoc#toc#shift*
+  default = 2
+
+  Defines the number of spaces per level to indent the higher level
+  positions in TOC buffer.
 
 - *g:pandoc#spell#enabled*
   default = 1
