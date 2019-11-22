@@ -11,6 +11,10 @@ function! pandoc#toc#Init() abort
     if !exists('g:pandoc#toc#close_after_navigating')
         let g:pandoc#toc#close_after_navigating = 1
     endif
+    " the number of spaces per level in toc
+    if !exists('g:pandoc#toc#shift')
+        let g:pandoc#toc#shift = 2
+    endif
     " create :TOC command {{{2
     command! -buffer TOC call pandoc#toc#Show()
     "}}}
@@ -93,7 +97,7 @@ function! pandoc#toc#ReDisplay(bufname) abort
             endif
             let d.text = '· '.d.text
         endif
-        call setline(l, repeat(' ', 2*l:level-1). d.text)
+        call setline(l, repeat(' ', g:pandoc#toc#shift*l:level). d.text)
     endfor
     set nomodified
     set nomodifiable
