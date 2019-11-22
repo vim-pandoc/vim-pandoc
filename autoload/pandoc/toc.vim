@@ -4,7 +4,7 @@ scriptencoding utf-8
 " Init(): set up defaults, create TOC command {{{1
 function! pandoc#toc#Init() abort
     " set up defaults {{{2
-    " where to open the location list {{{3
+    " where to open the location list
     if !exists('g:pandoc#toc#position')
         let g:pandoc#toc#position = 'right'
     endif
@@ -71,11 +71,11 @@ function! pandoc#toc#ReDisplay(bufname) abort
     " change the contents of the location-list buffer
     set modifiable
     " vint: -ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
-    silent %s/\v^([^|]*\|){2,2} #//e
+    silent %s/\v^([^|]*\|){2} #//e
     " vint: +ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
     for l in range(1, line('$'))
         " this is the location-list data for the current item
-        let d = getloclist(0)[l-1]
+        let d = getloclist(0)[l-1]  " -1 because numeration begins from 0
         " titleblock
         if match(d.text, '^%') > -1
             let l:level = 0
