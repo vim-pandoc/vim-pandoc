@@ -154,7 +154,7 @@ class PandocCommand(object):
                     wnr = vim.eval("bufwinnr('pandoc-execute')")
                     vim.command(wnr + "wincmd c")
 
-                vim.command("botright 0new pandoc-execute")
+                vim.command("botright 7new pandoc-execute")
                 vim.command("setlocal buftype=nofile")
                 vim.command("setlocal bufhidden=wipe")
                 vim.command("setlocal nobuflisted")

@@ -157,6 +157,9 @@ function! pandoc#command#JobHandler(id, data, event) abort dict
     elseif a:event ==# 'stderr'
         call writefile(a:data, 'pandoc.out', 'ab')
     else
+        if a:event ==# 'exit' && a:data == 0
+            bwipeout! pandoc-execute
+        endif
         py3 from vim_pandoc.command import pandoc
         py3 pandoc.on_done(vim.eval('self.should_open') == '1', vim.eval('a:data'))
     endif
