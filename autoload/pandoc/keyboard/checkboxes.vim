@@ -1,12 +1,12 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! pandoc#keyboard#checkboxes#Init() "{{{1
+function! pandoc#keyboard#checkboxes#Init() abort "{{{1
 
 	 " Toggle existing checkbox or insert checkbox.
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-cb) :call pandoc#keyboard#checkboxes#Toggle()<cr>
 	 " Remove existing checkbox
     noremap <buffer> <silent> <Plug>(pandoc-keyboard-delete-cb) :call pandoc#keyboard#checkboxes#Delete()<cr>
-    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "checkboxes") == -1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, 'checkboxes') == -1
         nmap <buffer> <localleader>cb <Plug>(pandoc-keyboard-toggle-cb)
         vmap <buffer> <localleader>cb <Plug>(pandoc-keyboard-toggle-cb)
         nmap <buffer> <localleader>cd <Plug>(pandoc-keyboard-delete-cb)
@@ -16,7 +16,7 @@ endfunction
 
 " Functions: {{{1
 
-function! pandoc#keyboard#checkboxes#Toggle() "{{{2
+function! pandoc#keyboard#checkboxes#Toggle() abort "{{{2
 	let l:line=getline('.')
 	let l:curs=winsaveview()
 
@@ -35,7 +35,7 @@ function! pandoc#keyboard#checkboxes#Toggle() "{{{2
 	call winrestview(l:curs)
 endfunction
 
-function! pandoc#keyboard#checkboxes#Delete() "{{{2
+function! pandoc#keyboard#checkboxes#Delete() abort "{{{2
 	let l:line=getline('.')
 	let l:curs=winsaveview()
 
