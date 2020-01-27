@@ -438,6 +438,8 @@ where they are available):
 - *<localleader>lcf*   move to the first list item child [n]
 - *<localleader>lcl*   move to the last list item child [n]
 - *<localleader>lcn*   move to the [count] nth list item child [n]
+- *<localleader>cb*    toggle checkbox or insert empty checkbox in list item [vn]
+- *<localleader>cd*    remove existing checkbox from list item [vn]
 
 For |<localleader>#|, you can decide what header style to use (always atx, use
 setex, append hashes at the end) by setting the
@@ -985,7 +987,7 @@ A description of the available configuration variables follows:
   |preview-window|? Requires the 'citeproc' backend.
 
 - *g:pandoc#keyboard#enabled_submodules*
-  default = ["lists", "references", "styles", "sections", "links"]
+  default = ["lists", "references", "styles", "sections", "links", "checkboxes"]
 
   What mapping groups to enable.
 

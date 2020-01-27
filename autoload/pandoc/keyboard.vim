@@ -5,7 +5,7 @@ function! pandoc#keyboard#Init() abort
     " set up defaults {{{2
     " Enabled submodules {{{3
     if !exists('g:pandoc#keyboard#enabled_submodules')
-        let g:pandoc#keyboard#enabled_submodules = ['lists', 'sections', 'styles', 'references', 'links', 'para']
+        let g:pandoc#keyboard#enabled_submodules = ['lists', 'sections', 'styles', 'references', 'links', 'para', 'checkboxes']
     endif
     " Use display motions when using soft wrapping {{{3
     if !exists('g:pandoc#keyboard#display_motions')
