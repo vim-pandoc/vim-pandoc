@@ -1,14 +1,14 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! markdown#codeblocks#InsideCodeblock(...)
-    let origin_pos = getpos(".")
+function! markdown#codeblocks#InsideCodeblock(...) abort
+    let origin_pos = getpos('.')
     if a:0 > 0
         let source_pos = a:1
     else
-        let source_pos = line(".")
+        let source_pos = line('.')
     endif
     call cursor(source_pos, 1)
-    if synIDattr(synID(source_pos, 1, 0), "name") =~? "pandocdelimitedcodeblock"
+    if synIDattr(synID(source_pos, 1, 0), 'name') =~? 'pandocdelimitedcodeblock'
         return 1
     endif
     let prev_delim = searchpair('^[~`]\{3}\s', '', '^[~`]\{3}', 'bnW')
@@ -21,18 +21,18 @@ function! markdown#codeblocks#InsideCodeblock(...)
     endif
 endfunction
 
-functio! markdown#codeblocks#Lang(...)
-    let l:lang = ""
-    let origin_pos = getpos(".")
+function! markdown#codeblocks#Lang(...) abort
+    let l:lang = ''
+    let origin_pos = getpos('.')
     if a:0 > 0
         let source_pos = a:1
     else
-        let source_pos = line(".")
+        let source_pos = line('.')
     endif
     call cursor(source_pos, 1)
     if markdown#codeblocks#InsideCodeblock(source_pos) == 1
-        let l:lang = matchstr(getline("."),  '\([~`]\{3}\s\+\)\@<=[[:alpha:]]*')
-        if l:lang == ""
+        let l:lang = matchstr(getline('.'),  '\([~`]\{3}\s\+\)\@<=[[:alpha:]]*')
+        if l:lang ==# ''
             let start_delim = search('^[~`]\{3}', 'nbW')
             let l:lang = matchstr(getline(start_delim), '\([~`]\{3}\s\+\)\@<=[[:alpha:]]*')
         endif
@@ -41,19 +41,19 @@ functio! markdown#codeblocks#Lang(...)
     return l:lang
 endfunction
 
-function! markdown#codeblocks#BodyRange(...)
+function! markdown#codeblocks#BodyRange(...) abort
     let l:range = []
-    let origin_pos = getpos(".")
+    let origin_pos = getpos('.')
     if a:0 > 0
         let source_pos = a:1
     else
-        let source_pos = line(".")
+        let source_pos = line('.')
     endif
     call cursor(source_pos, 1)
     if markdown#codeblocks#InsideCodeblock(source_pos) == 1
         let start_delim = searchpair('^[~`]\{3}', '', '^[~`]\{3}', 'cnbW')
         let end_delim = search('^[~`]\{3}', 'cnW')
-        if start_delim != line(".")
+        if start_delim != line('.')
             let l:range = [start_delim+1, end_delim-1]
         else
             " we are at the starting delimiter

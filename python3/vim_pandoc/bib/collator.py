@@ -1,6 +1,7 @@
 import os
 import vim
 from glob import glob
+from itertools import chain
 from subprocess import check_output
 
 bib_extensions = ["bib",
@@ -73,12 +74,12 @@ class SourceCollator():
             Search for bibliographies in the texmf data dirs.
             """
 
-            texmf = check_output(["kpsewhich", "-var-value", "TEXMFHOME"])
+            texmf = check_output(["kpsewhich", "-var-value", "TEXMFHOME"]).rstrip()
 
             if os.path.exists(texmf):
-                search_paths = [texmf + "/*." + f for f in bib_extensions]
-                relative_bibfiles = [glob(f) for f in search_paths]
-                bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
+                search_paths = (texmf.decode() + "/**/*." + f for f in bib_extensions)
+                relative_bibfiles = (glob(f, recursive=True) for f in search_paths)
+                bibfiles = [os.path.abspath(f) for f in chain.from_iterable(relative_bibfiles)]
                 return bibfiles
 
             return []

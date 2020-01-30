@@ -1,14 +1,14 @@
 " vim: set fdm=marker et ts=4 sw=4 sts=4:
 
-function! pandoc#keyboard#styles#Init() "{{{1
-    for style in ["emphasis", "strong", "verbatim", "strikeout", "superscript", "subscript"]
+function! pandoc#keyboard#styles#Init() abort "{{{1
+    for style in ['emphasis', 'strong', 'verbatim', 'strikeout', 'superscript', 'subscript']
         let u_style = substitute(style, '\<.', '\u&', '') " capitalize first char: emphasis -> Emphasis
         exe 'noremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :set opfunc=pandoc#keyboard#styles#Toggle'.u_style.'<cr>g@'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-toggle-'.style.') :<C-U>call pandoc#keyboard#styles#Toggle'.u_style.'(visualmode())<CR>'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-inclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("inclusive")<cr>'
         exe 'vnoremap <buffer> <silent> <Plug>(pandoc-keyboard-select-'.style.'-exclusive) :<C-U>call pandoc#keyboard#styles#Select'.u_style.'("exclusive")<cr>'
     endfor
-    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, "styles") == -1
+    if g:pandoc#keyboard#use_default_mappings == 1 && index(g:pandoc#keyboard#blacklist_submodule_mappings, 'styles') == -1
         nmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         vmap <buffer> <localleader>i <Plug>(pandoc-keyboard-toggle-emphasis)
         nmap <buffer> <localleader>b <Plug>(pandoc-keyboard-toggle-strong)
@@ -46,51 +46,51 @@ function! pandoc#keyboard#styles#Init() "{{{1
         omap <buffer> aPt :normal vaPl<cr>
         omap <buffer> iPt :normal viPl<cr>
     endif
-endfunction 
+endfunction
 
 " Functions: {{{1
 " Auxiliary: {{{2
-function! s:EscapeEnds(ends)
+function! s:EscapeEnds(ends) abort
     return escape(a:ends, '*^~')
 endfunction
-function! s:IsCursorAtEndofNonEmptyLine()
+function! s:IsCursorAtEndofNonEmptyLine() abort
     return (col('.')+1) == col('$') && col('.') != 1
 endfunction
 " Base: {{{2
 " Toggle Operators, WYSIWYG-style {{{3
-function! pandoc#keyboard#styles#ToggleOperator(type, ends)
+function! pandoc#keyboard#styles#ToggleOperator(type, ends) abort
     let sel_save = &selection
-    let &selection = "old"
+    let &selection = 'old'
     if has('clipboard')
         let reg = '*'
     else
         let reg = '"'
     endif
     let reg_save = getreg(reg)
-    if a:type ==# "v"
-        execute "normal! `<".a:type."`>".'"'.reg.'x'
-    elseif a:type ==# "char"
-        let cline = getline(".")
-        let ccol = getpos(".")[2]
+    if a:type ==# 'v'
+        execute 'normal! `<'.a:type.'`>'.'"'.reg.'x'
+    elseif a:type ==# 'char'
+        let cline = getline('.')
+        let ccol = getpos('.')[2]
         let nchar = cline[ccol]
         let pchar = cline[ccol-2]
-        if cline[ccol] == ""
+        if cline[ccol] ==# ''
             " at end
-            execute "normal! `[Bv`]BE".'"'.reg.'x'
+            execute 'normal! `[Bv`]BE'.'"'.reg.'x'
         elseif match(pchar, '[[:blank:]]') > -1
             if match(nchar, '[[:blank:]]') > -1
                 " single char
-                execute "normal! `[v`]ege".'"'.reg.'x'
+                execute 'normal! `[v`]ege'.'"'.reg.'x'
             else
                 " after space
-                execute "normal! `[v`]BE".'"'.reg.'x'
+                execute 'normal! `[v`]BE'.'"'.reg.'x'
             endif
         elseif match(nchar, '[[:blank:]]') > -1
             " before space
-            execute "normal! `[Bv`]BE".'"'.reg.'x'
+            execute 'normal! `[Bv`]BE'.'"'.reg.'x'
         else
             " inside a word
-            execute "normal! `[EBv`]BE".'"'.reg.'x'
+            execute 'normal! `[EBv`]BE'.'"'.reg.'x'
         endif
     else
         return
@@ -116,19 +116,19 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends)
 endfunction "}}}3
 
 " Apply style {{{3
-function! pandoc#keyboard#styles#Apply(type, ends)
+function! pandoc#keyboard#styles#Apply(type, ends) abort
     let sel_save = &selection
-    let &selection = "old"
+    let &selection = 'old'
     if has('clipboard')
         let reg = '*'
     else
         let reg = '"'
     endif
     let reg_save = getreg(reg)
-    if a:type ==# "v"
-        execute "normal! `<".a:type."`>".'"'.reg.'x'
-    elseif a:type ==# "char"
-        execute "normal! `[v`]".'"'.reg.'x'
+    if a:type ==# 'v'
+        execute 'normal! `<'.a:type.'`>'.'"'.reg.'x'
+    elseif a:type ==# 'char'
+        execute 'normal! `[v`]'.'"'.reg.'x'
     else
         return
     endif
@@ -141,99 +141,99 @@ endfunction
 "}}}2
 " Emphasis: {{{2
 " Apply emphasis, straight {{{3
-function! pandoc#keyboard#styles#Emph(type)
-    return pandoc#keyboard#styles#Apply(a:type, "*")
+function! pandoc#keyboard#styles#Emph(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '*')
 endfunction
 " }}}3
 " WYSIWYG-style toggle {{{3
 "
-function! pandoc#keyboard#styles#ToggleEmphasis(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "*")
+function! pandoc#keyboard#styles#ToggleEmphasis(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '*')
 endfunction
 " }}}3
 "}}}2
 " Strong: {{{2
-function! pandoc#keyboard#styles#Strong(type)
-    return pandoc#keyboard#styles#Apply(a:type, "**")
+function! pandoc#keyboard#styles#Strong(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '**')
 endfunction
-function! pandoc#keyboard#styles#ToggleStrong(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "**")
+function! pandoc#keyboard#styles#ToggleStrong(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '**')
 endfunction
 "}}}2
 " Verbatim: {{{2
-function! pandoc#keyboard#styles#Verbatim(type)
-    return pandoc#keyboard#styles#Apply(a:type, "`")
+function! pandoc#keyboard#styles#Verbatim(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '`')
 endfunction
-function! pandoc#keyboard#styles#ToggleVerbatim(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "`")
+function! pandoc#keyboard#styles#ToggleVerbatim(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '`')
 endfunction
 " }}}2
 " Strikeout: {{{2
-function! pandoc#keyboard#styles#Strikeout(type)
-    return pandoc#keyboard#styles#Apply(a:type, "~~")
+function! pandoc#keyboard#styles#Strikeout(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '~~')
 endfunction
-function! pandoc#keyboard#styles#ToggleStrikeout(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "~~")
+function! pandoc#keyboard#styles#ToggleStrikeout(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '~~')
 endfunction
 " }}}2
 " Superscript: {{{2
-function! pandoc#keyboard#styles#Superscript(type)
-    return pandoc#keyboard#styles#Apply(a:type, "^")
+function! pandoc#keyboard#styles#Superscript(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '^')
 endfunction
-function! pandoc#keyboard#styles#ToggleSuperscript(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "^")
+function! pandoc#keyboard#styles#ToggleSuperscript(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '^')
 endfunction
 " }}}2
 " Subscript: {{{2
-function! pandoc#keyboard#styles#Subscript(type)
-    return pandoc#keyboard#styles#Apply(a:type, "~")
+function! pandoc#keyboard#styles#Subscript(type) abort
+    return pandoc#keyboard#styles#Apply(a:type, '~')
 endfunction
-function! pandoc#keyboard#styles#ToggleSubscript(type)
-    return pandoc#keyboard#styles#ToggleOperator(a:type, "~")
+function! pandoc#keyboard#styles#ToggleSubscript(type) abort
+    return pandoc#keyboard#styles#ToggleOperator(a:type, '~')
 endfunction
 " }}}2
 " Objects: {{{2
-function! pandoc#keyboard#styles#SelectSpan(mode, char)
+function! pandoc#keyboard#styles#SelectSpan(mode, char) abort
     let [start_l, start_c] = searchpos(a:char, 'bn')
     let [end_l, end_c] = searchpos(a:char, 'n')
     let offset = len(substitute(a:char, '\\', '', 'g')) - 1
-    if a:mode == 'inclusive'
+    if a:mode ==# 'inclusive'
         let start_c = start_c - 1
         let end_c = end_c + offset  - 1
-    elseif a:mode == 'exclusive'
+    elseif a:mode ==# 'exclusive'
         let start_c = start_c + offset
-        let end_c = end_c - 2 
+        let end_c = end_c - 2
     endif
-    exe "normal! ".start_l. "G". start_c. "lv". end_l . "G". end_c ."l"
+    exe 'normal! '.start_l. 'G'. start_c. 'lv'. end_l . 'G'. end_c .'l'
 endfunction
 
-function! pandoc#keyboard#styles#SelectEmphasis(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocEmphasis"
+function! pandoc#keyboard#styles#SelectEmphasis(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocEmphasis'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\*')
     endif
 endfunction
-function! pandoc#keyboard#styles#SelectStrong(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocStrong"
+function! pandoc#keyboard#styles#SelectStrong(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocStrong'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\*\*')
     endif
 endfunction
-function! pandoc#keyboard#styles#SelectVerbatim(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocNoFormatted"
+function! pandoc#keyboard#styles#SelectVerbatim(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocNoFormatted'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\`')
     endif
 endfunction
-function! pandoc#keyboard#styles#SelectStrikeout(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocStrikeout"
+function! pandoc#keyboard#styles#SelectStrikeout(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocStrikeout'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\~\~')
     endif
 endfunction
-function! pandoc#keyboard#styles#SelectSuperscript(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocSuperscript"
+function! pandoc#keyboard#styles#SelectSuperscript(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocSuperscript'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\^')
     endif
 endfunction
-function! pandoc#keyboard#styles#SelectSubscript(mode)
-    if synIDattr(synID(line('.'), col('.'), 1), "name") == "pandocSubscript"
+function! pandoc#keyboard#styles#SelectSubscript(mode) abort
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') ==# 'pandocSubscript'
         call pandoc#keyboard#styles#SelectSpan(a:mode, '\~')
     endif
 endfunction

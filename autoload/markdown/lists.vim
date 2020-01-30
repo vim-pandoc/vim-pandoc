@@ -3,25 +3,25 @@
 " functions for list navigation
 "
 
-function! markdown#lists#ListItemStart(...) "{{{1
+function! markdown#lists#ListItemStart(...) abort "{{{1
     if a:0 > 0
         let line = getline(a:1)
     else
-        let line = getline(".")
+        let line = getline('.')
     endif
     if
-        \ line =~ '^>\=\s*[*+-]\s\+-\@!' ||
-        \ line =~ '^\s*\(\((*\d\+[.)]\+\)\|\((*\l[.)]\+\)\)\s\+' ||
-        \ line =~ '^\s*(*\u[.)]\+\s\{2,}' ||
-        \ line =~ '^\s*(*[#][.)]\+\s\{1,}' ||
-        \ line =~ '^\s*(*@.\{-}[.)]\+\s\{1,}' ||
-        \ line =~ '^\s*(*x\=l\=\(i\{,3}[vx]\=\)\{,3}c\{,3}[.)]\+'
+        \ line =~# '^>\=\s*[*+-]\s\+-\@!' ||
+        \ line =~# '^\s*\(\((*\d\+[.)]\+\)\|\((*\l[.)]\+\)\)\s\+' ||
+        \ line =~# '^\s*(*\u[.)]\+\s\{2,}' ||
+        \ line =~# '^\s*(*[#][.)]\+\s\{1,}' ||
+        \ line =~# '^\s*(*@.\{-}[.)]\+\s\{1,}' ||
+        \ line =~# '^\s*(*x\=l\=\(i\{,3}[vx]\=\)\{,3}c\{,3}[.)]\+'
         return 1
     endif
     return 0
 endfunction
 
-function! markdown#lists#ListStart(...) "{{{1
+function! markdown#lists#ListStart(...) abort "{{{1
     if a:0 > 0
         let l:l = a:1
     else
@@ -29,22 +29,22 @@ function! markdown#lists#ListStart(...) "{{{1
     endif
     let orig_pos = getpos('.')[1:]
     call cursor(l:l, 0)
-    normal {
+    normal! {
     if getpos('.')[1:] == orig_pos && markdown#lists#ListItemStart() != 1
         return -1
     endif
-    normal w
+    normal! w
     let pos = markdown#lists#ListItemStart()
     if pos == 1
         let c_par_start = line('.')
-        normal 2{w
+        normal! 2{w
         let p_par_start = line('.')
         if c_par_start != p_par_start
             let check_prev = markdown#lists#ListItemStart()
             if check_prev == 1
                 let l:l = markdown#lists#ListStart()
             else
-                normal }w
+                normal! }w
                 let l:l = line('.')
             endif
         else
@@ -57,7 +57,7 @@ function! markdown#lists#ListStart(...) "{{{1
     return l:l
 endfunction
 
-function! markdown#lists#ListEnd(...) "{{{1
+function! markdown#lists#ListEnd(...) abort "{{{1
     if markdown#lists#ListStart() == -1
         " not in a list
         return -1
@@ -69,11 +69,11 @@ function! markdown#lists#ListEnd(...) "{{{1
     endif
     let orig_pos = getpos('.')[1:]
     call cursor(l:l,0)
-    if getline(l:l) =~ '^\s*$' && markdown#lists#ListItemStart(l:l+1) == 0
+    if getline(l:l) =~# '^\s*$' && markdown#lists#ListItemStart(l:l+1) == 0
         " the list just ended
         return l:l-1
     endif
-    normal }
+    normal! }
     let c_lnum = line('.')
     let c_par_end = c_lnum-1
     let next_par_start = c_lnum+1
@@ -89,28 +89,28 @@ function! markdown#lists#ListEnd(...) "{{{1
     return l:l
 endfunction
 
-function! markdown#lists#ListKind(...) "{{{1
+function! markdown#lists#ListKind(...) abort "{{{1
     if a:0 > 0
         let line = getline(a:1)
     else
-        let line = getline(".")
+        let line = getline('.')
     endif
-    if line =~ '^>\=\s*[*+-]\s\+-\@!'
+    if line =~# '^>\=\s*[*+-]\s\+-\@!'
         return 'ul'
     else
         return 'ol'
     endif
 endfunction
 
-function! markdown#lists#NextListItem(...) "{{{1
+function! markdown#lists#NextListItem(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     let lnum = search_from + 1
     if markdown#lists#ListStart(search_from) > -1
-        while lnum <= line("$")
+        while lnum <= line('$')
             if markdown#lists#ListStart(lnum+1) == -1
                 return markdown#lists#CurrentListItem(lnum)
             endif
@@ -125,11 +125,11 @@ function! markdown#lists#NextListItem(...) "{{{1
     return -1
 endfunction
 
-function! markdown#lists#PrevListItem(...) "{{{1
+function! markdown#lists#PrevListItem(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     let lnum = search_from - 1
     while lnum >= 1
@@ -146,11 +146,11 @@ function! markdown#lists#PrevListItem(...) "{{{1
     return -1
 endfunction
 
-function! markdown#lists#CurrentListItem(...) "{{{1
+function! markdown#lists#CurrentListItem(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     if markdown#lists#ListItemStart(search_from) == 1
         return search_from
@@ -159,15 +159,15 @@ function! markdown#lists#CurrentListItem(...) "{{{1
     endif
 endfunction
 
-function! markdown#lists#ListItemLevel(line) "{{{1
+function! markdown#lists#ListItemLevel(line) abort "{{{1
     return len(matchstr(a:line, '^\s\+'))/4+1
 endfunction
 
-function! markdown#lists#CurrentListItemParent(...) "{{{1
+function! markdown#lists#CurrentListItemParent(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     let c_listitem = markdown#lists#CurrentListItem(search_from)
     if c_listitem != -1
@@ -188,17 +188,17 @@ function! markdown#lists#CurrentListItemParent(...) "{{{1
     return -1
 endfunction
 
-function! markdown#lists#ListItemSibling(direction, ...) "{{{1
+function! markdown#lists#ListItemSibling(direction, ...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     let c_listitem_lnum = markdown#lists#CurrentListItem(search_from)
     let c_listitem_level = markdown#lists#ListItemLevel(getline(c_listitem_lnum))
     let parent_lnum = markdown#lists#CurrentListItemParent(c_listitem_lnum)
 
-    if a:direction == 'b'
+    if a:direction ==# 'b'
         let while_cond = 'lnum >= 1'
     else
         let while_cond = 'lnum <= line("$")'
@@ -206,7 +206,7 @@ function! markdown#lists#ListItemSibling(direction, ...) "{{{1
 
     let lnum = c_listitem_lnum
     while eval(while_cond)
-        if a:direction == 'b'
+        if a:direction ==# 'b'
             let listitem_lnum = markdown#lists#PrevListItem(lnum)
         else
             let listitem_lnum = markdown#lists#NextListItem(lnum)
@@ -224,25 +224,25 @@ function! markdown#lists#ListItemSibling(direction, ...) "{{{1
     endwhile
 endfunction
 
-function! markdown#lists#NextListItemSibling(...) "{{{1
+function! markdown#lists#NextListItemSibling(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     return markdown#lists#ListItemSibling('', search_from)
 endfunction
 
-function! markdown#lists#PrevListItemSibling(...) "{{{1
+function! markdown#lists#PrevListItemSibling(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
-        let search_from = line(".")
+        let search_from = line('.')
     endif
     return markdown#lists#ListItemSibling('b', search_from)
 endfunction
 
-function! markdown#lists#FirstChild(...) "{{{1
+function! markdown#lists#FirstChild(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
@@ -259,7 +259,7 @@ function! markdown#lists#FirstChild(...) "{{{1
     endif
 endfunction
 
-function! markdown#lists#LastChild(...) "{{{1
+function! markdown#lists#LastChild(...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else
@@ -283,7 +283,7 @@ function! markdown#lists#LastChild(...) "{{{1
     return -1
 endfunction
 
-function! markdown#lists#NthChild(count, ...) "{{{1
+function! markdown#lists#NthChild(count, ...) abort "{{{1
     if a:0 > 0
         let search_from = a:1
     else

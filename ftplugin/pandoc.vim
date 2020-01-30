@@ -4,9 +4,14 @@
 " Description: vim-pandoc-handled buffer settings
 " Author: Felipe Morales
 
-if exists("b:pandoc_loaded") && b:pandoc_loaded == 1
+if exists('b:pandoc_loaded') && b:pandoc_loaded == 1
     finish
 endif
+
+" Start a new auto command group for all this plugin's hooks
+augroup VimPandoc
+    autocmd!
+augroup END
 
 " Modules: {{{1
 " we initialize stuff depending on the values of g:pandoc#modules#enabled and
@@ -23,14 +28,33 @@ for module in s:enabled_modules
     exe 'call pandoc#' . module . '#Init()'
 endfor
 
-if exists("loaded_matchit")
+if exists('loaded_matchit')
     setlocal matchpairs-=<:>
     let b:match_words = &l:matchpairs .
-      \ ',' . '\%(^\|[ (]\)\@<=\$\$\?' . ':' . '\$\?\$\%($\|[ ).\,;\:?!\-]\)' .
-      \ ',' . '\%(^\s*\)\@<=\\begin{\w\+\*\?}' . ':' . '\%(^\s*\)\@<=\\end{\w\+\*\?}'
+      \ ',' . '\%(^\|[ (/]\)\@<="' . ':' . '"\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=''' . ':' . '''\%($\|[ )/.\,;\:?!\-]\)'
+let b:match_words .=
+      \ ',' . '\%(^\|[ (/]\)\@<=\*' . ':' . '\*\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=\*\*' . ':' . '\*\*\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=\*\*\*' . ':' . '\*\*\*\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=_' . ':' . '_\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=__' . ':' . '__\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=___' . ':' . '___\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|[ (/]\)\@<=`[^`]' . ':' . '[^`]\@<=`\%($\|[ )/.\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|\s\)\@<=```' . ':' . '```\%($\|\s\)'
+let b:match_words .=
+      \ ',' . '\%(^\|[ (]\)\@<=\$[^$]' . ':' . '[^$]\@<=\$\%($\|[ ).\,;\:?!\-]\)' .
+      \ ',' . '\%(^\|\s\)\@<=\$\$' . ':' . '\$\$\%($\|\s\)' .
+      \ ',' . '\%(^\s*\)\@<=\\begin{\(\w\+\*\?\)}' . ':' . '\%(^\s*\)\@<=\\end{\1}'
 endif
 
 setlocal formatlistpat=\\C^\\s*[\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|^\\s*[-+o*]\\s\\+
 setlocal formatoptions+=n
+
+let b:undo_ftplugin = 'setlocal formatoptions< formatlistpat< matchpairs<'
+                \ . '| unlet! b:match_words'
+if exists('g:pandoc#formatting#equalprg') && !empty(g:pandoc#formatting#equalprg)
+    let b:undo_ftplugin .= '| setlocal equalprg<'
+endif
 
 let b:pandoc_loaded = 1

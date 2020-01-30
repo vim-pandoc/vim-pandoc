@@ -1,3 +1,4 @@
+import sys
 from subprocess import Popen, PIPE
 import re
 from collections import namedtuple
@@ -29,7 +30,12 @@ class PandocInfo(object):
         self.output_formats = self.get_output_formats()
 
     def get_version(self):
-        return self.__raw_output('--version', pattern='pandoc (\d+\.\d+)')
+        versionPattern = 'pandoc'
+        # check for MSYS terminal
+        if sys.platform.startswith('msys'):
+            versionPattern += '\.exe'
+        versionPattern += ' (\d+\.\d+)'
+        return self.__raw_output('--version', pattern=versionPattern)
 
     def get_options(self):
         # first line describes pandoc usage

@@ -1,8 +1,8 @@
-function! pandoc#spell#Init()
-    if !exists("g:pandoc#spell#enabled")
+function! pandoc#spell#Init() abort
+    if !exists('g:pandoc#spell#enabled')
         let g:pandoc#spell#enabled = 1
     endif
-    if !exists("g:pandoc#spell#default_langs")
+    if !exists('g:pandoc#spell#default_langs')
         let g:pandoc#spell#default_langs = []
     endif
 
@@ -10,6 +10,6 @@ function! pandoc#spell#Init()
         setlocal spell
     endif
     if g:pandoc#spell#default_langs != []
-        exe "setlocal spelllang=".join(g:pandoc#spell#default_langs, ',')
+        exe 'setlocal spelllang='.join(g:pandoc#spell#default_langs, ',')
     endif
 endfunction

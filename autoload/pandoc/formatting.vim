@@ -8,13 +8,13 @@ function! pandoc#formatting#Init() abort "{{{1
     " h: use hard wraps
     " a: auto format (only used if h is set)
     " A: smart auto format
-    if !exists("g:pandoc#formatting#mode")
-        let g:pandoc#formatting#mode = "s"
+    if !exists('g:pandoc#formatting#mode')
+        let g:pandoc#formatting#mode = 's'
     endif
     "}}}3
     " Auto-format {{{3
     " Autoformat blacklist {{{4
-    if !exists("g:pandoc#formatting#smart_autoformat_blacklist")
+    if !exists('g:pandoc#formatting#smart_autoformat_blacklist')
         let g:pandoc#formatting#smart_autoformat_blacklist = [
                     \ 'pandoc.+header',
                     \ 'pandoc\S{-}(code|title|line|math)block(title)?',
@@ -30,46 +30,46 @@ function! pandoc#formatting#Init() abort "{{{1
     endif
     " }}}4
     " Autoformat on CursorMovedI {{{4
-    if !exists("g:pandoc#formatting#smart_autoformat_on_cursormoved")
+    if !exists('g:pandoc#formatting#smart_autoformat_on_cursormoved')
         let g:pandoc#formatting#smart_autoformat_on_cursormoved = 0
     endif
     "}}}4
     "}}}3
     " Text width {{{3
-    if !exists("g:pandoc#formatting#textwidth")
+    if !exists('g:pandoc#formatting#textwidth')
         let g:pandoc#formatting#textwidth = 79
     endif
     " }}}3
     " equalprg {{{3
-    if !exists("g:pandoc#formatting#equalprg")
+    if !exists('g:pandoc#formatting#equalprg')
         if executable('pandoc')
-            let g:pandoc#formatting#equalprg = "pandoc -t markdown"
-            if g:pandoc#formatting#mode =~# "h"
-                let g:pandoc#formatting#equalprg.= " --columns ".g:pandoc#formatting#textwidth
+            let g:pandoc#formatting#equalprg = 'pandoc -t markdown'
+            if g:pandoc#formatting#mode =~# 'h'
+                let g:pandoc#formatting#equalprg.= ' --columns '.g:pandoc#formatting#textwidth
             else
-                let g:pandoc#formatting#equalprg.= " --wrap=none"
+                let g:pandoc#formatting#equalprg.= ' --wrap=none'
             endif
         else
-            let g:pandoc#formatting#equalprg = ""
+            let g:pandoc#formatting#equalprg = ''
         endif
     endif
     " extend the value of equalprg if needed
-    if !exists("g:pandoc#formatting#extra_equalprg")
-        let g:pandoc#formatting#extra_equalprg = "--reference-links"
+    if !exists('g:pandoc#formatting#extra_equalprg')
+        let g:pandoc#formatting#extra_equalprg = '--reference-links'
     endif
     " }}}3
     " formatprg {{{3
-    if !exists("g:pandoc#formatting#formatprg#use_pandoc")
+    if !exists('g:pandoc#formatting#formatprg#use_pandoc')
         let g:pandoc#formatting#formatprg#use_pandoc = 0
     endif
-    if !exists("g:pandoc#formatting#formatprg")
+    if !exists('g:pandoc#formatting#formatprg')
         if g:pandoc#formatting#formatprg#use_pandoc == 1
             if executable('pandoc')
-                let g:pandoc#formatting#formatprg = "pandoc -t markdown"
-                if g:pandoc#formatting#mode =~# "h"
-                    let g:pandoc#formatting#formatprg.= " --columns ".g:pandoc#formatting#textwidth
+                let g:pandoc#formatting#formatprg = 'pandoc -t markdown'
+                if g:pandoc#formatting#mode =~# 'h'
+                    let g:pandoc#formatting#formatprg.= ' --columns '.g:pandoc#formatting#textwidth
                 else
-                    let g:pandoc#formatting#formatprg.= " --wrap=none"
+                    let g:pandoc#formatting#formatprg.= ' --wrap=none'
                 endif
             endif
         else
@@ -78,17 +78,17 @@ function! pandoc#formatting#Init() abort "{{{1
     endif
     " }}}3
     " Use a custom indentexpr? {{{3
-    if !exists("g:pandoc#formatting#set_indentexpr")
+    if !exists('g:pandoc#formatting#set_indentexpr')
         let g:pandoc#formatting#set_indentexpr = 0
     endif
     " }}}3
     " set up soft or hard wrapping modes "{{{2
-    if stridx(g:pandoc#formatting#mode, "h") >= 0 && stridx(g:pandoc#formatting#mode, "s") < 0
+    if stridx(g:pandoc#formatting#mode, 'h') >= 0 && stridx(g:pandoc#formatting#mode, 's') < 0
         call pandoc#formatting#UseHardWraps()
-    elseif stridx(g:pandoc#formatting#mode, "s") >= 0 && stridx(g:pandoc#formatting#mode, "h") < 0
+    elseif stridx(g:pandoc#formatting#mode, 's') >= 0 && stridx(g:pandoc#formatting#mode, 'h') < 0
         call pandoc#formatting#UseSoftWraps()
     else
-        echoerr "pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default."
+        echoerr 'pandoc: The value of g:pandoc#formatting#mode is inconsistent. Using default.'
         call pandoc#formatting#UseSoftWraps()
     endif
 
@@ -99,7 +99,7 @@ function! pandoc#formatting#Init() abort "{{{1
     " NOTE: If you use this on your entire file, it will wipe out title blocks.
     "
     if g:pandoc#formatting#equalprg !=? ''
-        let &l:equalprg=g:pandoc#formatting#equalprg." ".g:pandoc#formatting#extra_equalprg
+        let &l:equalprg=g:pandoc#formatting#equalprg.' '.g:pandoc#formatting#extra_equalprg
     endif
 
     " formatprg {{{2
@@ -130,7 +130,7 @@ function! pandoc#formatting#Init() abort "{{{1
     endif
 
     " Textile uses .. for comments
-    if &filetype ==? "textile"
+    if &filetype ==? 'textile'
         setlocal commentstring=..%s
         setlocal comments=f:..
     else " Other markup formats use HTML-style comments
@@ -145,7 +145,7 @@ function! pandoc#formatting#Init() abort "{{{1
     let s:original_breakat = &breakat
     augroup pandoc_formatting
         au! BufEnter <buffer> set breakat-=@
-        au! BufLeave <buffer> exe "set breakat=".substitute(s:original_breakat, '\s*', '\\ ', 1)
+        au! BufLeave <buffer> exe 'set breakat='.substitute(s:original_breakat, '\s*', '\\ ', 1)
     augroup END
     set breakat-=@
     "}}}2
@@ -153,7 +153,7 @@ endfunction
 
 " Autoformat switches {{{1
 function! pandoc#formatting#isAutoformatEnabled() abort
-    if exists("b:pandoc_autoformat_enabled")
+    if exists('b:pandoc_autoformat_enabled')
         return b:pandoc_autoformat_enabled
     else
         return 1
@@ -166,7 +166,7 @@ function! pandoc#formatting#DisableAutoformat() abort
     let b:pandoc_autoformat_enabled = 0
 endfunction
 function! pandoc#formatting#ToggleAutoformat() abort
-    if get(b:, "pandoc_autoformat_enabled", 1) == 1
+    if get(b:, 'pandoc_autoformat_enabled', 1) == 1
         let b:pandoc_autoformat_enabled = 0
     else
         let b:pandoc_autoformat_enabled = 1
@@ -247,7 +247,7 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
     setlocal display&
     setlocal wrap&
     " textwidth
-    exec "setlocal textwidth=".g:pandoc#formatting#textwidth
+    exec 'setlocal textwidth='.g:pandoc#formatting#textwidth
 
     " t: wrap on &textwidth
     " n: keep inner indent for list items.
@@ -257,7 +257,7 @@ function! pandoc#formatting#UseHardWraps() abort "{{{1
     " TODO: add support for roman numerals
     setlocal formatlistpat=^\\s*\\([*+-]\\\|\\((*\\d\\+[.)]\\+\\)\\\|\\((*\\l[.)]\\+\\)\\)\\s\\+
 
-    if stridx(g:pandoc#formatting#mode, "a") >= 0
+    if stridx(g:pandoc#formatting#mode, 'a') >= 0
         " a: auto-format
         " w: lines with trailing spaces mark continuing
         " paragraphs, and lines ending on non-spaces end paragraphs.
@@ -292,14 +292,14 @@ function! pandoc#formatting#IndentExpr() abort "{{{1
     let l:cline = getline(v:lnum)
     let l:pline = getline(v:lnum - 1)
     let l:cline_li = matchstr(l:cline, '^\s*[*-:]\s*')
-    if l:cline_li !=? ""
+    if l:cline_li !=? ''
         return len(matchstr(l:cline_li, '^\s*'))
     endif
     let l:pline_li = matchstr(l:pline, '^\s*[*-:]\s\+')
-    if l:pline_li !=? ""
+    if l:pline_li !=? ''
         return len(l:pline_li)
     endif
-    if l:pline ==? ""
+    if l:pline ==? ''
         return indent(v:lnum)
     else
         return indent(v:lnum - 1)

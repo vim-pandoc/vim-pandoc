@@ -300,8 +300,8 @@ will create an incantation like:
 In nvim, vim-pandoc will open a terminal buffer and execute pandoc. If the
 value of |g:pandoc#command#use_message_buffers| is 1 and some error occurred,
 a buffer will open displaying the command output (this is unnecessary in nvim,
-because it will always display the command output, so the defalt for
-`use_message_buffers' there is 0). You can dismiss these buffers pressing 'q'.
+because it will always display the command output, so the default value for
+`use_message_buffers' is 0). You can dismiss these buffers pressing 'q'.
 
 Regardless of pandoc's execution status, the invocation used will be logged so
 it can be checked using |:messages|.
@@ -439,6 +439,8 @@ where they are available):
 - *<localleader>lcf*   move to the first list item child [n]
 - *<localleader>lcl*   move to the last list item child [n]
 - *<localleader>lcn*   move to the [count] nth list item child [n]
+- *<localleader>cb*    toggle checkbox or insert empty checkbox in list item [vn]
+- *<localleader>cd*    remove existing checkbox from list item [vn]
 
 For |<localleader>#|, you can decide what header style to use (always atx, use
 setex, append hashes at the end) by setting the
@@ -476,10 +478,12 @@ the corresponding flag to give g:pandoc#biblio#sources):
 2) [c] Search for any bibliography in the current dir.
 3) [l] Search for default bibliographies (`default.bib`, `default.ris`, etc.) in pandoc's
     data dir ("$HOME/.pandoc/" in *nix, "%APPDATA%/pandoc/" in Windows)
-4) [t] Search for bibliographies in texmf (requires the `kpsewhich` program)
+4) [t] Search for bibliographies in the local texmf tree (requires the
+   `kpsewhich` program)
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
+6) [y] Add any bibliographies specified in a YAML header.
 
-The default flags are "bcg". For the 'c' and 'l' flags, the
+The default flags are "bcgy". For the 'c', 'l', and 't' flags, the
 |g:pandoc#biblio#bib_extensions| is taken into account. You can, of
 course, modify the value of |b:pandoc_biblio_bibs| at any time.
 
@@ -682,7 +686,7 @@ following options: >
   if !exists('g:ycm_semantic_triggers')
     let g:ycm_semantic_triggers = {}
   endif
-  let g:ycm_semantic_triggers.tex = ['@']
+  let g:ycm_semantic_triggers.pandoc = ['@']
 
   let g:ycm_filetype_blacklist = {}
 <
@@ -716,6 +720,9 @@ moved in the source window to the position selected. By default, the TOC
 buffer is closed after this, but this can be circumvented by pressing <C-CR>.
 This behavior can be reversed by setting |g:pandoc#toc#close_after_navigating|
 to 0.
+
+The indentation in the TOC buffer can be tuned by |g:pandoc#toc#shift|
+variable, which definds the shift in number of spaces per level.
 
 - SPELL                                                *vim-pandoc-spell-module*
 
@@ -957,25 +964,27 @@ A description of the available configuration variables follows:
     let g:pandoc#compiler#arguments = "---quiet ---strict"
 <
 - *g:pandoc#biblio#sources*
-  default = "bcg"
+  default = "bcgy"
 
   Where to look for bibliographies:
 
     b: use files with the same name as the current file, in the working dir
     c: use any bibliography in the working dir
     l: look in pandoc's local dir
-    t: look in TeX's texmf
+    t: look in the local texmf tree
     g: append items in |g:pandoc#biblio#bibs|
+    y: look in the current file's YAML header
 
 - *g:pandoc#biblio#bib_extensions*
   default = ["bib", "bibtex", "ris", "mods", "enl", "wos", "medline", "copac"]
 
-  What extensions to look for 'c' and 'l' values in |g:pandoc#biblio#sources|.
+  What extensions to use for 'c', 'l', and 't' values in
+  |g:pandoc#biblio#sources|.
 
 - *g:pandoc#biblio#bibs*
   default = []
 
-  A list of bibliographies to use globally if `g` is in
+  A list of bibliographies to use globally if 'g' is in
   |g:pandoc#biblio#sources|.
 
 - *b:pandoc_biblio_bibs*
@@ -1004,7 +1013,7 @@ A description of the available configuration variables follows:
   |preview-window|? Requires the 'citeproc' backend.
 
 - *g:pandoc#keyboard#enabled_submodules*
-  default = ["lists", "references", "styles", "sections", "links"]
+  default = ["lists", "references", "styles", "sections", "links", "checkboxes"]
 
   What mapping groups to enable.
 
@@ -1127,6 +1136,12 @@ A description of the available configuration variables follows:
   Must the TOC window close after selecting a location? This also controls the
   behavior of the <CR> key. If '1', <CR> navigates and closes the TOC, <C-CR>
   simply navigates. If '0', this behavior is reversed.
+
+- *g:pandoc#toc#shift*
+  default = 2
+
+  Defines the number of spaces per level to indent the higher level
+  positions in TOC buffer.
 
 - *g:pandoc#spell#enabled*
   default = 1

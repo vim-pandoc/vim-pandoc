@@ -117,13 +117,13 @@ def get_json_suggestions(text, query):
     def test_entry(entry):
         if type(entry) != dict: return False
         for string in [entry.get(k) for k in string_matches]:
-            if type(string) == unicode and check(string): return True
+            if type(string) == str and check(string): return True
         for names in [entry.get(k) for k in name_matches]:
             if type(names) == list:
                 for person in names:
-                    if type(person.get(family_match)) == unicode:
+                    if type(person.get(family_match)) == str:
                         if check(person[family_match]): return True
-                    elif type(person.get(literal_match)) == unicode:
+                    elif type(person.get(literal_match)) == str:
                         if check(person[literal_match]): return True
 
     for entry in filter(test_entry, data):
