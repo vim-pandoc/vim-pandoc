@@ -165,6 +165,7 @@ class PandocCommand(object):
                             " {'on_exit': 'pandoc#command#JobHandler'," + \
                             "'on_stdout': 'pandoc#command#JobHandler'," + \
                             "'on_stderr': 'pandoc#command#JobHandler'}))")
+                vim.command("put='Running pandoc...\n'")
                 vim.command("file pandoc-execute")
                 vim.command("normal G")
                 vim.command("wincmd p")
