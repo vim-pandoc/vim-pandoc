@@ -153,6 +153,7 @@ class PandocCommand(object):
                 if int(vim.eval("bufloaded('pandoc-execute')")):
                     wnr = vim.eval("bufwinnr('pandoc-execute')")
                     vim.command(wnr + "wincmd c")
+                    vim.command(wnr + "put='Running pandoc...\n'")
 
                 vim.command("botright 7new pandoc-execute")
                 vim.command("setlocal buftype=nofile")
@@ -165,7 +166,6 @@ class PandocCommand(object):
                             " {'on_exit': 'pandoc#command#JobHandler'," + \
                             "'on_stdout': 'pandoc#command#JobHandler'," + \
                             "'on_stderr': 'pandoc#command#JobHandler'}))")
-                vim.command("put='Running pandoc...\n'")
                 vim.command("file pandoc-execute")
                 vim.command("normal G")
                 vim.command("wincmd p")
