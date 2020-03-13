@@ -70,12 +70,6 @@ if v:version < 704
     endif
 endif
 "}}}
-" Filetypes: {{{2
-" Use pandoc extensions to markdown for all markdown files {{{3
-if !exists('g:pandoc#filetypes#pandoc_markdown')
-    let g:pandoc#filetypes#pandoc_markdown = 1
-endif
-"}}}
 " Markups to handle {{{3
 if !exists('g:pandoc#filetypes#handled')
         let g:pandoc#filetypes#handled = [
@@ -94,17 +88,6 @@ endif
 " the value of g:pandoc#filetypes#handled and
 " g:pandoc#filetypes#pandoc_markdown
 
-" augroup pandoc {{{2
-" this sets the filetype for pandoc files
-augroup pandoc
-    au BufNewFile,BufRead,BufFilePost *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
-    if g:pandoc#filetypes#pandoc_markdown == 1
-        " skip loading of /markdown/ftplugin.vim
-        au BufNewFile,BufRead,BufFilePost *.markdown,*.mdown,*.mkd,*.mkdn,*.mdwn,*.md
-                    \ let b:did_ftplugin=1 | setlocal filetype=pandoc
-    endif
-augroup END
-"}}}
 " augroup pandoc_attach {{{2
 " this loads the vim-pandoc functionality for configured extensions
 augroup pandoc_attach
