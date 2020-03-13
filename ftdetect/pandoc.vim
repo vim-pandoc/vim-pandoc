@@ -1,3 +1,4 @@
+" vint: -ProhibitAutocmdWithNoGroup
 autocmd BufNewFile,BufRead,BufFilePost *.pandoc,*.pdk,*.pd,*.pdc set filetype=pandoc
 
 if !exists('g:pandoc#filetypes#pandoc_markdown')
