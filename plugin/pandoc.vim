@@ -76,7 +76,7 @@ if !exists('g:pandoc#filetypes#handled')
         			\'pandoc',
         			\'rst',
         			\'textile']
-        if g:pandoc#filetypes#pandoc_markdown == 1
+        if get(g:, 'pandoc#filetypes#pandoc_markdown', 1) == 1
             let g:pandoc#filetypes#handled += ['markdown']
         endif
 endif
