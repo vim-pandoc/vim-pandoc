@@ -109,7 +109,9 @@ function! s:ExpandArgs(args) abort
                 \'\=expand(submatch(0))', 'g') " expand placeholders
     let templatized_args = substitute(expanded_args, '#\(\S\+\)',
                 \'\=pandoc#command#GetTemplate(submatch(1))', 'g') " expand templates
-    return eval('templatized_args')
+    let expanded_template = substitute(templatized_args, '%\(:[phtre]\)\+',
+                \'\=expand(submatch(0))', 'g') " expand placeholders again
+    return eval('expanded_template')
 endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
