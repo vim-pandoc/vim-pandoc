@@ -105,13 +105,11 @@ function! pandoc#command#PandocNative(args, bang) abort
 endfunction
 
 function! s:ExpandArgs(args) abort
-    let expanded_args = substitute(a:args, '%\(:[phtre]\)\+',
-                \'\=expand(submatch(0))', 'g') " expand placeholders
-    let templatized_args = substitute(expanded_args, '#\(\S\+\)',
+    let templatized_args = substitute(a:args, '#\(\S\+\)',
                 \'\=pandoc#command#GetTemplate(submatch(1))', 'g') " expand templates
-    let expanded_template = substitute(templatized_args, '%\(:[phtre]\)\+',
-                \'\=expand(submatch(0))', 'g') " expand placeholders again
-    return eval('expanded_template')
+    let expanded_args = substitute(templatized_args, '%\(:[phtre]\)\+',
+                \'\=expand(submatch(0))', 'g') " expand placeholders
+    return eval('expanded_args')
 endfunction
 
 " PandocComplete(a, c, pos): the Pandoc command argument completion func, requires python support {{{2
