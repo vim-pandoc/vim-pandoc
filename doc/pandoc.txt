@@ -481,8 +481,9 @@ the corresponding flag to give g:pandoc#biblio#sources):
    `kpsewhich` program)
 5) [g] Add any bibliographies listed in |g:pandoc#biblio#bibs|.
 6) [y] Add any bibliographies specified in a YAML header.
+7) [G] Add any bibliographies in the current git repository.
 
-The default flags are "bcgy". For the 'c', 'l', and 't' flags, the
+The default flags are "bcgyG". For the 'c', 'l', and 't' flags, the
 |g:pandoc#biblio#bib_extensions| is taken into account. You can, of
 course, modify the value of |b:pandoc_biblio_bibs| at any time.
 

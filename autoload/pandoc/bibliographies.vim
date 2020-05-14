@@ -12,7 +12,7 @@ function! pandoc#bibliographies#Init() abort
     " y: add bibliography specified in yaml header
     "
     if !exists('g:pandoc#biblio#sources')
-        let g:pandoc#biblio#sources = 'bcgy'
+        let g:pandoc#biblio#sources = 'bcgyG'
     endif
     "}}}
     " File extensions to check for {{{3

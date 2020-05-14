@@ -53,6 +53,22 @@ class SourceCollator():
             bibfiles = [os.path.abspath(f) for f in relative_bibfiles]
             return bibfiles
 
+        def git_search():
+            """
+            Search for any bibliographies in the git repository.
+            """
+            try:
+                root_dir = check_output(['git', 'rev-parse', '--show-toplevel']).decode().strip()
+            except:
+                return []
+            git_files = check_output(['git', 'ls-tree',
+                                      '-r', '--full-tree', '--name-only',
+                                      'HEAD']).decode().split('\n')
+            relpaths = [f for f in git_files \
+                        if (ext := os.path.splitext(f)[1]) != '' and ext[1:] in bib_extensions]
+            bibfiles = [os.path.join(root_dir, f) for f in relpaths]
+            return bibfiles
+
         def pandoc_local_search():
             """
             Search for bibliographies in the pandoc data dirs.
@@ -96,7 +112,8 @@ class SourceCollator():
                           "c": curdir_all_search,
                           "l": pandoc_local_search,
                           "t": texmf_search,
-                          "g": explicit_global_search}
+                          "g": explicit_global_search,
+                          "G": git_search}
 
 
         bibfiles = []

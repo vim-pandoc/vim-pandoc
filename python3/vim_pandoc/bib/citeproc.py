@@ -261,7 +261,12 @@ class CSLItem: #{{{1
 
 class CiteprocSource: #{{{1
     def __init__(self, bib): #{{{2
-        citeproc_output = check_output(["pandoc-citeproc", "-j", bib])
+        try:
+            citeproc_output = check_output(["pandoc-citeproc", "-j", bib])
+        except:
+            print('pandoc: pandoc-citeproc had an error. maybe the bibliography file is corrupted?')
+            self.data = []
+            return
         if version_info.major == 2:
             raw_bib = json.loads(citeproc_output)
         elif version_info.major == 3:
