@@ -64,8 +64,11 @@ class SourceCollator():
             git_files = check_output(['git', 'ls-tree',
                                       '-r', '--full-tree', '--name-only',
                                       'HEAD']).decode().split('\n')
-            relpaths = [f for f in git_files \
-                        if (ext := os.path.splitext(f)[1]) != '' and ext[1:] in bib_extensions]
+            relpaths = []
+            for f in git_files:
+                ext = os.path.splitext(f)[1]
+                if ext != '' and ext[1:] in bib_extensions:
+                    relpaths.append(f)
             bibfiles = [os.path.join(root_dir, f) for f in relpaths]
             return bibfiles
 
