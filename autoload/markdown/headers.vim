@@ -6,7 +6,7 @@ function! markdown#headers#CheckValidHeader(lnum) abort "{{{1
     if a:lnum != 0
         if exists('g:vim_pandoc_syntax_exists')
             let synId = synIDattr(synID(a:lnum, 1, 1), 'name')
-            if synId !~# '^pandoc' || synId ==# 'pandocDelimitedCodeBlock'
+            if synId !~# '\v^(pandoc|pdc)' || synId ==# 'pandocDelimitedCodeBlock'
                 return 0
             endif
         endif

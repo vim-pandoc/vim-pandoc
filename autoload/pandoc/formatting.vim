@@ -18,13 +18,16 @@ function! pandoc#formatting#Init() abort "{{{1
         let g:pandoc#formatting#smart_autoformat_blacklist = [
                     \ 'pandoc.+header',
                     \ 'pandoc\S{-}(code|title|line|math)block(title)?',
+                    \ 'pdc(delimited|latex)?codeblock',
                     \ 'pandoc.+table',
                     \ 'pandoctable',
                     \ 'pandoc.+latex',
                     \ 'pandocreferencedefinition',
                     \ 'pandocreferencelabel',
                     \ 'tex.*',
+                    \ 'pdclatex*',
                     \ 'yaml.*',
+                    \ 'pdcyaml',
                     \ 'delimiter'
                     \]
     endif
@@ -202,7 +205,7 @@ function! pandoc#formatting#AutoFormat(force) abort "{{{1
                 catch /E684/
                     let l:p_synName = ''
                 endtry
-                if match(l:synName.l:p_synName, '\c\vpandocu?list') >= 0
+                if match(l:synName.l:p_synName, '\c\v(pandoc|pdc)[uo]?list') >= 0
                     let l:context_prevents = 1
                 endif
             else
@@ -211,7 +214,7 @@ function! pandoc#formatting#AutoFormat(force) abort "{{{1
                     let l:context_prevents = 1
                 elseif l:p_synName =~? '\c\vpandochrule'
                     let l:context_prevents = 1
-                elseif l:p_synName =~? '\c\vpandoccodeblock' && indent('.')%4 == 0
+                elseif l:p_synName =~? '\c\v(pandoc|pdc)codeblock' && indent('.')%4 == 0
                     let l:context_prevents = 1
                 elseif getline(l:line -1) =~? '^\w\+:'
                     let l:context_prevents = 1
@@ -226,7 +229,7 @@ function! pandoc#formatting#AutoFormat(force) abort "{{{1
                 setlocal formatoptions+=t
                 " block quotes are formatted like text comments (hackish, i know),
                 " so we want to make them break at textwidth
-                if l:stack != [] && l:synName ==? 'pandocBlockQuote'
+                if l:stack != [] && l:synName ==? '\c\v(pandoc|pdc)blockquote'
                     setlocal formatoptions+=c
                 endif
             elseif l:should_enable == 0
