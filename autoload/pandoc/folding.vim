@@ -21,6 +21,10 @@ function! pandoc#folding#Init() abort
     if !exists('g:pandoc#folding#fold_yaml')
         let g:pandoc#folding#fold_yaml = 0
     endif
+    " Set YAML foldlevel {{{3
+    if !exists('g:pandoc#folding#foldlevel_yaml')
+        let g:pandoc#folding#foldlevel_yaml = 1
+    endif
     " What <div> classes to fold {{{3
     if !exists('g:pandoc#folding#fold_div_classes')
         let g:pandoc#folding#fold_div_classes = ['notes']
@@ -122,13 +126,13 @@ function! pandoc#folding#FoldExpr() abort
     if g:pandoc#folding#fold_yaml == 1
         if vline =~# '\(^---$\|^...$\)' && synIDattr(synID(v:lnum , 1, 1), 'name') =~? '\(delimiter\|yamldocumentstart\)'
             if vline =~# '^---$' && v:lnum == 1
-                return '>1'
+                return '>' . g:pandoc#folding#foldlevel_yaml
             elseif synIDattr(synID(v:lnum - 1, 1, 1), 'name') ==# 'yamlkey'
-                return '<1'
+                return '<' . g:pandoc#folding#foldlevel_yaml
             elseif synIDattr(synID(v:lnum - 1, 1, 1), 'name') ==# 'pandocYAMLHeader'
-                return '<1'
+                return '<' . g:pandoc#folding#foldlevel_yaml
             elseif synIDattr(synID(v:lnum - 1, 1, 1), 'name') ==# 'yamlBlockMappingKey'
-                return '<1'
+                return '<' . g:pandoc#folding#foldlevel_yaml
             else
                 return '='
             endif
