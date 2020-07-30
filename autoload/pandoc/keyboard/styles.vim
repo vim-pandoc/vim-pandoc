@@ -61,11 +61,7 @@ endfunction
 function! pandoc#keyboard#styles#ToggleOperator(type, ends) abort
     let sel_save = &selection
     let &selection = 'old'
-    if has('clipboard')
-        let reg = '*'
-    else
-        let reg = '"'
-    endif
+    let reg = 'p'
     let reg_save = getreg(reg)
     if a:type ==# 'v'
         execute 'normal! `<'.a:type.'`>'.'"'.reg.'x'
@@ -119,11 +115,7 @@ endfunction "}}}3
 function! pandoc#keyboard#styles#Apply(type, ends) abort
     let sel_save = &selection
     let &selection = 'old'
-    if has('clipboard')
-        let reg = '*'
-    else
-        let reg = '"'
-    endif
+    let reg = 'p'
     let reg_save = getreg(reg)
     if a:type ==# 'v'
         execute 'normal! `<'.a:type.'`>'.'"'.reg.'x'
