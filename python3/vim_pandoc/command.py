@@ -230,10 +230,6 @@ class PandocCommand(object):
             if sys.platform.startswith("win"):
                 from time import sleep
                 sleep(1)
-            if os.path.exists("pandoc.out"):
-                os.remove("pandoc.out")
-
-            # open file if needed
 
             # nvim's python host doesn't change the directory the same way vim does
             try:
@@ -241,6 +237,11 @@ class PandocCommand(object):
                     os.chdir(vim.eval('getcwd()'))
             except:
                 pass
+
+            if os.path.exists("pandoc.out"):
+                os.remove("pandoc.out")
+
+            # open file if needed
 
             if vim.eval("g:pandoc#command#prefer_pdf") == "1":
                 maybe_pdf = os.path.splitext(self._output_file_path)[0] + ".pdf"
