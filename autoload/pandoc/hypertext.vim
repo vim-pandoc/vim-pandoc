@@ -41,7 +41,7 @@ function! pandoc#hypertext#Init() abort
     if exists('g:pandoc#hypertext#reference_link_regex')
         let s:reference_link_regex = g:pandoc#hypertext#reference_link_regex
     else
-        let s:reference_link_regex = '\v!?\[[^]]+\]\[([^]]*)\]'
+        let s:reference_link_regex = '\v!?\[[^]]+\]%(\[([^]]*)\])?'
     endif
 
     if exists('g:pandoc#hypertext#referenced_link_regex')
@@ -152,10 +152,14 @@ endfunc " }}}1
 function! s:GetLinkAtCursor(pat) abort "{{{1
     let matched_str = s:MatchstrAtCursor(a:pat)
     let url = substitute(matched_str, a:pat, '\1', 'g')
-    let indices = [1, 4]
+    let indices = [1, 2]
 
     if '!' ==# matched_str[:0]
-        let indices = [2, 5]
+        let indices = [2, 3]
+    endif
+
+    if '][]' ==# matched_str[-3:]
+        let indices[1] += 2
     endif
 
     " for [hypertext][]
@@ -169,7 +173,12 @@ endfunc " }}}1
 function! s:GetReferenceUrl(ref) abort
     let pattern = '\v\c\s*\['.a:ref.'\]:\s*([^ ]+)'
     let linenum = search(pattern, 'nw')
-    return substitute(getline(linenum), pattern, '\1', 'g')
+    let url = substitute(getline(linenum), pattern, '\1', 'g')
+    " if no reference URL exists, fall back to an implicit header reference
+    if url ==# ''
+        let url = '#' . markdown#headers#GetAutomaticID(a:ref)
+    endif
+    return url
 endfunction
 
 
