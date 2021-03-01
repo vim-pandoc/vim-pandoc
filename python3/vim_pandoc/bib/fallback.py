@@ -5,6 +5,7 @@ import os
 import os.path
 import operator
 import subprocess as sp
+import shlex
 from vim_pandoc.bib.collator import SourceCollator
 from vim_pandoc.bib.util import make_title_ascii
 
@@ -32,8 +33,11 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
     if use_bibtool:
         bibtex_id_search = re.compile(".*{\s*(?P<id>.*),")
 
-        args = "-- select{$key title booktitle author editor \"%(query)s\"}'" % {"query": query}
-        text = sp.Popen(["bibtool", "--preserve.key.case=on",  args, bib], stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0]
+        extra_args = shlex.split(vim.vars["pandoc#biblio#bibtool_extra_args"])
+
+        search = ["--", "select{$key title booktitle author editor \"%(query)s\"}" % {"query": query}]
+        cmd = ["bibtool", "--preserve.key.case=on", *extra_args, *search, bib]
+        text = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0]
         if isinstance(text, bytes):
             text = text.decode("utf-8")
     else:

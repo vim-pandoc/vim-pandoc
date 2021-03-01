@@ -506,6 +506,11 @@ you might retrieve both
 This is off by default, but can be turned on (if `bibtool` is available) by
 setting the |g:pandoc#biblio#use_bibtool| variable to 1.
 
+You can pass extra arguments to `bibtool` by setting
+|g:pandoc#biblio#bibtool_extra_args|. The default is "-r biblatex", which
+enables support for biblatex bibliographies (bibtex bibliographies will still
+work).
+
 TIP: If you use unite.vim, you might want to check https://github.com/msprev/unite-bibtex
 
 - YAML                                                 *vim-pandoc-yaml-module*
