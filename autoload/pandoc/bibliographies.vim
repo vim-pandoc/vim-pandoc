@@ -25,6 +25,11 @@ function! pandoc#bibliographies#Init() abort
         let g:pandoc#biblio#use_bibtool = 0
     endif
     "}}}
+    " Pass extra args to bibtool? {{{3
+    if !exists('g:pandoc#biblio#bibtool_extra_args')
+        let g:pandoc#biblio#bibtool_extra_args = '-r biblatex'
+    endif
+    "}}}
     " Files to add to b:pandoc_biblio_bibs if "g" is in g:pandoc#biblio#sources {{{3
     if !exists('g:pandoc#biblio#bibs')
         let g:pandoc#biblio#bibs = []
