@@ -15,6 +15,7 @@ let g:pandoc#loaded = 1
 
 " we use this to configure to what filetypes we attach to
 let g:pandoc_extensions_table = {
+            \'beamer': ['beamer', 'bmr'],
             \'extra': ['text', 'txt'],
             \'html': ['html', 'htm'],
             \'json' : ['json'],
