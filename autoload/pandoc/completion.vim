@@ -60,7 +60,7 @@ endfunction
 "
 " Write a function that fills s:mylist with unused image file paths
 "
-fun! s:FetchImageNames()
+fun! s:FetchImageNames() abort
     "
     " Add all image extensions to l:filelist
     "
@@ -85,7 +85,7 @@ endfun
 "
 " Populate s:mylist with labels such as tbl:, eq:, fig: and tbl:
 "
-fun! s:FetchRefLabels()
+fun! s:FetchRefLabels() abort
     let l:reflist = []
     call execute(
                 \ '%s/\v#\zs(eq:|fig:|lst:|sec:|tbl:)(\w|-)+/' .
@@ -120,7 +120,7 @@ endfun
 "
 " Putting it all together
 "
-fun! s:PopulatePandoc()
+fun! s:PopulatePandoc() abort
     "
     " This is the main function that populates the omni-completion menu
     "
