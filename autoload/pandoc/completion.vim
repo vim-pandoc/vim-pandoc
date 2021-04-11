@@ -183,10 +183,10 @@ function! pandoc#completion#Complete(findstart, base) abort "{{{1
                     "
                     let start = col('.') - 1
                     while start > 0 && (
-                                \    line[start - 1] =~ '\a'
-                                \ || line[start - 1] =~ '-'
-                                \ || line[start - 1] =~ ':'
-                                \ || line[start - 1] =~ '\d')
+                                \    line[start - 1] =~# '\a'
+                                \ || line[start - 1] =~# '-'
+                                \ || line[start - 1] =~# ':'
+                                \ || line[start - 1] =~# '\d')
                         let start -= 1
                     endwhile
                     return start
