@@ -73,7 +73,7 @@ function! pandoc#toc#ReDisplay(bufname) abort
     execute 'setlocal statusline=Pandoc\ TOC:\ '.escape(a:bufname, ' ')
 
     " change the contents of the location-list buffer
-    set modifiable
+    setlocal modifiable
     " vint: -ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
     silent %s/\v^([^|]*\|){2} #//e
     " vint: +ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
@@ -99,8 +99,8 @@ function! pandoc#toc#ReDisplay(bufname) abort
         endif
         call setline(l, repeat(' ', g:pandoc#toc#shift*l:level). d.text)
     endfor
-    set nomodified
-    set nomodifiable
+    setlocal nomodified
+    setlocal nomodifiable
 
     " re-highlight the quickfix buffer
     syn match pandocTocHeader /^.*\n/
