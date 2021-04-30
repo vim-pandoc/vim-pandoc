@@ -116,7 +116,8 @@ class PandocInfo(object):
             extra = {}
             extra['action'] = 'store_true' if not opt.arg else 'store'
             # some options can be given several times
-            if any(map(lambda x: x.isupper() and x != 'T' or x == 'bibliography' or x == 'defaults', opt.names)):
+            repeatable_options = ['bibliography', 'css', 'defaults', 'metadata-file', 'syntax-definition']
+            if any(map(lambda x: x.isupper() and x != 'T' or x in repeatable_options, opt.names)):
                 extra['action'] = 'append'
 
             if opt.arg:
