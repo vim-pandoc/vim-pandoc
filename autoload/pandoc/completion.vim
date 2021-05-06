@@ -72,7 +72,11 @@ fun! s:FetchImageNames() abort
     call extend(l:filelist, globpath(s:imgdir, '*.eps', 1, 1))
     "
     for l:file in l:filelist
-        if ! search(l:file, 'nw')
+        let l:currBuff = bufnr('%')
+        let l:occurrences = 0
+        bufdo if search(l:file, 'nw') | let l:occurrences += 1 | endif
+        execute 'buffer ' . l:currBuff
+        if l:occurrences == 0
             call add(s:mylist, {
                         \ 'icase': 0,
                         \ 'word': l:file,
@@ -87,11 +91,13 @@ endfun
 "
 fun! s:FetchRefLabels() abort
     let l:reflist = []
+    let l:currBuff = bufnr('%')
     call execute(
-                \ '%s/\v#\zs(eq:|fig:|lst:|sec:|tbl:)(\w|-)+/' .
+                \ 'bufdo %s/\v#\zs(eq:|fig:|lst:|sec:|tbl:)(\w|-)+/' .
                 \ '\=add(l:reflist, submatch(0))/gn',
                 \  'silent!'
                 \ )
+    execute 'buffer ' . l:currBuff
     "
     " Lets add the list items to s:mylist
     "
