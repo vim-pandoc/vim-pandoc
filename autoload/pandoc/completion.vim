@@ -21,19 +21,19 @@ function! pandoc#completion#Init() abort "{{{1
     "
     " If your images are in the same directory as the markdown file, they are included
     " by default in the completion menu. However, many authors like to keep their
-    " images in a directory called 'figures' or 'fig'. The options called
-    " 'g:pandoc#completion#figdirtype' and 'g:pandoc#completion#figdirpre' are
+    " images in a directory such as 'images' or 'figures'. The options called
+    " 'g:pandoc#completion#imgdirtype' and 'g:pandoc#completion#imgdirpre' are
     " used to define such image directories
     "
-    let s:figdir = ''
-    if exists('g:pandoc#completion#figdirtype')
-        if g:pandoc#completion#figdirtype == 1
-            if exists('g:pandoc#completion#figdirpre')
-                let s:figdir = g:pandoc#completion#figdirpre
+    let s:imgdir = ''
+    if exists('g:pandoc#completion#imgdirtype')
+        if g:pandoc#completion#imgdirtype == 1
+            if exists('g:pandoc#completion#imgdirpre')
+                let s:imgdir = g:pandoc#completion#imgdirpre
             endif
-        elseif g:pandoc#completion#figdirtype == 2
-            if exists('g:pandoc#completion#figdirpre')
-                let s:figdir = g:pandoc#completion#figdirpre . expand('%:r')
+        elseif g:pandoc#completion#imgdirtype == 2
+            if exists('g:pandoc#completion#imgdirpre')
+                let s:imgdir = g:pandoc#completion#imgdirpre . expand('%:r')
             endif
         endif
     endif
@@ -65,11 +65,11 @@ fun! s:FetchImageNames() abort
     " Add all image extensions to l:filelist
     "
     let l:filelist = []
-    call extend(l:filelist, globpath(s:figdir, '*.png', 1, 1))
-    call extend(l:filelist, globpath(s:figdir, '*.jpg', 1, 1))
-    call extend(l:filelist, globpath(s:figdir, '*.svg', 1, 1))
-    call extend(l:filelist, globpath(s:figdir, '*.gif', 1, 1))
-    call extend(l:filelist, globpath(s:figdir, '*.eps', 1, 1))
+    call extend(l:filelist, globpath(s:imgdir, '*.png', 1, 1))
+    call extend(l:filelist, globpath(s:imgdir, '*.jpg', 1, 1))
+    call extend(l:filelist, globpath(s:imgdir, '*.svg', 1, 1))
+    call extend(l:filelist, globpath(s:imgdir, '*.gif', 1, 1))
+    call extend(l:filelist, globpath(s:imgdir, '*.eps', 1, 1))
     "
     for l:file in l:filelist
         if ! search(l:file, 'nw')
