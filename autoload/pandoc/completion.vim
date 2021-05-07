@@ -38,6 +38,46 @@ function! pandoc#completion#Init() abort "{{{1
         endif
     endif
     "
+    " User can specify the sources from where reference list consisting of
+    " labels such as fig:, lst:, eq: etc. will be populated. Currently two
+    " sourses are supported: g:pandoc#completion#refsources = 'buffers' and
+    " g:pandoc#completion#refsources = 'pandocfiles'. These correspond to all
+    " open buffers ('buffers') and the pandoc files found (recursively) in the
+    " current directory ('pandocfiles'), respectively. 'buffers' is the
+    " default
+    "
+    let s:refsources = 'buffers'
+    if exists('g:pandoc#completion#refsources')
+        let s:refsources = g:pandoc#completion#refsources
+    endif
+    "
+    let l:currArgs = argv()
+    execute '%argd'
+    if s:refsources ==# 'buffers'
+        " do nothing
+    elseif s:refsources ==# 'pandocfiles'
+        " this will populate the bufferlist and we can then work with bufdo
+        " argdo does not work very well with unsaved buffers
+        let l:pandocfiles = []
+        call extend(l:pandocfiles, glob('**/*.pandoc', 1, 1))
+        call extend(l:pandocfiles, glob('**/*.pdk', 1, 1))
+        call extend(l:pandocfiles, glob('**/*.pd', 1, 1))
+        call extend(l:pandocfiles, glob('**/*.pdc', 1, 1))
+        execute 'argadd ' . join(l:pandocfiles)
+        if get(g:, 'pandoc#filetypes#pandoc_markdown', 1) == 1
+            let l:pandocfiles = []
+            call extend(l:pandocfiles, glob('**/*.markdown', 1, 1))
+            call extend(l:pandocfiles, glob('**/*.mdown', 1, 1))
+            call extend(l:pandocfiles, glob('**/*.mkd', 1, 1))
+            call extend(l:pandocfiles, glob('**/*.mkdn', 1, 1))
+            call extend(l:pandocfiles, glob('**/*.mkdwn', 1, 1))
+            call extend(l:pandocfiles, glob('**/*.md', 1, 1))
+            execute 'argadd ' . join(l:pandocfiles)
+        endif
+    endif
+    execute '%argd'
+    execute 'argadd ' . join(l:currArgs)
+    "
     " set the correct omnifunc completion
     "
     if has('python3')
@@ -71,11 +111,11 @@ fun! s:FetchImageNames() abort
     call extend(l:filelist, globpath(s:imgdir, '*.gif', 1, 1))
     call extend(l:filelist, globpath(s:imgdir, '*.eps', 1, 1))
     "
+    let l:currBuff = bufnr('%')
+    "
     for l:file in l:filelist
-        let l:currBuff = bufnr('%')
         let l:occurrences = 0
-        bufdo if search(l:file, 'nw') | let l:occurrences += 1 | endif
-        execute 'buffer ' . l:currBuff
+        bufdo if &l:filetype ==# 'pandoc' | if search(l:file, 'nw') | let l:occurrences += 1 | endif | endif
         if l:occurrences == 0
             call add(s:mylist, {
                         \ 'icase': 0,
@@ -84,6 +124,9 @@ fun! s:FetchImageNames() abort
                         \ })
         endif
     endfor
+    "
+    execute 'buffer ' . l:currBuff
+    "
 endfun
 
 "
@@ -93,8 +136,8 @@ fun! s:FetchRefLabels() abort
     let l:reflist = []
     let l:currBuff = bufnr('%')
     call execute(
-                \ 'bufdo %s/\v#\zs(eq:|fig:|lst:|sec:|tbl:)(\w|-)+/' .
-                \ '\=add(l:reflist, submatch(0))/gn',
+                \ 'bufdo if &l:filetype ==# "pandoc" | %s/\v#\zs(eq:|fig:|lst:|sec:|tbl:)(\w|-)+/' .
+                \ '\=add(l:reflist, submatch(0))/gn | endif',
                 \  'silent!'
                 \ )
     execute 'buffer ' . l:currBuff
