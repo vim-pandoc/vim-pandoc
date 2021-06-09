@@ -236,7 +236,7 @@ Besides this, some extensions are provided:
 * If present, fold the document's YAML frontmatter (this is configurable with
   |g:pandoc#folding#fold_yaml|)
 * The foldlevel for YAML frontmatter is 1 by default (this is configurable
-  with |g:pandoc#folding#folding_yaml|)
+  with |g:pandoc#folding#foldlevel_yaml|)
 * Fold divs of the classes defined in |g:pandoc#folding#fold_div_classes|. For
   example, you might want to create notes for a presentation. pandoc
   understands
@@ -1078,7 +1078,7 @@ A description of the available configuration variables follows:
 
   Fold YAML frontmatters.
 
-- *g:pandoc#folding#folding_yaml*
+- *g:pandoc#folding#foldlevel_yaml*
   default = 1
 
   Foldlevel for YAML frontmatters.
