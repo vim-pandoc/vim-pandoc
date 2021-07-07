@@ -33,19 +33,20 @@ let g:pandoc_extensions_table = {
 " Enabled modules {{{3
 if !exists('g:pandoc#modules#enabled')
     let g:pandoc#modules#enabled = [
-                \'yaml',
-                \'bibliographies',
-                \'completion',
-                \'command',
-                \'folding',
-                \'formatting',
-                \'indent',
-                \'menu',
-                \'metadata',
-                \'keyboard' ,
-                \'toc',
-                \'spell',
-                \'hypertext']
+                \"yaml",
+                \"bibliographies",
+                \"completion",
+                \"command",
+                \"folding",
+                \"formatting",
+                \"indent",
+                \"menu",
+                \"metadata",
+                \"keyboard" ,
+                \"toc",
+                \"spell",
+                \"hypertext",
+                \"table"]
 endif
 
 " Auxiliary module blacklist. {{{3
