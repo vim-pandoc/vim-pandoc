@@ -18,7 +18,7 @@ class PandocInfo(object):
     def __raw_output(self, cmd, pattern=None):
         data = ensure_string(Popen([self.pandoc, cmd], stdout=PIPE).communicate()[0])
         if pattern:
-            return re.search(pattern, data, re.DOTALL).group(1)
+            return re.search(pattern, data, re.DOTALL)
         else:
             return data
 
@@ -30,12 +30,8 @@ class PandocInfo(object):
         self.output_formats = self.get_output_formats()
 
     def get_version(self):
-        versionPattern = 'pandoc'
-        # check for MSYS terminal
-        if sys.platform.startswith('msys'):
-            versionPattern += '\.exe'
-        versionPattern += ' (\d+\.\d+)'
-        return self.__raw_output('--version', pattern=versionPattern)
+        versionPattern = 'pandoc(\.exe)? (?P<version>\d+\.\d+)'
+        return self.__raw_output('--version', pattern=versionPattern).group('version')
 
     def get_options(self):
         # first line describes pandoc usage
