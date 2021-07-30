@@ -21,16 +21,16 @@ function! pandoc#keyboard#checkboxes#Toggle() abort "{{{2
 	let l:curs=winsaveview()
 
 	" match '- [ ]' and replace with '- [x]'
-	if l:line=~?'^\s*\(-\|\*\)\s*\[ \] .*'
+	if l:line=~?'^\s*\(-\|\*\|+\)\s*\[ \] .*'
 		:call setline(line('.'), substitute(l:line, '\[ \]', '\[x\]', ''))
 
 	" match '- [x]' and replace with '- [ ]'
-	elseif l:line=~?'^\s*\(-\|\*\)\s*\[x\] .*'
+	elseif l:line=~?'^\s*\(-\|\*\|+\)\s*\[x\] .*'
 		:call setline(line('.'), substitute(l:line, '\[x\]', '\[ \]', ''))
 
 	" match list item that does not have a [ at the beginning
-	elseif l:line=~?'^\s*\(-\|\*\)\s*[^\[].*'
-		:call setline(line('.'), substitute(l:line, '^\s*\(-\|\*\)', '\0 \[ \]', ''))
+	elseif l:line=~?'^\s*\(-\|\*\|+\)\s*[^\[].*'
+		:call setline(line('.'), substitute(l:line, '^\s*\(-\|\*\|+\)', '\0 \[ \]', ''))
 	endif
 	call winrestview(l:curs)
 endfunction
@@ -39,8 +39,8 @@ function! pandoc#keyboard#checkboxes#Delete() abort "{{{2
 	let l:line=getline('.')
 	let l:curs=winsaveview()
 
-	if l:line=~?'^\s*\(-\|\*\)\s*\[[^\]]\] .*'
-		:call setline(line('.'), substitute(l:line, '^\s*\(-\|\*\)\s*\zs\(\[[^\]]\]\) \ze', '', ''))
+	if l:line=~?'^\s*\(-\|\*\|+\)\s*\[[^\]]\] .*'
+		:call setline(line('.'), substitute(l:line, '^\s*\(-\|\*\|+\)\s*\zs\(\[[^\]]\]\) \ze', '', ''))
 	endif
 	call winrestview(l:curs)
 endfunction
