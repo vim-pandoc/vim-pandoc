@@ -20,6 +20,7 @@ class PandocCommand(object):
         self._output_file_path = None
         self._run_command = None
         self._out = None
+        self._python_executable = None
 
     def build_formats_table(self):
         for i in self.pandoc_info.output_formats:
@@ -141,12 +142,13 @@ class PandocCommand(object):
         self.execute(should_open)
 
     def python_executable(self):
-        if vim.eval("executable('python')") == '1':
-            return 'python'
-        elif vim.eval("executable('python3')") == '1':
-            return 'python3'
-        else:
-            return None
+        if self._python_executable is None:
+            if vim.eval("executable('python')") == '1':
+                self._python_executable = 'python'
+            elif vim.eval("executable('python3')") == '1':
+                self._python_executable = 'python3'
+
+        return self._python_executable
 
     def execute(self, should_open):
         with open("pandoc.out", 'w') as tmp:
