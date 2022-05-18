@@ -140,6 +140,14 @@ class PandocCommand(object):
         # execute
         self.execute(should_open)
 
+    def python_executable(self):
+        if vim.eval("executable('python')") == '1':
+            return 'python'
+        elif vim.eval("executable('python3')") == '1':
+            return 'python3'
+        else:
+            return None
+
     def execute(self, should_open):
         with open("pandoc.out", 'w') as tmp:
 
@@ -173,11 +181,11 @@ class PandocCommand(object):
             # for vim versions with clientserver support
             elif vim.eval("has('clientserver')") == '1' and \
                  vim.eval("v:servername") != "" and \
-                 vim.eval("executable('python')") == '1':
+                 self.python_executable() is not None:
                 async_runner = '"' + os.path.join(os.path.dirname(__file__), "async.py") + '"'
                 servername_arg = "--servername=" + vim.eval("v:servername")
                 open_arg  = "--open" if should_open else "--noopen"
-                async_command = " ".join(["python", async_runner, servername_arg, open_arg, self._run_command])
+                async_command = " ".join([self.python_executable(), async_runner, servername_arg, open_arg, self._run_command])
                 try:
                     Popen(shlex.split(async_command), stdout=tmp, stderr=tmp)
                 except:
