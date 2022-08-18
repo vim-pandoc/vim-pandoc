@@ -4,6 +4,13 @@
 " Description: vim-pandoc-handled buffer settings
 " Author: Felipe Morales
 
+" Source the plugin already here as Neovim has changed their loading order,
+" and without it, the variables being checked below is not present.
+"
+" GH: https://github.com/neovim/neovim/issues/19008
+" GH: https://github.com/vim-pandoc/vim-pandoc/issues/433
+runtime! plugin/pandoc.vim
+
 if exists('b:pandoc_loaded') && b:pandoc_loaded == 1
     finish
 endif
