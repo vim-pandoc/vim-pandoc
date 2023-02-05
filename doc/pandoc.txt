@@ -120,9 +120,12 @@ FILETYPES                                                *vim-pandoc-filetypes*
 
 vim-pandoc is not a regular filetype plugin. Although it does define a
 `pandoc` filetype, vim-pandoc can also attach to other filetypes, like
-`markdown`, `rst` and `textile`. In that case, vim-pandoc uses the
-appropriate filetype syntax file, but creates the Pandoc command and loads the
-extra utilities. What filetypes to attach to is determined by the value of the
+`markdown`, `rst` and `textile`. In that case, vim-pandoc uses the appropriate
+filetype syntax file, but creates the Pandoc command and loads the extra
+utilities. vim-pandoc also provides a convenience `beamer` filetype, that
+simply clones the `pandoc` filetype. The `beamer` filetype is useful for
+managing the behavior of |g:pandoc#command#autoexec_command| (see below). What
+filetypes to attach to is determined by the value of the
 |g:pandoc#filetypes#handled| variable.
 
 Setting `pandoc#filetypes#pandoc_markdown` to 0 will disable all pandoc
@@ -233,7 +236,7 @@ Besides this, some extensions are provided:
 * If present, fold the document's YAML frontmatter (this is configurable with
   |g:pandoc#folding#fold_yaml|)
 * The foldlevel for YAML frontmatter is 1 by default (this is configurable
-  with |g:pandoc#folding#folding_yaml|)
+  with |g:pandoc#folding#foldlevel_yaml|)
 * Fold divs of the classes defined in |g:pandoc#folding#fold_div_classes|. For
   example, you might want to create notes for a presentation. pandoc
   understands
@@ -332,6 +335,11 @@ enable this functionality, set |g:pandoc#command#autoexec_on_writes| to 1 and
 provide a command to execute like so:
 
     let |g:pandoc#command#autoexec_command| = "Pandoc! pdf"
+
+You can use different commands for different filetypes, if needed. For example,
+
+    autocmd FileType beamer let |g:pandoc#command#autoexec_command| = "Pandoc! beamer"
+    autocmd FileType pandoc let |g:pandoc#command#autoexec_command| = "Pandoc! pdf"
 
 You can also use a buffer local variable if you want to override the global
 setting.
@@ -505,6 +513,11 @@ you might retrieve both
 
 This is off by default, but can be turned on (if `bibtool` is available) by
 setting the |g:pandoc#biblio#use_bibtool| variable to 1.
+
+You can pass extra arguments to `bibtool` by setting
+|g:pandoc#biblio#bibtool_extra_args|. The default is "-r biblatex", which
+enables support for biblatex bibliographies (bibtex bibliographies will still
+work).
 
 TIP: If you use unite.vim, you might want to check https://github.com/msprev/unite-bibtex
 
@@ -1065,7 +1078,7 @@ A description of the available configuration variables follows:
 
   Fold YAML frontmatters.
 
-- *g:pandoc#folding#folding_yaml*
+- *g:pandoc#folding#foldlevel_yaml*
   default = 1
 
   Foldlevel for YAML frontmatters.
