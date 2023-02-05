@@ -9,8 +9,10 @@ function! markdown#tex#InsideTeXBlock(...) abort
     endif
     call cursor(source_pos, 1)
     if synIDattr(synID(source_pos, 1, 0), 'name') =~? '^tex'
+        call cursor(origin_pos[1], origin_pos[2])
         return 1
     endif
+    call cursor(source_pos, 1)
     let prev_delim = searchpair('^$\{2}', '', '^$\{2}', 'bnW')
     let next_delim = search('^$\{2}', 'nW')
     call cursor(origin_pos[1], origin_pos[2])
