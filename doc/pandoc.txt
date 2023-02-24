@@ -53,7 +53,7 @@ REQUIREMENTS                                          *vim-pandoc-requirements*
 
 * Vim 7.4
   Note: On vim versions < 7.4, some modules are automatically disabled (see
-  |g:pandoc#modules#disabled|, but vim-vim-pandoc is able to run in a degraded
+  |g:pandoc#modules#disabled|, but vim-pandoc is able to run in a degraded
   mode.
 * python 3 support.
   Note: If python is not available, the features that require it are
