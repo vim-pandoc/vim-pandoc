@@ -16,8 +16,8 @@ if (exists('b:did_ftplugin'))
 endif
 let b:did_ftplugin = 1
 
-let s:cpo_save = &cpo
-set cpo&vim
+let s:cpo_save = &cpoptions
+set cpoptions&vim
 
 " Start a new auto command group for all this plugin's hooks
 augroup VimPandoc
@@ -68,5 +68,5 @@ if exists('g:pandoc#formatting#equalprg') && !empty(g:pandoc#formatting#equalprg
     let b:undo_ftplugin .= '| setlocal equalprg<'
 endif
 
-let &cpo = s:cpo_save
+let &cpoptions = s:cpo_save
 unlet s:cpo_save
