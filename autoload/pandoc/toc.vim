@@ -28,7 +28,7 @@ function! pandoc#toc#Show() abort
     " prepare the location-list buffer
     call pandoc#toc#Update()
     if g:pandoc#toc#position ==# 'right'
-        let toc_pos = 'vertical'
+        let toc_pos = 'botright vertical'
     elseif g:pandoc#toc#position ==# 'left'
         let toc_pos = 'topleft vertical'
     elseif g:pandoc#toc#position ==# 'top'
