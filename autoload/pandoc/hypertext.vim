@@ -97,7 +97,7 @@ endfunction
 function! s:ExtendedCFILE() abort
     let orig_isfname = &isfname
     let &isfname = orig_isfname . ',?,&,:'
-    let addr = expand('<cfile>')
+    let addr = expand('%:h') . '/' . expand('<cfile>')
     let &isfname = orig_isfname
     return addr
 endfunction
