@@ -270,7 +270,7 @@ function! pandoc#hypertext#OpenSystem(...) abort
     endif
 
     if has('unix') && executable('xdg-open')
-        call system('xdg-open '. shellescape(expand(addr,':p')))
+        call system('xdg-open '. shellescape(addr))
     elseif has('win32') || has('win64')
         call system('cmd /c "start '. addr .'"')
     elseif has('macunix')
