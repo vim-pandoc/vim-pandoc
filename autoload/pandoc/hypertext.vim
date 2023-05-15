@@ -76,16 +76,6 @@ function! s:IsEditable(path) abort
     return 0
 endfunction
 
-function! s:SortAlternates(a, b) abort
-    let ext = fnamemodify(a:a, ':e')
-    if ext ==? g:pandoc#hypertext#preferred_alternate
-        " return 1 will cass the preferred on at the last
-        return -1
-    endif
-    " return 0 will cause others before the preferred
-    return 1
-endfunction
-
 function! s:FindAlternates(path) abort
     let candidates = glob(fnamemodify(a:path, ':r').'.*', 0, 1)
     if candidates !=# []
