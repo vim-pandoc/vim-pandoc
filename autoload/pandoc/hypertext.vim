@@ -63,12 +63,7 @@ function! pandoc#hypertext#Init() abort
 endfunction
 
 function! s:IsEditable(path) abort
-    let exts = []
-    for type_exts in values(g:pandoc_extensions_table)
-        for ext in type_exts
-            call add(exts, fnamemodify('*.'.ext, ':e'))
-        endfor
-    endfor
+    let exts = flatten(values(g:pandoc_extensions_table))
 
     if index(exts, fnamemodify(a:path, ':e')) > -1
         return 1
