@@ -774,7 +774,7 @@ then open it by VIM or system application. If the link address starts with a
 cursor to specified header.
 After moving, you can use |<localleader>gb| to move back to that link.
 
-See |vim-pandoc-keyboard-module| ro detail.
+See |vim-pandoc-keyboard-module| for detail.
 
 SETTINGS                                                   *vim-pandoc-settings*
 
