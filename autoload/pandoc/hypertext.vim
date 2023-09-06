@@ -307,6 +307,11 @@ function! pandoc#hypertext#OpenLink(cmd) abort
     if '#' ==# url[:0]
         call pandoc#hypertext#GotoID(url[1:], sname, curpos, pos)
     elseif ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
+
+        if "/" !=# url[:0]
+            let url = printf("%s/%s", expand("%:h"), url)
+        endif
+
         call pandoc#hypertext#OpenLocal(url, a:cmd)
         if hashnum != -1
             call pandoc#hypertext#GotoID(id, sname, curpos, pos)
