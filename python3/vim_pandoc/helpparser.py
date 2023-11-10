@@ -80,8 +80,8 @@ class PandocInfo(object):
         return list(chain.from_iterable([v.names for v in self.options]))
 
     def get_extensions(self):
-        data = self.__raw_output('--list-extensions').\
-            replace(' +', '').replace(' -', '')
+        data = self.__raw_output('--list-extensions')
+        data = re.sub('(^ |^)[\+-]', '', data, flags=re.MULTILINE)
         return data.splitlines()
 
     def get_input_formats(self):
