@@ -38,7 +38,10 @@ class PandocInfo(object):
         data = self.__raw_output('--help').splitlines()[1:]
         data = [l.strip() for l in data]
         # options from --trace onwards are not meaningful for us
-        cutoff = data.index('--trace')
+        try:
+            cutoff = data.index('--trace')
+        except ValueError:
+            cutoff = -1
         data = data[:cutoff]
 
         options = []
