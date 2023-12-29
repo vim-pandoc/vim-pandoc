@@ -35,7 +35,7 @@ function! pandoc#hypertext#Init() abort
     if exists('g:pandoc#hypertext#inline_link_regex')
         let s:inline_link_regex = g:pandoc#hypertext#inline_link_regex
     else
-        let s:inline_link_regex = '\v!?\[[^]]+\]\(([^) \t]+).*\)'
+        let s:inline_link_regex = '\v!?\[[^]]+\]\(([^) \t]+)\)'
     endif
 
     if exists('g:pandoc#hypertext#reference_link_regex')
