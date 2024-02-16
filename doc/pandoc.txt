@@ -1146,8 +1146,10 @@ A description of the available configuration variables follows:
 - *g:pandoc#spell#default_langs*
   default = []
 
-  What languages to use for spelling by default for files handled by
-  vim-pandoc.
+  Specifies the default languages to be used by the spell checker for files handled
+  by vim-pandoc. It should be set to a list of ISO 639-1 language codes. For example:
+
+    let g:pandoc#spell#default_langs = ['pt', 'en']
 
 - *g:pandoc#hypertext#open_editable_alternates*
   default = 1
