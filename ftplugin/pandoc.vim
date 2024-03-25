@@ -41,7 +41,7 @@ endfor
 
 if exists('loaded_matchit')
     setlocal matchpairs-=<:>
-    let b:match_words = get(b:, 'match_words', &l:matchpairs)
+    let b:match_words = get(b:, 'match_words', &l:matchpairs) .
       \ ',' . '\%(^\|[ (/]\)\@<="' . ':' . '"\%($\|[ )/.\,;\:?!\-]\)' .
       \ ',' . '\%(^\|[ (/]\)\@<=''' . ':' . '''\%($\|[ )/.\,;\:?!\-]\)'
     let b:match_words .=
