@@ -18,8 +18,8 @@ bib_extensions = ["bib", "bibtex", "ris", "mods", "json", "enl", "wos", "medline
 
 # SUGGESTIONS
 
-bibtex_title_search = re.compile("^\s*[Tt]itle\s*=\s*{(?P<title>\S.*?)}.{,1}\n", re.MULTILINE | re.DOTALL)
-bibtex_booktitle_search = re.compile("^\s*[Bb]ooktitle\s*=\s*{(?P<booktitle>\S.*?)}.{,1}\n", re.MULTILINE | re.DOTALL)
+bibtex_title_search = re.compile(r"^\s*[Tt]itle\s*=\s*{(?P<title>\S.*?)}.{,1}\n", re.MULTILINE | re.DOTALL)
+bibtex_booktitle_search = re.compile(r"^\s*[Bb]ooktitle\s*=\s*{(?P<booktitle>\S.*?)}.{,1}\n", re.MULTILINE | re.DOTALL)
 
 def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
     global bibtex_title_search
@@ -31,7 +31,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
     entries = []
 
     if use_bibtool:
-        bibtex_id_search = re.compile(".*{\s*(?P<id>.*),")
+        bibtex_id_search = re.compile(r".*{\s*(?P<id>.*),")
 
         extra_args = shlex.split(vim.vars["pandoc#biblio#bibtool_extra_args"])
 
@@ -41,7 +41,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
         if isinstance(text, bytes):
             text = text.decode("utf-8")
     else:
-        bibtex_id_search = re.compile(".*{\s*(?P<id>" + query + ".*),")
+        bibtex_id_search = re.compile(r".*{\s*(?P<id>" + query + ".*),")
 
     for entry in [i for i in re.split("\n@", text)]:
         entry_dict = {}
@@ -58,7 +58,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
                 i3 = bibtex_booktitle_search.search(entry)
                 if i3:
                     title = i3.group("booktitle")
-            title = re.sub("[{}]", "", re.sub("\s+", " ", title))
+            title = re.sub("[{}]", "", re.sub(r"\s+", " ", title))
 
             entry_dict["menu"] = make_title_ascii(title)
 
@@ -67,7 +67,7 @@ def get_bibtex_suggestions(text, query, use_bibtool=False, bib=None):
     return entries
 
 
-ris_title_search = re.compile("^(TI|T1|CT|BT|T2|T3)\s*-\s*(?P<title>.*)\n", re.MULTILINE)
+ris_title_search = re.compile(r"^(TI|T1|CT|BT|T2|T3)\s*-\s*(?P<title>.*)\n", re.MULTILINE)
 
 def get_ris_suggestions(text, query):
     global ris_title_search
@@ -75,9 +75,9 @@ def get_ris_suggestions(text, query):
 
     entries = []
 
-    ris_id_search = re.compile("^ID\s*-\s*(?P<id>" +  query + ".*)\n", re.MULTILINE)
+    ris_id_search = re.compile(r"^ID\s*-\s*(?P<id>" +  query + ".*)\n", re.MULTILINE)
 
-    for entry in re.split("ER\s*-\s*\n", text):
+    for entry in re.split(r"ER\s*-\s*\n", text):
         entry_dict = {}
         i1 = ris_id_search.search(entry)
         if i1:
