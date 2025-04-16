@@ -59,7 +59,7 @@ let b:match_words .=
       \ ',' . '\%(^\s*\)\@<=\\begin{\(\w\+\*\?\)}' . ':' . '\%(^\s*\)\@<=\\end{\1}'
 endif
 
-setlocal formatlistpat=\\C^\\s*[\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|^\\s*[-+o*]\\s\\+
+setlocal formatlistpat=\\C^\\s*\\([\\[({]\\\?\\([0-9]\\+\\\|[iIvVxXlLcCdDmM]\\+\\\|[a-zA-Z]\\)[\\]:.)}]\\s\\+\\\|[-+o*>]\\s\\+\\)\\+
 setlocal formatoptions+=n
 
 let b:undo_ftplugin = 'setlocal formatoptions< formatlistpat< matchpairs<'
