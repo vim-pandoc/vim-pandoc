@@ -284,7 +284,7 @@ function! pandoc#hypertext#OpenSystem(...) abort
     elseif has('win32') || has('win64')
         call system('cmd /c "start '. addr .'"')
     elseif has('macunix')
-        call system('open '. addr)
+        call system('open '. shellescape(expand(addr,':p')))
     endif
 endfunction
 
