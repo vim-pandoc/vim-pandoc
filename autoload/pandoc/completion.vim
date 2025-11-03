@@ -29,7 +29,7 @@ function! pandoc#completion#Init() abort "{{{1
         if stridx(&completeopt, 'preview') > -1
             let b:pandoc_old_cot = &completeopt
             let &completeopt = &completeopt.',preview'
-            au! VimPandoc BufEnter,WinEnter <buffer> let &completeopt = b:pandoc_old_cot.'.preview'
+            au! VimPandoc BufEnter,WinEnter <buffer> let &completeopt = b:pandoc_old_cot.',preview'
             au! VimPandoc BufLeave,WinLeave <buffer> let &completeopt = b:pandoc_old_cot
         endif
         " close the preview window when the completion has been inserted
