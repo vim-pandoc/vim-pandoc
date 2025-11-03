@@ -64,7 +64,9 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends) abort
     let reg = 'p'
     let reg_save = getreg(reg)
     if a:type ==# 'v'
-        execute 'normal! `<'.a:type.'`>'.'"'.reg.'x'
+        execute 'normal! `>'
+        let was_eoln = s:IsCursorAtEndofNonEmptyLine()
+        execute 'normal! '.a:type.'`<'.'"'.reg.'x'        
     elseif a:type ==# 'char'
         let cline = getline('.')
         let ccol = getpos('.')[2]
@@ -88,20 +90,21 @@ function! pandoc#keyboard#styles#ToggleOperator(type, ends) abort
             " inside a word
             execute 'normal! `[EBv`]BE'.'"'.reg.'x'
         endif
+        let was_eoln = s:IsCursorAtEndofNonEmptyLine()
     else
         return
     endif
     let match_data = matchlist(getreg(reg), '\('.s:EscapeEnds(a:ends).'\)\(.*\)\('.s:EscapeEnds(a:ends).'\)')
     if len(match_data) == 0
         call setreg(reg, a:ends.getreg(reg).a:ends)
-        if s:IsCursorAtEndofNonEmptyLine()
+        if was_eoln
             execute 'normal "'.reg.'p'
         else
             execute 'normal "'.reg.'P'
         endif
     else
         call setreg(reg, match_data[2])
-        if s:IsCursorAtEndofNonEmptyLine()
+        if was_eoln
             execute 'normal "'.reg.'p'
         else
             execute 'normal "'.reg.'P'
