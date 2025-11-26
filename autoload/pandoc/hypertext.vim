@@ -306,14 +306,20 @@ function! pandoc#hypertext#OpenLink(cmd) abort
 
     if '#' ==# url[:0]
         call pandoc#hypertext#GotoID(url[1:], sname, curpos, pos)
-    elseif ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
-        call pandoc#hypertext#OpenLocal(url, a:cmd)
-        if hashnum != -1
-            call pandoc#hypertext#GotoID(id, sname, curpos, pos)
-            call pandoc#hypertext#PushLink( ['file', curfile] )
-        endif
     else
-        call pandoc#hypertext#OpenSystem(url)
+        " treat paths as relative to the file they're written in, not relative to vim's
+        " current directory.
+        let url = fnamemodify(expand('%:h'), ':p') . url
+
+        if ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
+            call pandoc#hypertext#OpenLocal(url, a:cmd)
+            if hashnum != -1
+                call pandoc#hypertext#GotoID(id, sname, curpos, pos)
+                call pandoc#hypertext#PushLink( ['file', curfile] )
+            endif
+        else
+            call pandoc#hypertext#OpenSystem(url)
+        endif
     endif
 endfunction
 
