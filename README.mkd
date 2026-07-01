@@ -4,13 +4,13 @@
 
 `vim-pandoc` provides facilities to integrate Vim with the [pandoc][] document
 converter and work with documents written in [its markdown
-variant](http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown)
+variant](https://pandoc.org/MANUAL.html#pandocs-markdown)
 (although textile documents are also supported). 
 
 `vim-pandoc`'s goals are 1) to provide advanced integration with pandoc, 2) a
 comfortable document writing environment, and 3) great configurability.
 
-[pandoc]: http://johnmacfarlane.net/pandoc/
+[pandoc]: https://pandoc.org/
 
 ## IMPORTANT
 
