@@ -1196,6 +1196,14 @@ A description of the available configuration variables follows:
   To use this for alternate files, the value of
   |g:pandoc#hypertext#open_editable_alternates| should be 1.
 
+- *g:pandoc#hypertext#open_files_relative_to*
+  default = "vim"
+
+  When opening a file from a link, what to treat its path as relative to:
+
+      - "vim": Vim's current directory.
+      - "file": The file that the link is in.
+
 - *g:pandoc#hypertext#use_default_mappings*
   default = 1
 

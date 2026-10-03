@@ -10,6 +10,9 @@ function! pandoc#hypertext#Init() abort
     if !exists('g:pandoc#hypertext#create_if_no_alternates_exists')
         let g:pandoc#hypertext#create_if_no_alternates_exists = 0
     endif
+    if !exists('g:pandoc#hypertext#open_files_relative_to')
+        let g:pandoc#hypertext#open_files_relative_to = 'vim'
+    endif
     if !exists('g:pandoc#hypertext#split_open_cmd')
         let g:pandoc#hypertext#split_open_cmd = 'botright vsplit'
     endif
@@ -306,14 +309,22 @@ function! pandoc#hypertext#OpenLink(cmd) abort
 
     if '#' ==# url[:0]
         call pandoc#hypertext#GotoID(url[1:], sname, curpos, pos)
-    elseif ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
-        call pandoc#hypertext#OpenLocal(url, a:cmd)
-        if hashnum != -1
-            call pandoc#hypertext#GotoID(id, sname, curpos, pos)
-            call pandoc#hypertext#PushLink( ['file', curfile] )
-        endif
     else
-        call pandoc#hypertext#OpenSystem(url)
+        if g:pandoc#hypertext#open_files_relative_to == 'file'
+            " "file": Treat paths as relative to the file they're written in.
+            let url = fnamemodify(expand('%:h'), ':p') . url
+        endif
+        " ("vim"/Default behaviour: treat paths as relative to Vim's current directory.)
+
+        if ext =~ g:pandoc#hypertext#editable_alternates_extensions || s:IsEditable(url)
+            call pandoc#hypertext#OpenLocal(url, a:cmd)
+            if hashnum != -1
+                call pandoc#hypertext#GotoID(id, sname, curpos, pos)
+                call pandoc#hypertext#PushLink( ['file', curfile] )
+            endif
+        else
+            call pandoc#hypertext#OpenSystem(url)
+        endif
     endif
 endfunction
 
