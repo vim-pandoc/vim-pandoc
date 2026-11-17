@@ -121,6 +121,19 @@ function! pandoc#folding#FoldExpr() abort
         endif
     endif
 
+    " Markdown folds used to call synID() on candidate lines. Collect the
+    " levels once per change instead. Textile, basic folding, and Vim
+    " without vim9script keep the expressions below.
+    if (&filetype =~# 'markdown' || &filetype ==# 'pandoc' || &filetype ==# 'rmd')
+                \ && exists('g:vim_pandoc_syntax_exists')
+                \ && get(b:, 'pandoc_folding_basic', 0) != 1
+        if has('nvim')
+            return v:lua.require('pandoc.folding').expr()
+        elseif has('vim9script')
+            return pandoc#folding9#Expr()
+        endif
+    endif
+
     let vline = getline(v:lnum)
     " fold YAML headers
     if g:pandoc#folding#fold_yaml == 1
