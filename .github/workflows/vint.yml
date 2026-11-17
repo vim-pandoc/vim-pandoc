@@ -19,4 +19,5 @@ jobs:
     - name: Setup dependencies
       run: pip install vim-vint
     - name: Run Vimscript Linter
-      run: vint .
+      # folding9.vim is vim9script. vint 0.3.21 does not finish parsing it.
+      run: find . -name '*.vim' ! -name 'folding9.vim' -print0 | xargs -0 vint

@@ -227,6 +227,13 @@ The "relative" mode counts the number of parents the header has, so
 The "stacked" mode counts all headers as first level, and it can be used to
 view all the headers at once.
 
+Header folds are taken from the buffer text. The expression used to call
+|synID()| on candidate lines, and each call could walk a long syntax region.
+Vim 8.2 and later collect the levels in one compiled pass and reuse them
+until the buffer or the folding options change. Neovim does that pass in
+Lua. Vim without |vim9script| keeps the previous expression, as does
+|b:pandoc_folding_basic|.
+
 The mode can be changed on the fly using the *:PandocFolding* command which
 takes as argument the options "syntax", "relative" and "stacked". If no
 argument is given, then automatic folding will be disabled.
@@ -1216,7 +1223,8 @@ A: Add to your `vimrc` the line
 <
 Q: Editing text is laggy. What's wrong?
 
-A: See |g:pandoc#folding#fastfolds|.
+A: Header folds no longer call |synID()| on current Vim and Neovim. If insert
+   mode is still slow, see |g:pandoc#folding#fastfolds|.
 
 CONTRIBUTE                                              *vim-pandoc-contribute*
 
